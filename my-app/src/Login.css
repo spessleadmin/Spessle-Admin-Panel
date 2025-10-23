@@ -1,5 +1,5 @@
 .authentication-bg {
-  background: #52b6b7;
+  background: #15adad;
   width: 100vw;
   height: 100vh;
   min-height: 100vh;
@@ -86,7 +86,7 @@ form {
 }
 
 .form-control:focus {
-  border-color: #52b6b7;
+  border-color: #15adad;
   box-shadow: 0 0 0 2px rgba(82, 182, 183, 0.14);
   outline: none;
 }
@@ -120,7 +120,7 @@ form {
 
 .input-group-text:active,
 .input-group-text:focus {
-  border-color: #52b6b7;
+  border-color: #15adad;
   outline: none;
 }
 
