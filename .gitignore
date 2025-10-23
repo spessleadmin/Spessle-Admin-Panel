@@ -1,0 +1,59 @@
+# Node modules
+node_modules/
+
+# Production build output
+/build/
+/dist/
+
+# Miscellaneous
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE files
+*.sublime-workspace
+*.sublime-project
+.vscode/
+.idea/
+*.swp
+
+# Testing and coverage
+coverage/
+*.lcov
+
+# Mac/OSX
+Thumbs.db
+
+# Optional: If you use typescript and don't want to track build .ts files
+*.tsbuildinfo
+
+# Optional: If you use ESLint cache
+.eslintcache
+
+# Optional: If you use Next.js
+.next/
+
+# Optional: If you use Storybook
+.storybook/
+out/
+
+# Optional: If you use JetBrains/WebStorm
+*.iml
+
+# Optional: For React Native
+*.expo/
+
+# Optional: For React snapshots (Jest)
+__snapshots__/
+
+# Optional: For local API stubs/data
+mockData/
