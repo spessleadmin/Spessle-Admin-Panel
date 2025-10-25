@@ -21,6 +21,39 @@ export default function AdminUsers() {
   const [entriesPerPage, setEntriesPerPage] = useState("10");
   const [users, setUsers] = useState(sampleUsers);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+
+  const sortUsers = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+
+    const sortedUsers = [...users].sort((a, b) => {
+      if (a[key] < b[key]) {
+        return direction === 'ascending' ? -1 : 1;
+      }
+      if (a[key] > b[key]) {
+        return direction === 'ascending' ? 1 : -1;
+      }
+      return 0;
+    });
+    setUsers(sortedUsers);
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const initialFilters = {
+      business: params.get('business') || '',
+      name: params.get('name') || '',
+      email: params.get('email') || '',
+      phone: params.get('phone') || '',
+      role: params.get('role') || 'Support Admin',
+      status: params.get('status') || '',
+    };
+    setFilters(initialFilters);
+  }, []);
 
   // Filter card: preserves your filter functionality
   const handleFilterSearch = (e) => {
@@ -39,6 +72,14 @@ export default function AdminUsers() {
     if (filters.status)
       filtered = filtered.filter(u => u.status === filters.status);
 
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      }
+    });
+    window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
+
     setUsers(filtered);
     setCurrentPage(1);
   };
@@ -47,6 +88,7 @@ export default function AdminUsers() {
     setUsers(sampleUsers);
     setSearch("");
     setCurrentPage(1);
+    window.history.pushState({}, '', window.location.pathname);
   };
 
   // Table search
@@ -105,7 +147,7 @@ export default function AdminUsers() {
 
   return (
     <Layout>
-        <main className="admin-users-page dashboard-main width-100">
+        <main className="admin-users-page dashboard-main" style={{ width: '100%' }}>
           {/* Page Title */}
           <div className="row">
             <div className="col-12">
@@ -229,22 +271,22 @@ export default function AdminUsers() {
                       <div className="d-flex">
                         <div id="basic-datatable_filter" className="dataTables_filter">
                           <label>
-                                                          <input
-                                                            type="search"
-                                                            className="form-control form-control-sm search-input"
-                                                            placeholder="Search..."
-                                                            aria-controls="basic-datatable"
-                                                            value={search}
-                                                            onChange={e => handleTableSearch(e.target.value)}
-                                                          />                          </label>
+                                                                                        <input
+                                                                                          type="search"
+                                                                                          className="form-control form-control-sm"
+                                                                                          placeholder="Search..."
+                                                                                          aria-controls="basic-datatable"
+                                                                                          value={search}
+                                                                                          onChange={e => handleTableSearch(e.target.value)}
+                                                                                          style={{ width: '200px', height: '38px' }}
+                                                                                        />                          </label>
                         </div>
-                        <a
-                          href="#"
-                          className="btn btn-sm btn-primary ms-2 add-user-btn"
+                        <button
+                          className="btn btn-blue btn-sm ms-2 add-user-table-btn"
                           onClick={e => e.preventDefault()}
                         >
                           <i data-feather="plus"></i>Add User
-                        </a>
+                        </button>
                       </div>
                     </div>
 
@@ -256,11 +298,21 @@ export default function AdminUsers() {
                         >
                           <thead>
                             <tr>
-                              <th>Name</th>
-                              <th>Email</th>
-                              <th>Phone</th>
-                              <th>Business Name</th>
-                              <th>User Role</th>
+                              <th className="sortable-header" onClick={() => sortUsers('name')}>
+                                Name {sortConfig.key === 'name' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                              </th>
+                              <th className="sortable-header" onClick={() => sortUsers('email')}>
+                                Email {sortConfig.key === 'email' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                              </th>
+                              <th className="sortable-header" onClick={() => sortUsers('phone')}>
+                                Phone {sortConfig.key === 'phone' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                              </th>
+                              <th className="sortable-header" onClick={() => sortUsers('business')}>
+                                Business Name {sortConfig.key === 'business' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                              </th>
+                              <th className="sortable-header" onClick={() => sortUsers('role')}>
+                                User Role {sortConfig.key === 'role' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                              </th>
                               <th>Action</th>
                             </tr>
                           </thead>

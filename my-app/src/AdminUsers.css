@@ -219,19 +219,35 @@ body,
 }
 .admin-filter-col input,
 .admin-filter-col select {
-  padding: 10px 12px;
-  border: 1px solid #cdd2de;
-  border-radius: 7px;
-  font-size: 1.05rem;
-  margin-top: 3px;
-  background: #fafbfc;
-  color: #21262c;
-  transition: border 0.18s;
+    display: block;
+    width: 100%;
+    padding: .45rem .9rem;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--ct-input-color);
+    background-color: var(--ct-input-bg);
+    background-clip: padding-box;
+    border: 1px solid #adb5bd;
+    border-radius: .2rem;
+    -webkit-transition: border-color .15s 
+ease-in-out, -webkit-box-shadow .15s 
+ease-in-out;
+    transition: border-color .15s 
+ease-in-out, -webkit-box-shadow .15s 
+ease-in-out;
+    transition: border-color .15s 
+ease-in-out, box-shadow .15s 
+ease-in-out;
+    transition: border-color .15s 
+ease-in-out, box-shadow .15s 
+ease-in-out, -webkit-box-shadow .15s 
+ease-in-out;
 }
 .admin-filter-col input:focus,
 .admin-filter-col select:focus {
   border-color: #15adad;
-  outline: none;
+  outline: 1px solid #15adad;
 }
 .admin-filter-actions {
   display: flex;
@@ -493,17 +509,7 @@ ease-in-out;
 
 
 
-.width-100 {
-
-    width: 100%;
-
-}
-
-
-
-.search-input {
-
-    width: 200px;
+.add-user-table-btn {
 
     height: 38px;
 
@@ -511,12 +517,3 @@ ease-in-out;
 
 
 
-.add-user-btn {
-
-    width: 100px;
-
-    height: 38px;
-
-    line-height: 2.5;
-
-}
