@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import Layout from "./Layout";
 import "./EditProduct.css";
+import "./Dropify.css";
 import feather from "feather-icons";
 
 const transformApiProduct = (apiProduct) => ({
@@ -355,19 +356,29 @@ export default function EditProduct() {
             <div className="admin-card card">
               <div className="card-body">
                 <h4 className="header-title">Product Image Upload</h4>
-                <div {...getRootProps({ className: "dropzone" })}>
+                <div {...getRootProps({ className: 'dropify-wrapper' })}>
                   <input {...getInputProps()} />
-                  <p>Drag 'n' drop some files here, or click to select files</p>
-                </div>
-                <aside style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", marginTop: 16 }}>
-                  {files.map((file) => (
-                    <div style={{ display: "inline-flex", borderRadius: 2, border: "1px solid #eaeaea", marginBottom: 8, marginRight: 8, width: 100, height: 100, padding: 4, boxSizing: "border-box" }} key={file.name}>
-                      <div style={{ display: "flex", minWidth: 0, overflow: "hidden" }}>
-                        <img src={file.preview} style={{ display: "block", width: "auto", height: "100%" }} alt={file.name} />
+                  {files.length > 0 ? (
+                    <div className="dropify-preview">
+                      <span className="dropify-render">
+                        <img src={files[0].preview} alt={files[0].name} />
+                      </span>
+                      <div className="dropify-infos">
+                        <div className="dropify-infos-inner">
+                          <p className="dropify-filename">
+                            <span className="file-icon"></span> {files[0].name}
+                          </p>
+                          <p className="dropify-infos-message">Drag and drop or click to replace</p>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </aside>
+                  ) : (
+                    <div className="dropify-message">
+                      <span className="file-icon"></span>
+                      <p>Drag and drop a file here or click</p>
+                    </div>
+                  )}
+                </div>
                 <div className="buttons-row" style={{ marginTop: "20px", justifyContent: "end" }}>
                   <button type="button" className="btn btn-blue" style={{ marginRight: "10px" }} onClick={handleImageUpload}>
                     Edit Product

@@ -1,0 +1,53 @@
+.dropify-wrapper {
+    border: 2px dashed #e8ebf3;
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+
+.dropify-wrapper:hover {
+    background-color: #f7f8fa;
+}
+
+.dropify-message {
+    font-size: 16px;
+    color: #7a869a;
+}
+
+.dropify-message .file-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.dropify-preview {
+    position: relative;
+    padding: 10px;
+}
+
+.dropify-render img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 6px;
+}
+
+.dropify-infos {
+    padding: 10px 0;
+}
+
+.dropify-infos-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dropify-filename {
+    font-weight: 600;
+}
+
+.dropify-infos-message {
+    font-size: 14px;
+    color: #7a869a;
+}
