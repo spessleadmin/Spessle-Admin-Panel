@@ -381,7 +381,7 @@ export default function EditProduct() {
                 </div>
                 <div className="buttons-row" style={{ marginTop: "20px", justifyContent: "end" }}>
                   <button type="button" className="btn btn-blue" style={{ marginRight: "10px" }} onClick={handleImageUpload}>
-                    Edit Product
+                    Upload
                   </button>
                   <button type="button" className="btn btn-secondary" onClick={() => setFiles([])}>
                     Reset
