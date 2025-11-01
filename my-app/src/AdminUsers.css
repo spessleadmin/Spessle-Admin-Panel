@@ -190,7 +190,7 @@ body,
 
 /* Left aligning form and limiting width */
 .admin-filter-form {
-  width: 660px;
+  width: 800px;
   max-width: 100%;
   margin-left: 0;
   margin-right: auto;
@@ -213,32 +213,59 @@ body,
 .admin-filter-col {
   flex: 1 1 0px;
   min-width: 140px;
-  max-width: 235px;
+  max-width: 280px;
   display: flex;
   flex-direction: column;
 }
 .admin-filter-col input,
 .admin-filter-col select {
-  padding: 10px 12px;
-  border: 1px solid #cdd2de;
-  border-radius: 7px;
-  font-size: 1.05rem;
-  margin-top: 3px;
-  background: #fafbfc;
-  color: #21262c;
-  transition: border 0.18s;
+    display: block;
+    width: 100%;
+    padding: .45rem .9rem;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--ct-input-color);
+    background-color: var(--ct-input-bg);
+    background-clip: padding-box;
+    border: 1px solid #adb5bd;
+    border-radius: .2rem;
+    -webkit-transition: border-color .15s 
+ease-in-out, -webkit-box-shadow .15s 
+ease-in-out;
+    transition: border-color .15s 
+ease-in-out, -webkit-box-shadow .15s 
+ease-in-out;
+    transition: border-color .15s 
+ease-in-out, box-shadow .15s 
+ease-in-out;
+    transition: border-color .15s 
+ease-in-out, box-shadow .15s 
+ease-in-out, -webkit-box-shadow .15s 
+ease-in-out;
 }
 .admin-filter-col input:focus,
 .admin-filter-col select:focus {
   border-color: #15adad;
-  outline: none;
+  outline: 1px solid #15adad;
 }
 .admin-filter-actions {
   display: flex;
-  align-items: flex-end;
-  gap: 8px;
   margin-top: 2px;
   margin-left: 0;
+}
+
+.buttons-row {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.admin-filter-button {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 1.05rem;
+    border: 1px solid;
 }
 .admin-btn,
 .admin-btn-primary,
@@ -402,63 +429,65 @@ body,
 }
 
 :root .btn {
-  --ct-btn-box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 1px rgba(0,0,0,0.075);
-  --ct-btn-active-box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
-  --ct-btn-link-color: #6658dd;
-  --ct-btn-link-hover-color: #473e9b;
-  --ct-btn-link-disabled-color: #98a6ad;
+    --ct-btn-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
+    --ct-btn-active-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --ct-btn-link-color: #6658dd;
+    --ct-btn-link-hover-color: #473e9b;
+    --ct-btn-link-disabled-color: #98a6ad;
 }
 
 .btn {
-  --ct-btn-padding-x: 0.9rem;
-  --ct-btn-padding-y: 0.45rem;
-  --ct-btn-font-size: 1rem;
-  --ct-btn-font-weight: 500;
-  --ct-btn-line-height: 1.5;
-  --ct-btn-color: #6c757d;
-  --ct-btn-bg: transparent;
-  --ct-btn-border-width: 1px;
-  --ct-btn-border-color: transparent;
-  --ct-btn-border-radius: 0.15rem;
-  --ct-btn-box-shadow: var(--ct-btn-box-shadow);
-  --ct-btn-disabled-opacity: 0.65;
-  --ct-btn-focus-box-shadow: 0 0 0 0.15rem rgba(var(--ct-btn-focus-shadow-rgb,101,148,218),.5);
-  display: inline-block;
-  padding: var(--ct-btn-padding-y) var(--ct-btn-padding-x);
-  font-family: var(--ct-body-font-family);
-  font-size: var(--ct-btn-font-size);
-  font-weight: var(--ct-btn-font-weight);
-  line-height: var(--ct-btn-line-height);
-  color: var(--ct-btn-color);
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  user-select: none;
-  border: var(--ct-btn-border-width) solid var(--ct-btn-border-color);
-  border-radius: var(--ct-btn-border-radius);
-  background-color: var(--ct-btn-bg);
-  transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-  box-shadow: var(--ct-btn-box-shadow);
-}
-
-.btn-blue {
-  --ct-btn-color: #fff;
-  --ct-btn-bg: #067878;
-  --ct-btn-border-color: #067878;
-  --ct-btn-hover-color: #fff;
-  --ct-btn-hover-bg: #067878;
-  --ct-btn-hover-border-color: #067878;
-  --ct-btn-focus-shadow-rgb: 101,148,218;
-  --ct-btn-active-color: #fff;
-  --ct-btn-active-bg: #067878;
-  --ct-btn-active-border-color: #067878;
-  --ct-btn-active-shadow: var(--ct-btn-active-box-shadow);
-  --ct-btn-disabled-color: #fff;
-  --ct-btn-disabled-bg: #4a81d4;
-  --ct-btn-disabled-border-color: #4a81d4;
-  color: var(--ct-btn-color);
-  background-color: var(--ct-btn-bg);
-  border-color: var(--ct-btn-border-color);
+    --ct-btn-padding-x: 0.9rem;
+    --ct-btn-padding-y: 0.45rem;
+    --ct-btn-font-size: 0.875rem;
+    --ct-btn-font-weight: 400;
+    --ct-btn-line-height: 1.5;
+    --ct-btn-color: #6c757d;
+    --ct-btn-bg: transparent;
+    --ct-btn-border-width: 1px;
+    --ct-btn-border-color: transparent;
+    --ct-btn-border-radius: 0.15rem;
+    --ct-btn-box-shadow: var(--ct-btn-box-shadow);
+    --ct-btn-disabled-opacity: 0.65;
+    --ct-btn-focus-box-shadow: 0 0 0 0.15rem rgba(var(--ct-btn-focus-shadow-rgb), .5);
+    display: inline-block;
+    padding: var(--ct-btn-padding-y) var(--ct-btn-padding-x);
+    font-family: var(--ct-btn-font-family);
+    font-size: var(--ct-btn-font-size);
+    font-weight: var(--ct-btn-font-weight);
+    line-height: var(--ct-btn-line-height);
+    color: var(--ct-btn-color);
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: var(--ct-btn-border-width) solid var(--ct-btn-border-color);
+    border-radius: var(--ct-btn-border-radius);
+    background-color: var(--ct-btn-bg);
+    -webkit-transition: color .15s 
+ease-in-out, background-color .15s 
+ease-in-out, border-color .15s 
+ease-in-out, -webkit-box-shadow .15s 
+ease-in-out;
+    transition: color .15s 
+ease-in-out, background-color .15s 
+ease-in-out, border-color .15s 
+ease-in-out, -webkit-box-shadow .15s 
+ease-in-out;
+    transition: color .15s 
+ease-in-out, background-color .15s 
+ease-in-out, border-color .15s 
+ease-in-out, box-shadow .15s 
+ease-in-out;
+    transition: color .15s 
+ease-in-out, background-color .15s 
+ease-in-out, border-color .15s 
+ease-in-out, box-shadow .15s 
+ease-in-out, -webkit-box-shadow .15s 
+ease-in-out;
 }
 
 .btn-blue:hover,
@@ -471,6 +500,20 @@ body,
 }
 
 /* Button cursor (native buttons already are pointer, but this is safe) */
+
 [type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+
   cursor: pointer;
+
 }
+
+
+
+.add-user-table-btn {
+
+    height: 38px;
+
+}
+
+
+

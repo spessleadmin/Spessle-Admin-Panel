@@ -1,103 +1,124 @@
 import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import feather from "feather-icons";
 import "./Sidebar.css";
 
-// Sidebar data (move this here for easy management)
-const sidebarLinks = [
-  { label: "Dashboard", icon: "layout" },
+const initialSidebarLinks = [
+  { label: "Dashboard", icon: "layout", href: "/dashboard" },
   {
     label: "User Management",
     icon: "users",
     hasSub: true,
+    isOpen: false,
     subItems: [
       { label: "Manage Admin Users", href: "/admin-users" },
-      { label: "Customer Management", href: "/customer-management" }
-    ]
+      { label: "Customer Management", href: "/customer-management" },
+    ],
   },
-  { label: "Manage Business", icon: "briefcase" },
-  { label: "Manage Categories", icon: "grid" },
-  { label: "Manage Attributes", icon: "file-text" },
-  { label: "Manage Product", icon: "package" },
-  { label: "Manage Orders", icon: "shopping-cart" },
-  { label: "Manage Reviews & Ratings", icon: "star" },
-  { label: "Transaction Management", icon: "repeat" },
-  { label: "Revenue Management/Report", icon: "bar-chart-2" },
-  { label: "Notification", icon: "bell" },
-  { label: "Manage Coupons", icon: "percent" },
-  { label: "Content Management", icon: "file" },
+  { label: "Manage Business", icon: "briefcase", href: "/manage-business" },
+  { label: "Manage Categories", icon: "grid", href: "/manage-categories" },
+  { label: "Manage Attributes", icon: "file-text", href: "/manage-attributes" },
+  { label: "Manage Product", icon: "package", href: "/manage-product" },
+  { label: "Manage Orders", icon: "shopping-cart", href: "/manage-orders" },
+  { label: "Manage Reviews & Ratings", icon: "star", href: "/manage-reviews" },
+  {
+    label: "Transaction Management",
+    icon: "repeat",
+    href: "/transaction-management",
+  },
+  {
+    label: "Revenue Management/Report",
+    icon: "bar-chart-2",
+    href: "/revenue-management",
+  },
+  { label: "Notification", icon: "bell", href: "/notifications" },
+  { label: "Manage Coupons", icon: "percent", href: "/manage-coupons" },
+  { label: "Content Management", icon: "file", href: "/content-management" },
 ];
 
 function ChevronIcon({ open }) {
-  return open ? (
-    <svg width="24" height="24" viewBox="0 0 24 24" stroke="#138783" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
-  ) : (
-    <svg width="24" height="24" viewBox="0 0 24 24" stroke="#138783" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 6 15 12 9 18"></polyline>
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      stroke="#138783"
+      fill="none"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points={open ? "6 9 12 15 18 9" : "9 6 15 12 9 18"}></polyline>
     </svg>
   );
 }
 
-export default function Sidebar({ activePage }) {
-  const [openSubmenu, setOpenSubmenu] = useState("User Management");
+export default function Sidebar({ isCollapsed }) {
+  const location = useLocation();
+  const [sidebarLinks, setSidebarLinks] = useState(initialSidebarLinks);
 
   useEffect(() => {
     feather.replace();
-  }, []);
+  }, [location.pathname, isCollapsed, sidebarLinks]);
+
+  const handleLinkClick = (index) => {
+    const newSidebarLinks = [...sidebarLinks];
+    if (newSidebarLinks[index].hasSub) {
+      newSidebarLinks[index].isOpen = !newSidebarLinks[index].isOpen;
+      setSidebarLinks(newSidebarLinks);
+    }
+  };
 
   return (
-    <aside className="dashboard-sidebar">
+    <aside className={`dashboard-sidebar ${isCollapsed ? "collapsed" : ""}`}>
       <div className="sidebar-links">
         {sidebarLinks.map((item, idx) => {
           const isActive =
-            item.label === activePage ||
-            (item.hasSub && item.subItems.some(sub => sub.href === activePage));
-          const submenuOpen = openSubmenu === item.label;
+            item.href === location.pathname ||
+            (item.hasSub &&
+              item.subItems.some((sub) => sub.href === location.pathname));
+
+          const LinkWrapper = item.hasSub ? "div" : Link;
+          const linkProps = item.hasSub ? {} : { to: item.href };
+
           return (
             <React.Fragment key={item.label}>
-              <div
-                className={
-                  "sidebar-link" +
-                  (isActive ? " active" : "") +
-                  (item.hasSub ? " has-sub" : "")
-                }
-                onClick={() => {
-                  if (item.hasSub) {
-                    setOpenSubmenu(submenuOpen ? null : item.label);
-                  }
-                }}
+              <LinkWrapper
+                {...linkProps}
+                className={`sidebar-link ${isActive ? "active" : ""} ${
+                  item.hasSub ? "has-sub" : ""
+                }`}
+                onClick={() => handleLinkClick(idx)}
                 style={{
-                  cursor: item.hasSub ? "pointer" : "default"
+                  cursor: "pointer",
+                  textDecoration: "none",
                 }}
+                title={isCollapsed ? item.label : ""}
               >
                 <span className="sidebar-icon">
                   <i data-feather={item.icon}></i>
                 </span>
-                <span className="sidebar-label">{item.label}</span>
-                {item.hasSub && (
+                {!isCollapsed && (
+                  <span className="sidebar-label">{item.label}</span>
+                )}
+                {item.hasSub && !isCollapsed && (
                   <span className="sidebar-chevron">
-                    <ChevronIcon open={submenuOpen} />
+                    <ChevronIcon open={item.isOpen} />
                   </span>
                 )}
-              </div>
-              {item.hasSub && (
-                <div
-                  className={
-                    "sidebar-submenu" + (submenuOpen ? " open" : "")
-                  }
-                >
+              </LinkWrapper>
+              {item.hasSub && item.isOpen && (
+                <div className="sidebar-submenu open">
                   {item.subItems.map((sub, subIdx) => (
-                    <a
-                      href={sub.href}
+                    <Link
+                      to={sub.href}
                       key={sub.label}
-                      className={
-                        "sidebar-submenu-item" +
-                        (activePage === sub.href ? " selected" : "")
-                      }
+                      className={`sidebar-submenu-item ${
+                        location.pathname === sub.href ? "selected" : ""
+                      }`}
                     >
                       {sub.label}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -105,12 +126,18 @@ export default function Sidebar({ activePage }) {
           );
         })}
       </div>
-      <footer className="sidebar-footer">
-        2025 © wesite design by{" "}
-        <a href="https://ncrts.com" target="_blank" rel="noopener noreferrer">
-          ncrts.com
-        </a>
-      </footer>
+      {!isCollapsed && (
+        <footer className="sidebar-footer">
+          2025 © wesite design by{" "}
+          <a
+            href="https://ncrts.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ncrts.com
+          </a>
+        </footer>
+      )}
     </aside>
   );
 }
