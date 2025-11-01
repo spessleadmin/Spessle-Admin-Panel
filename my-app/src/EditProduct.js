@@ -191,9 +191,9 @@ export default function EditProduct() {
         <div className="row">
           <div className="col-12">
             <div className="admin-card card">
-              <div className="card-body left-aligned-card-body">
-                <form>
-                  <>
+              <div className="card-body">
+                <div className="admin-filter-title header-title">Product Information</div>
+                <form className="admin-filter-form">
                   <div className="admin-filter-row">
                     <div className="admin-filter-col">
                       <label>Business Name</label>
@@ -260,7 +260,7 @@ export default function EditProduct() {
                   </div>
                   <div className="admin-filter-row">
                     <div className="admin-filter-col filter-actions buttons-row">
-                      <button type="button" className="btn btn-blue admin-filter-button">
+                      <button type="button" className="btn btn-blue admin-filter-button" onClick={handleProductInfoSave}>
                         Save
                       </button>
                       <button type="button" className="btn btn-secondary admin-filter-button" onClick={handleProductInfoReset}>
@@ -268,7 +268,6 @@ export default function EditProduct() {
                       </button>
                     </div>
                   </div>
-                  </>
                 </form>
               </div>
             </div>
@@ -278,10 +277,9 @@ export default function EditProduct() {
         <div className="row">
           <div className="col-12">
             <div className="admin-card card">
-              <div className="card-body left-aligned-card-body">
+              <div className="card-body">
                 <div className="admin-filter-title header-title">Product Attributes</div>
-                <form>
-                  <>
+                <form className="admin-filter-form">
                   <div className="admin-filter-row">
                     <div className="admin-filter-col">
                       <label>Size</label>
@@ -338,7 +336,7 @@ export default function EditProduct() {
                   </div>
                   <div className="admin-filter-row">
                     <div className="admin-filter-col filter-actions buttons-row">
-                      <button type="button" className="btn btn-blue admin-filter-button">
+                      <button type="button" className="btn btn-blue admin-filter-button" onClick={handleProductAttributesSave}>
                         Save
                       </button>
                       <button type="button" className="btn btn-secondary admin-filter-button" onClick={handleProductAttributesReset}>
@@ -346,7 +344,6 @@ export default function EditProduct() {
                       </button>
                     </div>
                   </div>
-                  </>
                 </form>
               </div>
             </div>
@@ -355,8 +352,8 @@ export default function EditProduct() {
 
         <div className="row">
           <div className="col-12">
-            <div className="card">
-              <div className="card-body left-aligned-card-body">
+            <div className="admin-card card">
+              <div className="card-body">
                 <h4 className="header-title">Product Image Upload</h4>
                 <div {...getRootProps({ className: "dropzone" })}>
                   <input {...getInputProps()} />
