@@ -4,112 +4,120 @@ import Layout from "./Layout";
 import "./ManageBusiness.css"; // Using the same CSS file
 import feather from "feather-icons";
 
-// New constants for products
+// New constants for businesses
 const categories = ["Food", "Gifts", "Beauty", "Clothing"];
 
 // Helper function to transform complex API data into flat structure for the table
-const transformApiProduct = (apiProduct) => ({
-  id: apiProduct.id,
-  // Use the first image URL if it exists, otherwise null
-  imageUrl: apiProduct.productimages_on_product[0]?.imageurl || null, 
-  businessName: apiProduct.business.businessname,
-  category: apiProduct.business.category.categoryname,
-  productName: apiProduct.productname,
-  cost: apiProduct.price,
-  dateTime: apiProduct.createddate, // Using createddate from API
-  rating: 0.0 // Defaulting rating as it's not in the API response
+const transformApiBusiness = (apiBusiness) => ({
+  id: apiBusiness.id,
+  ownerName: apiBusiness.user.username, // Assuming owner relationship
+  businessName: apiBusiness.businessname,
+  rating: apiBusiness.businessReviews_on_business.length > 0
+    ? apiBusiness.businessReviews_on_business.reduce((acc, review) => acc + review.rating, 0) / apiBusiness.businessReviews_on_business.length
+    : 0.0, // Calculate average rating
+  phoneNo: apiBusiness.phonenum,
+  address: apiBusiness.address,
+  category: apiBusiness.category.categoryname,
 });
 
 export default function ManageBusiness() {
   // Updated filter state
   const [filters, setFilters] = useState({
-    productName: "", businessName: "", category: "", dateTime: ""
+    businessName: "",
+    category: "",
+    ownerName: "",
   });
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState("10");
-  
+
   // State for API data
-  const [masterProductList, setMasterProductList] = useState([]); // Holds all products from API
-  const [products, setProducts] = useState([]); // Holds filtered/sorted products for display
+  const [masterBusinessList, setMasterBusinessList] = useState([]); // Holds all businesses from API
+  const [businesses, setBusinesses] = useState([]); // Holds filtered/sorted businesses for display
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
 
   // Fetch data from API on component mount
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchBusinesses = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch('http://localhost:5050/products/state/California');
+        // IMPORTANT: Replace with your actual business API endpoint
+        const response = await fetch(
+          "http://localhost:5050/businesses"
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        
+
         // Transform the data to match the table structure
-        const transformedProducts = data.products.map(transformApiProduct);
-        
-        setMasterProductList(transformedProducts); // Set the master list
-        setProducts(transformedProducts); // Set the initial displayed list
-        
+        const transformedBusinesses = data.businesses.map(transformApiBusiness);
+
+        setMasterBusinessList(transformedBusinesses); // Set the master list
+        setBusinesses(transformedBusinesses); // Set the initial displayed list
       } catch (e) {
-        console.error("Failed to fetch products:", e);
+        console.error("Failed to fetch businesses:", e);
         setError(e.message);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchBusinesses();
   }, []); // Empty dependency array ensures this runs once on mount
 
-  // Sort function (operates on the currently displayed 'products' state)
-  const sortProducts = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+  // Sort function
+  const sortBusinesses = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
 
-    const sortedProducts = [...products].sort((a, b) => {
+    const sortedBusinesses = [...businesses].sort((a, b) => {
       if (a[key] < b[key]) {
-        return direction === 'ascending' ? -1 : 1;
+        return direction === "ascending" ? -1 : 1;
       }
       if (a[key] > b[key]) {
-        return direction === 'ascending' ? 1 : -1;
+        return direction === "ascending" ? 1 : -1;
       }
       return 0;
     });
-    setProducts(sortedProducts);
+    setBusinesses(sortedBusinesses);
   };
 
-  // Get initial filters from URL (no change needed)
+  // Get initial filters from URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const initialFilters = {
-      productName: params.get('productName') || '',
-      businessName: params.get('businessName') || '',
-      category: params.get('category') || '',
-      dateTime: params.get('dateTime') || '',
+      businessName: params.get("businessName") || "",
+      category: params.get("category") || "",
+      ownerName: params.get("ownerName") || "",
     };
     setFilters(initialFilters);
   }, []);
 
-  // Filter card: updated to filter 'masterProductList'
+  // Filter card: updated to filter 'masterBusinessList'
   const handleFilterSearch = (e) => {
     e.preventDefault();
-    let filtered = masterProductList; // Start from the master list
-    if (filters.productName)
-      filtered = filtered.filter(p => p.productName.toLowerCase().includes(filters.productName.toLowerCase()));
+    let filtered = masterBusinessList; // Start from the master list
     if (filters.businessName)
-      filtered = filtered.filter(p => p.businessName.toLowerCase().includes(filters.businessName.toLowerCase()));
+      filtered = filtered.filter((b) =>
+        b.businessName.toLowerCase().includes(filters.businessName.toLowerCase())
+      );
     if (filters.category)
-      filtered = filtered.filter(p => p.category === filters.category);
-    if (filters.dateTime)
-      filtered = filtered.filter(p => p.dateTime.startsWith(filters.dateTime));
+      filtered = filtered.filter((b) => b.category === filters.category);
+    if (filters.ownerName)
+      filtered = filtered.filter((b) =>
+        b.ownerName.toLowerCase().includes(filters.ownerName.toLowerCase())
+      );
 
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
@@ -117,64 +125,77 @@ export default function ManageBusiness() {
         params.set(key, value);
       }
     });
-    window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
+    window.history.pushState(
+      {},
+      "",
+      `${window.location.pathname}?${params.toString()}`
+    );
 
-    setProducts(filtered); // Set the displayed products
+    setBusinesses(filtered); // Set the displayed businesses
     setCurrentPage(1);
   };
 
-  // Updated to reset to 'masterProductList'
+  // Updated to reset to 'masterBusinessList'
   const handleFilterReset = () => {
-    setFilters({ productName: "", businessName: "", category: "", dateTime: "" });
-    setProducts(masterProductList); // Reset to full list
+    setFilters({ businessName: "", category: "", ownerName: "" });
+    setBusinesses(masterBusinessList); // Reset to full list
     setSearch("");
     setCurrentPage(1);
-    window.history.pushState({}, '', window.location.pathname);
+    window.history.pushState({}, "", window.location.pathname);
   };
 
-  // Table search: updated to filter 'masterProductList'
-  const handleTableSearch = value => {
+  // Table search: updated to filter 'masterBusinessList'
+  const handleTableSearch = (value) => {
     setSearch(value);
     if (!value.trim()) {
-      setProducts(masterProductList); // Reset to full list
+      setBusinesses(masterBusinessList); // Reset to full list
       setCurrentPage(1);
       return;
     }
-    const filtered = masterProductList.filter(p => // Filter from master list
-      p.productName.toLowerCase().includes(value.toLowerCase()) ||
-      p.businessName.toLowerCase().includes(value.toLowerCase()) ||
-      p.category.toLowerCase().includes(value.toLowerCase()) ||
-      p.cost.toString().includes(value) ||
-      p.rating.toString().includes(value)
+    const filtered = masterBusinessList.filter(
+      (b) => // Filter from master list
+        b.businessName.toLowerCase().includes(value.toLowerCase()) ||
+        b.ownerName.toLowerCase().includes(value.toLowerCase()) ||
+        b.category.toLowerCase().includes(value.toLowerCase()) ||
+        b.phoneNo.includes(value) ||
+        b.address.toLowerCase().includes(value.toLowerCase())
     );
-    setProducts(filtered);
+    setBusinesses(filtered);
     setCurrentPage(1);
   };
 
   // Updated to delete from both master and displayed lists
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      const updatedProducts = products.filter(p => p.id !== id);
-      const updatedMasterList = masterProductList.filter(p => p.id !== id);
+    if (window.confirm("Are you sure you want to delete this business?")) {
+      // Here you would typically make an API call to delete the business
+      // For now, we'll just update the state
+      const updatedBusinesses = businesses.filter((b) => b.id !== id);
+      const updatedMasterList = masterBusinessList.filter((b) => b.id !== id);
 
-      setProducts(updatedProducts);
-      setMasterProductList(updatedMasterList);
+      setBusinesses(updatedBusinesses);
+      setMasterBusinessList(updatedMasterList);
     }
   };
 
-  // Pagination logic (no change needed, uses 'products' state)
+  // Pagination logic
   const indexOfLastEntry = currentPage * parseInt(entriesPerPage);
   const indexOfFirstEntry = indexOfLastEntry - parseInt(entriesPerPage);
-  const currentEntries = products.slice(indexOfFirstEntry, indexOfLastEntry);
-  const totalPages = Math.ceil(products.length / parseInt(entriesPerPage));
-  
+  const currentEntries = businesses.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
+  const totalPages = Math.ceil(businesses.length / parseInt(entriesPerPage));
+
   useEffect(() => {
     feather.replace();
   }, [currentEntries, isLoading, error]); // Re-run when entries, loading, or error change
 
   return (
     <Layout>
-      <main className="manage-business-page dashboard-main" style={{ width: '100%' }}>
+      <main
+        className="manage-business-page dashboard-main"
+        style={{ width: "100%" }}
+      >
         {/* Page Title */}
         <div className="row">
           <div className="col-12">
@@ -184,24 +205,17 @@ export default function ManageBusiness() {
           </div>
         </div>
 
-        {/* Filter Card (no change needed in JSX) */}
+        {/* Filter Card */}
         <div className="row">
           <div className="col-12">
             <div className="admin-card card">
               <div className="card-body">
                 <div className="admin-filter-title header-title">Filter</div>
-                <form className="admin-filter-form" onSubmit={handleFilterSearch}>
+                <form
+                  className="admin-filter-form"
+                  onSubmit={handleFilterSearch}
+                >
                   <div className="admin-filter-row">
-                    <div className="admin-filter-col">
-                      <label>Product Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Product Name"
-                        value={filters.productName}
-                        onChange={e => setFilters(f => ({ ...f, productName: e.target.value }))}
-                      />
-                    </div>
                     <div className="admin-filter-col">
                       <label>Business Name</label>
                       <input
@@ -209,35 +223,57 @@ export default function ManageBusiness() {
                         className="form-control"
                         placeholder="Business Name"
                         value={filters.businessName}
-                        onChange={e => setFilters(f => ({ ...f, businessName: e.target.value }))}
+                        onChange={(e) =>
+                          setFilters((f) => ({
+                            ...f,
+                            businessName: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="admin-filter-col">
+                      <label>Owner Name</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Owner Name"
+                        value={filters.ownerName}
+                        onChange={(e) =>
+                          setFilters((f) => ({
+                            ...f,
+                            ownerName: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                     <div className="admin-filter-col">
                       <label>Category</label>
                       <select
                         value={filters.category}
-                        onChange={e => setFilters(f => ({ ...f, category: e.target.value }))}
+                        onChange={(e) =>
+                          setFilters((f) => ({ ...f, category: e.target.value }))
+                        }
                       >
                         <option value="">Select category</option>
-                        {categories.map(cat => <option key={cat}>{cat}</option>)}
+                        {categories.map((cat) => (
+                          <option key={cat}>{cat}</option>
+                        ))}
                       </select>
-                    </div>
-                    <div className="admin-filter-col">
-                      <label>Date & Time</label>
-                      <input
-                        type="datetime-local"
-                        className="form-control"
-                        value={filters.dateTime}
-                        onChange={e => setFilters(f => ({ ...f, dateTime: e.target.value }))}
-                      />
                     </div>
                   </div>
                   <div className="admin-filter-row">
                     <div className="admin-filter-col filter-actions buttons-row">
-                      <button type="submit" className="btn btn-blue admin-filter-button">
+                      <button
+                        type="submit"
+                        className="btn btn-blue admin-filter-button"
+                      >
                         Search
                       </button>
-                      <button type="button" className="btn btn-secondary admin-filter-button" onClick={handleFilterReset}>
+                      <button
+                        type="button"
+                        className="btn btn-secondary admin-filter-button"
+                        onClick={handleFilterReset}
+                      >
                         Reset
                       </button>
                     </div>
@@ -248,14 +284,17 @@ export default function ManageBusiness() {
           </div>
         </div>
 
-        {/* Product Table (Top controls no change) */}
+        {/* Business Table */}
         <div className="row">
           <div className="col-12">
             <div className="card">
               <div className="card-body">
                 <div className="dataTables_wrapper dt-bootstrap5 no-footer">
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <div className="dataTables_length" id="basic-datatable_length">
+                    <div
+                      className="dataTables_length"
+                      id="basic-datatable_length"
+                    >
                       <label className="form-label">
                         Show{" "}
                         <select
@@ -263,7 +302,7 @@ export default function ManageBusiness() {
                           aria-controls="basic-datatable"
                           className="form-select form-select-sm"
                           value={entriesPerPage}
-                          onChange={e => {
+                          onChange={(e) => {
                             setEntriesPerPage(e.target.value);
                             setCurrentPage(1);
                           }}
@@ -272,11 +311,15 @@ export default function ManageBusiness() {
                           <option value="25">25</option>
                           <option value="50">50</option>
                           <option value="100">100</option>
-                        </select>entries
+                        </select>
+                        entries
                       </label>
                     </div>
                     <div className="d-flex">
-                      <div id="basic-datatable_filter" className="dataTables_filter">
+                      <div
+                        id="basic-datatable_filter"
+                        className="dataTables_filter"
+                      >
                         <label>
                           <input
                             type="search"
@@ -284,14 +327,14 @@ export default function ManageBusiness() {
                             placeholder="Search..."
                             aria-controls="basic-datatable"
                             value={search}
-                            onChange={e => handleTableSearch(e.target.value)}
-                            style={{ width: '200px', height: '38px' }}
+                            onChange={(e) => handleTableSearch(e.target.value)}
+                            style={{ width: "200px", height: "38px" }}
                           />
                         </label>
                       </div>
                       <button
                         className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                        onClick={e => e.preventDefault()}
+                        onClick={(e) => e.preventDefault()}
                       >
                         <i data-feather="plus"></i>Add Business
                       </button>
@@ -304,93 +347,121 @@ export default function ManageBusiness() {
                         className="table dt-responsive nowrap w-100 dataTable no-footer dtr-inline"
                         aria-describedby="basic-datatable_info"
                       >
-                        {/* Headers (no change) */}
                         <thead>
                           <tr>
-                            <th className="sortable-header" onClick={() => sortProducts('id')}>
-                              ID {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            <th
+                              className="sortable-header"
+                              onClick={() => sortBusinesses("id")}
+                            >
+                              ID{" "}
+                              {sortConfig.key === "id"
+                                ? sortConfig.direction === "ascending"
+                                  ? "🔼"
+                                  : "🔽"
+                                : ""}
                             </th>
-                            <th>Image</th>
-                            <th className="sortable-header" onClick={() => sortProducts('businessName')}>
-                              Business Name {sortConfig.key === 'businessName' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            <th
+                              className="sortable-header"
+                              onClick={() => sortBusinesses("ownerName")}
+                            >
+                              Owner Name{" "}
+                              {sortConfig.key === "ownerName"
+                                ? sortConfig.direction === "ascending"
+                                  ? "🔼"
+                                  : "🔽"
+                                : ""}
                             </th>
-                            <th className="sortable-header" onClick={() => sortProducts('category')}>
-                              Category {sortConfig.key === 'category' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            <th
+                              className="sortable-header"
+                              onClick={() => sortBusinesses("businessName")}
+                            >
+                              Business Name{" "}
+                              {sortConfig.key === "businessName"
+                                ? sortConfig.direction === "ascending"
+                                  ? "🔼"
+                                  : "🔽"
+                                : ""}
                             </th>
-                            <th className="sortable-header" onClick={() => sortProducts('productName')}>
-                              Product Name {sortConfig.key === 'productName' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            <th
+                              className="sortable-header"
+                              onClick={() => sortBusinesses("rating")}
+                            >
+                              Ratings{" "}
+                              {sortConfig.key === "rating"
+                                ? sortConfig.direction === "ascending"
+                                  ? "🔼"
+                                  : "🔽"
+                                : ""}
                             </th>
-                            <th className="sortable-header" onClick={() => sortProducts('cost')}>
-                              Cost {sortConfig.key === 'cost' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                            </th>
-                            <th className="sortable-header" onClick={() => sortProducts('dateTime')}>
-                              Date & Time {sortConfig.key === 'dateTime' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                            </th>
-                            <th className="sortable-header" onClick={() => sortProducts('rating')}>
-                              Rating {sortConfig.key === 'rating' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            <th>Phone No.</th>
+                            <th>Address</th>
+                            <th
+                              className="sortable-header"
+                              onClick={() => sortBusinesses("category")}
+                            >
+                              Category{" "}
+                              {sortConfig.key === "category"
+                                ? sortConfig.direction === "ascending"
+                                  ? "🔼"
+                                  : "🔽"
+                                : ""}
                             </th>
                             <th>Action</th>
                           </tr>
                         </thead>
-                        
-                        {/* === UPDATED TABLE BODY === */}
+
                         <tbody>
                           {isLoading ? (
-                            <tr><td colSpan="9" style={{ textAlign: 'center' }}>Loading products...</td></tr>
+                            <tr>
+                              <td colSpan="8" style={{ textAlign: "center" }}>
+                                Loading businesses...
+                              </td>
+                            </tr>
                           ) : error ? (
-                            <tr><td colSpan="9" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                            <tr>
+                              <td
+                                colSpan="8"
+                                style={{ textAlign: "center", color: "red" }}
+                              >
+                                Error: {error}
+                              </td>
+                            </tr>
                           ) : currentEntries.length === 0 ? (
-                            <tr><td colSpan="9" style={{ textAlign: 'center' }}>No products found.</td></tr>
+                            <tr>
+                              <td colSpan="8" style={{ textAlign: "center" }}>
+                                No businesses found.
+                              </td>
+                            </tr>
                           ) : (
-                            currentEntries.map((product, idx) => (
-                              <tr key={product.id} className={idx % 2 === 0 ? "odd" : "even"}>
-                                <td>{product.id.substring(0, 8)}...</td> {/* Shorten ID for display */}
-                                <td>
-                                  {/* VERY SMALL ICON/IMAGE */}
-                                  {product.imageUrl ? (
-                                    <img 
-                                      src={product.imageUrl} 
-                                      alt={product.productName} 
-                                      style={{ width: '32px', height: '32px', objectFit: 'cover', borderRadius: '4px' }} 
-                                    />
-                                  ) : (
-                                    // Fallback placeholder
-                                    <span style={{ 
-                                      display: 'inline-flex', 
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      width: '32px', 
-                                      height: '32px', 
-                                      backgroundColor: '#eee', 
-                                      borderRadius: '4px'
-                                    }}>
-                                      <i data-feather="image" style={{ width: '16px', height: '16px', color: '#aaa' }}></i>
-                                    </span>
-                                  )}
-                                </td>
-                                <td>{product.businessName}</td>
-                                <td>{product.category}</td>
-                                <td>
-                                  <a href="#" onClick={e => e.preventDefault()}>{product.productName}</a>
-                                </td>
-                                <td>${product.cost.toFixed(2)}</td>
-                                <td>{new Date(product.dateTime).toLocaleString()}</td>
-                                <td>⭐ {product.rating.toFixed(1)}</td>
+                            currentEntries.map((business, idx) => (
+                              <tr
+                                key={business.id}
+                                className={idx % 2 === 0 ? "odd" : "even"}
+                              >
+                                <td>{business.id.substring(0, 8)}...</td>
+                                <td>{business.ownerName}</td>
+                                <td>{business.businessName}</td>
+                                <td>⭐ {business.rating.toFixed(1)}</td>
+                                <td>{business.phoneNo}</td>
+                                <td>{business.address}</td>
+                                <td>{business.category}</td>
                                 <td>
                                   <Link
-                                    to={`/edit-product/${product.id}`}
+                                    to={`/edit-business/${business.id}`} // Assuming an edit route
                                     title="Edit"
                                     className="btn btn-xs btn-warning edit-btn"
                                   >
                                     <i data-feather="edit"></i>
-                                    <span className="hidden-xs hidden-sm">Edit</span>
+                                    <span className="hidden-xs hidden-sm">
+                                      Edit
+                                    </span>
                                   </Link>
                                   <a
                                     href="#"
                                     className="action-icon text-danger"
-                                    onClick={e => {
+                                    onClick={(e) => {
                                       e.preventDefault();
-                                      handleDelete(product.id);
+                                      handleDelete(business.id);
                                     }}
                                   >
                                     <i data-feather="trash-2"></i>
@@ -404,47 +475,76 @@ export default function ManageBusiness() {
                     </div>
                   </div>
 
-                  {/* Pagination (uses 'products' length, no change needed) */}
+                  {/* Pagination */}
                   <div className="row">
                     <div className="col-sm-12 col-md-5">
-                      <div className="dataTables_info" id="basic-datatable_info" role="status" aria-live="polite">
-                        Showing {products.length > 0 ? indexOfFirstEntry + 1 : 0} to {Math.min(indexOfLastEntry, products.length)} of {products.length} entries
+                      <div
+                        className="dataTables_info"
+                        id="basic-datatable_info"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        Showing {businesses.length > 0 ? indexOfFirstEntry + 1 : 0}{" "}
+                        to {Math.min(indexOfLastEntry, businesses.length)} of{" "}
+                        {businesses.length} entries
                       </div>
                     </div>
                     <div className="col-sm-12 col-md-7">
-                      <div className="dataTables_paginate paging_simple_numbers" id="basic-datatable_paginate">
+                      <div
+                        className="dataTables_paginate paging_simple_numbers"
+                        id="basic-datatable_paginate"
+                      >
                         <ul className="pagination pagination-rounded">
-                          <li className={`paginate_button page-item previous ${currentPage === 1 ? "disabled" : ""}`}>
+                          <li
+                            className={`paginate_button page-item previous ${
+                              currentPage === 1 ? "disabled" : ""
+                            }`}
+                          >
                             <a
                               href="#"
                               className="page-link"
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.preventDefault();
-                                if (currentPage > 1) setCurrentPage(currentPage - 1);
+                                if (currentPage > 1)
+                                  setCurrentPage(currentPage - 1);
                               }}
                             >
                               <i data-feather="chevron-left"></i>
                             </a>
                           </li>
                           {[...Array(totalPages)].map((_, i) => (
-                            <li key={i} className={`paginate_button page-item ${currentPage === i + 1 ? "active" : ""}`}>
+                            <li
+                              key={i}
+                              className={`paginate_button page-item ${
+                                currentPage === i + 1 ? "active" : ""
+                              }`}
+                            >
                               <a
                                 href="#"
                                 className="page-link"
-                                onClick={e => {
+                                onClick={(e) => {
                                   e.preventDefault();
                                   setCurrentPage(i + 1);
                                 }}
-                              >{i + 1}</a>
+                              >
+                                {i + 1}
+                              </a>
                             </li>
                           ))}
-                          <li className={`paginate_button page-item next ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""}`}>
+                          <li
+                            className={`paginate_button page-item next ${
+                              currentPage === totalPages || totalPages === 0
+                                ? "disabled"
+                                : ""
+                            }`}
+                          >
                             <a
                               href="#"
                               className="page-link"
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.preventDefault();
-                                if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                                if (currentPage < totalPages)
+                                  setCurrentPage(currentPage + 1);
                               }}
                             >
                               <i data-feather="chevron-right"></i>
@@ -455,8 +555,10 @@ export default function ManageBusiness() {
                     </div>
                   </div>
                 </div>
-              </div> {/* end card-body */}
-            </div> {/* end card */}
+              </div>{" "}
+              {/* end card-body */}
+            </div>{" "}
+            {/* end card */}
           </div>
         </div>
       </main>
