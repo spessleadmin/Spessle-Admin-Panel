@@ -29,11 +29,9 @@ const transformApiProduct = (apiProduct) => {
     category: apiProduct.business.category.categoryname,
     productName: apiProduct.productname,
     cost: apiProduct.price,
-    availabilityDateTime: apiProduct.createddate,
     description: apiProduct.description,
     options: options, // Grouped options
-    stock: apiProduct.quantity > 0 ? "In Stock" : "Out of Stock",
-    totalQuantity: apiProduct.quantity,
+    quantity: apiProduct.quantity,
   };
 };
 
@@ -44,8 +42,8 @@ export default function EditProduct() {
     category: "",
     productName: "",
     cost: "",
-    availabilityDateTime: "",
     description: "",
+    quantity: "",
   });
 
   const [productAttributes, setProductAttributes] = useState({});
@@ -107,12 +105,11 @@ export default function EditProduct() {
         const transformed = transformApiProduct(data.product);
         setInitialProductState(transformed);
         setProductInfo({
-          businessName: transformed.businessName,
           category: transformed.category,
           productName: transformed.productName,
           cost: transformed.cost,
-          availabilityDateTime: new Date(transformed.availabilityDateTime).toISOString().slice(0, 16),
           description: transformed.description,
+          quantity: transformed.quantity,
         });
         setProductAttributes(transformed.options);
       } catch (error) {
@@ -142,9 +139,34 @@ export default function EditProduct() {
     }));
   };
 
-  const handleProductInfoSave = () => {
-    console.log("Saving Product Info:", productInfo);
-    // Placeholder for API call
+  const handleProductInfoSave = async () => {
+    const payload = {
+      productname: productInfo.productName,
+      description: productInfo.description,
+      price: parseFloat(productInfo.cost),
+      quantity: parseInt(productInfo.quantity, 10),
+    };
+
+    try {
+      const response = await fetch(`http://localhost:5050/products/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Product updated successfully:", result);
+      alert("Product updated successfully!");
+    } catch (error) {
+      console.error("Failed to update product:", error);
+      alert("Failed to update product.");
+    }
   };
 
   const handleProductInfoReset = () => {
@@ -152,8 +174,8 @@ export default function EditProduct() {
       category: initialProductState.category,
       productName: initialProductState.productName,
       cost: initialProductState.cost,
-      availabilityDateTime: initialProductState.availabilityDateTime,
       description: initialProductState.description,
+      quantity: initialProductState.quantity,
     });
   };
 
@@ -225,12 +247,12 @@ export default function EditProduct() {
                       />
                     </div>
                     <div className="admin-filter-col">
-                      <label>Availability Date & Time</label>
+                      <label>Quantity</label>
                       <input
-                        type="datetime-local"
+                        type="text"
                         className="form-control"
-                        name="availabilityDateTime"
-                        value={productInfo.availabilityDateTime}
+                        name="quantity"
+                        value={productInfo.quantity}
                         onChange={handleProductInfoChange}
                       />
                     </div>
@@ -270,23 +292,26 @@ export default function EditProduct() {
                 <div className="admin-filter-title header-title">Product Attributes</div>
                 <form className="admin-filter-form">
                   <div className="admin-filter-row">
-                    {Object.keys(productAttributes).map(optionType => (
-                      <div className="admin-filter-col" key={optionType}>
-                        <label>{optionType}</label>
-                        <select
-                          className="form-control"
-                          name={optionType}
-                          value={productAttributes[optionType].selectedValue}
-                          onChange={handleProductAttributesChange}
-                        >
-                          {productAttributes[optionType].values.map(optionValue => (
-                            <option key={optionValue} value={optionValue}>
-                              {optionValue}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    ))}
+                    {Object.keys(productAttributes).map(optionType => {
+                      if (optionType === 'stock' || optionType === 'totalQuantity') return null;
+                      return (
+                        <div className="admin-filter-col" key={optionType}>
+                          <label>{optionType}</label>
+                          <select
+                            className="form-control"
+                            name={optionType}
+                            value={productAttributes[optionType].selectedValue}
+                            onChange={handleProductAttributesChange}
+                          >
+                            {productAttributes[optionType].values.map(optionValue => (
+                              <option key={optionValue} value={optionValue}>
+                                {optionValue}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      );
+                    })}
                   </div>
                   <div className="admin-filter-row">
                     <div className="admin-filter-col filter-actions buttons-row">
