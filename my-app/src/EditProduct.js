@@ -9,7 +9,6 @@ import "./Dropify.css";
 import feather from "feather-icons";
 
 const transformApiProduct = (apiProduct) => ({
-  businessName: apiProduct.business.businessname,
   category: apiProduct.business.category.categoryname,
   productName: apiProduct.productname,
   cost: apiProduct.price,
@@ -26,7 +25,6 @@ export default function EditProduct() {
   const { id } = useParams();
   const [initialProductState, setInitialProductState] = useState({});
   const [productInfo, setProductInfo] = useState({
-    businessName: "",
     category: "",
     productName: "",
     cost: "",
@@ -144,7 +142,6 @@ export default function EditProduct() {
 
   const handleProductInfoReset = () => {
     setProductInfo({
-      businessName: initialProductState.businessName,
       category: initialProductState.category,
       productName: initialProductState.productName,
       cost: initialProductState.cost,
@@ -196,16 +193,6 @@ export default function EditProduct() {
                 <div className="admin-filter-title header-title">Product Information</div>
                 <form className="admin-filter-form">
                   <div className="admin-filter-row">
-                    <div className="admin-filter-col">
-                      <label>Business Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="businessName"
-                        value={productInfo.businessName}
-                        onChange={handleProductInfoChange}
-                      />
-                    </div>
                     <div className="admin-filter-col">
                       <label>Category</label>
                       <input
