@@ -8,18 +8,34 @@ import "./EditProduct.css";
 import "./Dropify.css";
 import feather from "feather-icons";
 
-const transformApiProduct = (apiProduct) => ({
-  category: apiProduct.business.category.categoryname,
-  productName: apiProduct.productname,
-  cost: apiProduct.price,
-  availabilityDateTime: apiProduct.createddate,
-  description: apiProduct.description,
-  size: "", // Placeholder
-  filling: "", // Placeholder
-  leadTime: "", // Placeholder
-  stock: apiProduct.quantity > 0 ? "In Stock" : "Out of Stock",
-  totalQuantity: apiProduct.quantity,
-});
+const transformApiProduct = (apiProduct) => {
+  const options = {};
+  if (apiProduct.productoptionss_on_product) {
+    apiProduct.productoptionss_on_product.forEach(option => {
+      if (!options[option.optionType]) {
+        options[option.optionType] = { values: [], selectedValue: '' };
+      }
+      options[option.optionType].values.push(option.optionValue);
+    });
+    // Set the initial selected value
+    for (const optionType in options) {
+      if (options[optionType].values.length > 0) {
+        options[optionType].selectedValue = options[optionType].values[0];
+      }
+    }
+  }
+
+  return {
+    category: apiProduct.business.category.categoryname,
+    productName: apiProduct.productname,
+    cost: apiProduct.price,
+    availabilityDateTime: apiProduct.createddate,
+    description: apiProduct.description,
+    options: options, // Grouped options
+    stock: apiProduct.quantity > 0 ? "In Stock" : "Out of Stock",
+    totalQuantity: apiProduct.quantity,
+  };
+};
 
 export default function EditProduct() {
   const { id } = useParams();
@@ -32,13 +48,7 @@ export default function EditProduct() {
     description: "",
   });
 
-  const [productAttributes, setProductAttributes] = useState({
-    size: "",
-    filling: "",
-    leadTime: "",
-    stock: "In Stock",
-    totalQuantity: "",
-  });
+  const [productAttributes, setProductAttributes] = useState({});
   const [files, setFiles] = useState([]);
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -104,13 +114,7 @@ export default function EditProduct() {
           availabilityDateTime: new Date(transformed.availabilityDateTime).toISOString().slice(0, 16),
           description: transformed.description,
         });
-        setProductAttributes({
-          size: transformed.size,
-          filling: transformed.filling,
-          leadTime: transformed.leadTime,
-          stock: transformed.stock,
-          totalQuantity: transformed.totalQuantity,
-        });
+        setProductAttributes(transformed.options);
       } catch (error) {
         console.error("Failed to fetch product:", error);
       }
@@ -132,7 +136,10 @@ export default function EditProduct() {
 
   const handleProductAttributesChange = (e) => {
     const { name, value } = e.target;
-    setProductAttributes((prevAttributes) => ({ ...prevAttributes, [name]: value }));
+    setProductAttributes(prev => ({
+      ...prev,
+      [name]: { ...prev[name], selectedValue: value }
+    }));
   };
 
   const handleProductInfoSave = () => {
@@ -156,13 +163,7 @@ export default function EditProduct() {
   };
 
   const handleProductAttributesReset = () => {
-    setProductAttributes({
-      size: initialProductState.size,
-      filling: initialProductState.filling,
-      leadTime: initialProductState.leadTime,
-      stock: initialProductState.stock,
-      totalQuantity: initialProductState.totalQuantity,
-    });
+    setProductAttributes(initialProductState.options);
   };
   
   const handleEditProduct = () => {
@@ -269,58 +270,23 @@ export default function EditProduct() {
                 <div className="admin-filter-title header-title">Product Attributes</div>
                 <form className="admin-filter-form">
                   <div className="admin-filter-row">
-                    <div className="admin-filter-col">
-                      <label>Size</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="size"
-                        value={productAttributes.size}
-                        onChange={handleProductAttributesChange}
-                      />
-                    </div>
-                    <div className="admin-filter-col">
-                      <label>Filling</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="filling"
-                        value={productAttributes.filling}
-                        onChange={handleProductAttributesChange}
-                      />
-                    </div>
-                    <div className="admin-filter-col">
-                      <label>Lead time, days</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="leadTime"
-                        value={productAttributes.leadTime}
-                        onChange={handleProductAttributesChange}
-                      />
-                    </div>
-                    <div className="admin-filter-col">
-                      <label>Stock</label>
-                      <select
-                        className="form-control"
-                        name="stock"
-                        value={productAttributes.stock}
-                        onChange={handleProductAttributesChange}
-                      >
-                        <option>In Stock</option>
-                        <option>Out of Stock</option>
-                      </select>
-                    </div>
-                    <div className="admin-filter-col">
-                      <label>Total quantity</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="totalQuantity"
-                        value={productAttributes.totalQuantity}
-                        onChange={handleProductAttributesChange}
-                      />
-                    </div>
+                    {Object.keys(productAttributes).map(optionType => (
+                      <div className="admin-filter-col" key={optionType}>
+                        <label>{optionType}</label>
+                        <select
+                          className="form-control"
+                          name={optionType}
+                          value={productAttributes[optionType].selectedValue}
+                          onChange={handleProductAttributesChange}
+                        >
+                          {productAttributes[optionType].values.map(optionValue => (
+                            <option key={optionValue} value={optionValue}>
+                              {optionValue}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
                   </div>
                   <div className="admin-filter-row">
                     <div className="admin-filter-col filter-actions buttons-row">
