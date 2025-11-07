@@ -4,6 +4,7 @@ import Login from "./Login";
 import TestPage from "./TestPage";
 import Dashboard from "./Dashboard";
 import AdminUsers from "./AdminUsers";
+import EditProduct from "./EditProduct";
 import ManageProduct from "./ManageProduct";
 import ManageCoupons from "./ManageCoupons";
 
