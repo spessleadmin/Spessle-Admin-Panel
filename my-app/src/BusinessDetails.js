@@ -77,16 +77,30 @@ export default function BusinessDetails() {
                 {loading && <p>Loading...</p>}
                 {error && <p>Error: {error}</p>}
                 {businessDetails && (
-                  <table className="details-table">
-                    <tbody>
-                      {Object.entries(detailsToShow).map(([key, value]) => (
-                        <tr key={key}>
-                          <td className="label">{key}</td>
-                          <td>{value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <>
+                    <div className="profile-picture-section">
+                      <h5>Profile Picture</h5>
+                      {businessDetails.businessPictureUrl ? (
+                        <img
+                          src={businessDetails.businessPictureUrl}
+                          alt="Business"
+                          style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
+                        />
+                      ) : (
+                        <p>No picture available</p>
+                      )}
+                    </div>
+                    <table className="details-table">
+                      <tbody>
+                        {Object.entries(detailsToShow).map(([key, value]) => (
+                          <tr key={key}>
+                            <td className="label">{key}</td>
+                            <td>{value}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </>
                 )}
               </div>
             </div>
