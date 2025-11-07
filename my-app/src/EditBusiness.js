@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
+import Select from "react-select";
 import Layout from "./Layout";
 import "./EditBusiness.css";
 import "./Dropify.css";
@@ -17,9 +18,10 @@ export default function EditBusiness() {
     zipCode: "",
     address: "",
     category: "",
-    tags: "",
   });
   const [files, setFiles] = useState([]);
+  const [tagOptions, setTagOptions] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -55,16 +57,40 @@ export default function EditBusiness() {
           zipCode: business.zipcode,
           address: business.address,
           category: business.category.categoryname,
-          tags: business.businesstagss_on_business.map(tag => tag.tag.name).join(', '),
         });
+        setSelectedTags(
+          business.businesstagss_on_business.map(tag => ({
+            value: tag.tag.id,
+            label: tag.tag.name,
+          }))
+        );
       } catch (error) {
         console.error("Failed to fetch business:", error);
+      }
+    };
+
+    const fetchTags = async () => {
+      try {
+        const response = await fetch(`http://localhost:5050/tags`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setTagOptions(
+          data.tags.map((tag) => ({
+            value: tag.id,
+            label: tag.tagname,
+          }))
+        );
+      } catch (error) {
+        console.error("Failed to fetch tags:", error);
       }
     };
 
     if (id) {
       fetchBusiness();
     }
+    fetchTags();
   }, [id]);
 
   useEffect(() => {
@@ -76,8 +102,16 @@ export default function EditBusiness() {
     setBusinessInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
   };
 
+  const handleTagsChange = (selectedOptions) => {
+    setSelectedTags(selectedOptions);
+  };
+
   const handleEditBusiness = () => {
-    console.log("Editing Business:", businessInfo);
+    const payload = {
+      ...businessInfo,
+      tags: selectedTags.map(tag => tag.value),
+    };
+    console.log("Editing Business:", payload);
     // Placeholder for API call
   };
 
@@ -214,12 +248,14 @@ export default function EditBusiness() {
                     </div>
                     <div className="admin-filter-col">
                       <label>Tags</label>
-                      <input
-                        type="text"
-                        className="form-control"
+                      <Select
+                        isMulti
                         name="tags"
-                        value={businessInfo.tags}
-                        onChange={handleChange}
+                        options={tagOptions}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        value={selectedTags}
+                        onChange={handleTagsChange}
                       />
                     </div>
                   </div>
