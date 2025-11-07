@@ -68,10 +68,10 @@ export default function BusinessDetails() {
                   <button className="btn btn-blue">Orders</button>
                   <button className="btn btn-blue">Financies</button>
                 </div>
-                <button className="btn btn-red">
+                <Link to={`/edit-business/${id}`} className="btn btn-red">
                   <i data-feather="edit-2" className="feather"></i>
                   Edit
-                </button>
+                </Link>
               </div>
               <div className="card-body">
                 {loading && <p>Loading...</p>}
