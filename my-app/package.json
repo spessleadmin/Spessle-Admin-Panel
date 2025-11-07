@@ -11,8 +11,8 @@
     "feather-icons": "^4.29.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-dropzone": "^14.3.8",
     "react-native": "^0.82.1",
-    "react-dropzone": "^14.2.3",
     "react-router-dom": "^7.9.4",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
