@@ -6,7 +6,9 @@ import Dashboard from "./Dashboard";
 import AdminUsers from "./AdminUsers";
 import EditProduct from "./EditProduct";
 import ManageProduct from "./ManageProduct";
+import ManageBusiness from "./ManageBusiness";
 import ManageCoupons from "./ManageCoupons";
+import BusinessDetails from "./BusinessDetails";
 
 function App() {
   return (
@@ -17,9 +19,11 @@ function App() {
         <Route path="/test-page" element={<TestPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit-product/:id" element={<EditProduct />} />
+        <Route path="/manage-business" element={<ManageBusiness />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
+        <Route path="/business-details/:id" element={<BusinessDetails />} />
       </Routes>
     </Router>
   );
