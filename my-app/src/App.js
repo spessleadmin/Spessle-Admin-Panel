@@ -9,6 +9,7 @@ import ManageProduct from "./ManageProduct";
 import ManageBusiness from "./ManageBusiness";
 import ManageCoupons from "./ManageCoupons";
 import BusinessDetails from "./BusinessDetails";
+import BusinessProducts from "./BusinessProducts";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
         <Route path="/business-details/:id" element={<BusinessDetails />} />
+        <Route path="/business-products/:businessID" element={<BusinessProducts />} />
       </Routes>
     </Router>
   );

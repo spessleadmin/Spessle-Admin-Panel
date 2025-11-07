@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Layout from './Layout';
 import './BusinessDetails.css';
 import feather from 'feather-icons';
@@ -63,7 +63,7 @@ export default function BusinessDetails() {
             <div className="admin-card card">
               <div className="card-header">
                 <div className="header-buttons">
-                  <button className="btn btn-blue">Products</button>
+                  <Link to={`/business-products/${id}`} className="btn btn-blue">Products</Link>
                   <button className="btn btn-blue">Users</button>
                   <button className="btn btn-blue">Orders</button>
                   <button className="btn btn-blue">Financies</button>
