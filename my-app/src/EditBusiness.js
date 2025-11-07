@@ -17,11 +17,12 @@ export default function EditBusiness() {
     city: "",
     zipCode: "",
     address: "",
-    category: "",
   });
   const [files, setFiles] = useState([]);
   const [tagOptions, setTagOptions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -56,7 +57,10 @@ export default function EditBusiness() {
           city: business.city,
           zipCode: business.zipcode,
           address: business.address,
-          category: business.category.categoryname,
+        });
+        setSelectedCategory({
+          value: business.category.id,
+          label: business.category.categoryname,
         });
         setSelectedTags(
           business.businesstagss_on_business.map(tag => ({
@@ -87,10 +91,29 @@ export default function EditBusiness() {
       }
     };
 
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`http://localhost:5050/categories`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setCategoryOptions(
+          data.categories.map((category) => ({
+            value: category.id,
+            label: category.categoryname,
+          }))
+        );
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
     if (id) {
       fetchBusiness();
     }
     fetchTags();
+    fetchCategories();
   }, [id]);
 
   useEffect(() => {
@@ -106,9 +129,14 @@ export default function EditBusiness() {
     setSelectedTags(selectedOptions);
   };
 
+  const handleCategoryChange = (selectedOption) => {
+    setSelectedCategory(selectedOption);
+  };
+
   const handleEditBusiness = () => {
     const payload = {
       ...businessInfo,
+      category: selectedCategory.value,
       tags: selectedTags.map(tag => tag.value),
     };
     console.log("Editing Business:", payload);
@@ -238,12 +266,13 @@ export default function EditBusiness() {
                   <div className="admin-filter-row">
                     <div className="admin-filter-col">
                       <label>Category</label>
-                      <input
-                        type="text"
-                        className="form-control"
+                      <Select
                         name="category"
-                        value={businessInfo.category}
-                        onChange={handleChange}
+                        options={categoryOptions}
+                        className="basic-single"
+                        classNamePrefix="select"
+                        value={selectedCategory}
+                        onChange={handleCategoryChange}
                       />
                     </div>
                     <div className="admin-filter-col">
