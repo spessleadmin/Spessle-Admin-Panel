@@ -9,6 +9,7 @@ import feather from "feather-icons";
 
 export default function EditBusiness() {
   const { id } = useParams();
+  const [initialBusinessState, setInitialBusinessState] = useState(null);
   const [businessInfo, setBusinessInfo] = useState({
     businessName: "",
     email: "",
@@ -17,6 +18,7 @@ export default function EditBusiness() {
     city: "",
     zipCode: "",
     address: "",
+    description: "",
   });
   const [files, setFiles] = useState([]);
   const [tagOptions, setTagOptions] = useState([]);
@@ -49,7 +51,7 @@ export default function EditBusiness() {
         }
         const data = await response.json();
         const business = data.business;
-        setBusinessInfo({
+        const initialState = {
           businessName: business.businessname,
           email: business.email,
           phone: business.phonenum,
@@ -57,17 +59,29 @@ export default function EditBusiness() {
           city: business.city,
           zipCode: business.zipcode,
           address: business.address,
-        });
-        setSelectedCategory({
-          value: business.category.id,
-          label: business.category.categoryname,
-        });
-        setSelectedTags(
-          business.businesstagss_on_business.map(tag => ({
+          description: business.description,
+          category: {
+            value: business.category.id,
+            label: business.category.categoryname,
+          },
+          tags: business.businesstagss_on_business.map(tag => ({
             value: tag.tag.id,
             label: tag.tag.name,
-          }))
-        );
+          })),
+        };
+        setInitialBusinessState(initialState);
+        setBusinessInfo({
+          businessName: initialState.businessName,
+          email: initialState.email,
+          phone: initialState.phone,
+          state: initialState.state,
+          city: initialState.city,
+          zipCode: initialState.zipCode,
+          address: initialState.address,
+          description: initialState.description,
+        });
+        setSelectedCategory(initialState.category);
+        setSelectedTags(initialState.tags);
       } catch (error) {
         console.error("Failed to fetch business:", error);
       }
@@ -133,18 +147,116 @@ export default function EditBusiness() {
     setSelectedCategory(selectedOption);
   };
 
-  const handleEditBusiness = () => {
-    const payload = {
-      ...businessInfo,
-      category: selectedCategory.value,
+  const haveDetailsChanged = () => {
+    if (!initialBusinessState) return false;
+
+    const currentDetails = {
+      businessname: businessInfo.businessName,
+      email: businessInfo.email,
+      phonenum: businessInfo.phone,
+      state: businessInfo.state,
+      city: businessInfo.city,
+      zipcode: businessInfo.zipCode,
+      address: businessInfo.address,
+      description: businessInfo.description,
+      category_id: selectedCategory ? selectedCategory.value : null,
       tags: selectedTags.map(tag => tag.value),
     };
-    console.log("Editing Business:", payload);
-    // Placeholder for API call
+
+    const initialDetails = {
+      businessname: initialBusinessState.businessName,
+      email: initialBusinessState.email,
+      phonenum: initialBusinessState.phone,
+      state: initialBusinessState.state,
+      city: initialBusinessState.city,
+      zipcode: initialBusinessState.zipCode,
+      address: initialBusinessState.address,
+      description: initialBusinessState.description,
+      category_id: initialBusinessState.category.value,
+      tags: initialBusinessState.tags.map(tag => tag.value),
+    };
+
+    return JSON.stringify(currentDetails) !== JSON.stringify(initialDetails);
+  };
+
+  const handleEditBusiness = async () => {
+    const imageChanged = files.length > 0;
+    const detailsChanged = haveDetailsChanged();
+
+    if (imageChanged) {
+      const formData = new FormData();
+      formData.append("image", files[0]);
+
+      try {
+        const response = await fetch(`http://localhost:5050/businesses/${id}/image`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        console.log("Image uploaded successfully");
+      } catch (error) {
+        console.error("Failed to upload image:", error);
+      }
+    }
+
+    if (detailsChanged) {
+      const payload = {
+        businessname: businessInfo.businessName,
+        email: businessInfo.email,
+        phonenum: businessInfo.phone,
+        state: businessInfo.state,
+        city: businessInfo.city,
+        zipcode: businessInfo.zipCode,
+        address: businessInfo.address,
+        description: businessInfo.description,
+        category_id: selectedCategory.value,
+        tags: selectedTags.map(tag => tag.value),
+      };
+
+      try {
+        const response = await fetch(`http://localhost:5050/businesses/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        console.log("Business details updated successfully");
+      } catch (error) {
+        console.error("Failed to update business details:", error);
+      }
+    }
+
+    if (!imageChanged && !detailsChanged) {
+      console.log("No changes to save.");
+    }
   };
 
   const handleReset = () => {
-    // Implement reset logic
+    if (initialBusinessState) {
+      setBusinessInfo({
+        businessName: initialBusinessState.businessName,
+        email: initialBusinessState.email,
+        phone: initialBusinessState.phone,
+        state: initialBusinessState.state,
+        city: initialBusinessState.city,
+        zipCode: initialBusinessState.zipCode,
+        address: initialBusinessState.address,
+        description: initialBusinessState.description,
+      });
+      setSelectedCategory(initialBusinessState.category);
+      setSelectedTags(initialBusinessState.tags);
+      setFiles([]);
+    }
   };
 
   return (
@@ -261,6 +373,18 @@ export default function EditBusiness() {
                         value={businessInfo.address}
                         onChange={handleChange}
                       />
+                    </div>
+                  </div>
+                  <div className="admin-filter-row">
+                    <div className="admin-filter-col" style={{ width: "100%" }}>
+                      <label>Description</label>
+                      <textarea
+                        className="form-control"
+                        name="description"
+                        rows="4"
+                        value={businessInfo.description}
+                        onChange={handleChange}
+                      ></textarea>
                     </div>
                   </div>
                   <div className="admin-filter-row">
