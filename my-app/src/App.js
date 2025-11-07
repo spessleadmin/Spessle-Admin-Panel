@@ -15,6 +15,7 @@ function App() {
         <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/test-page" element={<TestPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/edit-product/:id" element={<EditProduct />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
