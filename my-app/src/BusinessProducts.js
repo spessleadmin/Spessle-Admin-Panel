@@ -22,7 +22,7 @@ const transformApiProduct = (apiProduct) => ({
 });
 
 export default function BusinessProducts() {
-  const { businessID } = useParams(); // Get businessID from URL
+  const { id } = useParams(); // Get id from URL
 
   // Updated filter state
   const [filters, setFilters] = useState({
@@ -46,7 +46,7 @@ export default function BusinessProducts() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:5050/businesses/${businessID}/products`);
+        const response = await fetch(`http://localhost:5050/businesses/${id}/products`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -66,10 +66,10 @@ export default function BusinessProducts() {
       }
     };
 
-    if (businessID) {
+    if (id) {
       fetchProducts();
     }
-  }, [businessID]); // Re-run when businessID changes
+  }, [id]); // Re-run when id changes
 
   // Sort function (operates on the currently displayed 'products' state)
   const sortProducts = (key) => {
