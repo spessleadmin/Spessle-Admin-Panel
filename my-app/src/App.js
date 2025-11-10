@@ -8,9 +8,8 @@ import EditProduct from "./EditProduct";
 import ManageProduct from "./ManageProduct";
 import ManageBusiness from "./ManageBusiness";
 import ManageCoupons from "./ManageCoupons";
-import BusinessDetails from "./BusinessDetails";
-import BusinessProducts from "./BusinessProducts";
-import EditBusiness from "./EditBusiness";
+import Notification from "./Notification";
+import EditNotification from "./EditNotification";
 
 function App() {
   return (
@@ -25,9 +24,8 @@ function App() {
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
-        <Route path="/business-details/:id" element={<BusinessDetails />} />
-        <Route path="/business-products/:businessID" element={<BusinessProducts />} />
-        <Route path="/edit-business/:id" element={<EditBusiness />} />
+        <Route path="/notification" element={<Notification />} />
+        <Route path="/edit-notification/:id" element={<EditNotification />} />
       </Routes>
     </Router>
   );
