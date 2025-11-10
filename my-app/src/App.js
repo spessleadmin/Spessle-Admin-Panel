@@ -7,6 +7,8 @@ import AdminUsers from "./AdminUsers";
 import EditProduct from "./EditProduct";
 import ManageProduct from "./ManageProduct";
 import ManageCoupons from "./ManageCoupons";
+import Notification from "./Notification";
+import EditNotification from "./EditNotification";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
+        <Route path="/notification" element={<Notification />} />
+        <Route path="/edit-notification/:id" element={<EditNotification />} />
       </Routes>
     </Router>
   );

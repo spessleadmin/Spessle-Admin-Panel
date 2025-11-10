@@ -31,7 +31,7 @@ const initialSidebarLinks = [
     icon: "bar-chart-2",
     href: "/revenue-management",
   },
-  { label: "Notification", icon: "bell", href: "/notifications" },
+  { label: "Notification", icon: "bell", href: "/notification" },
   { label: "Manage Coupons", icon: "percent", href: "/manage-coupons" },
   { label: "Content Management", icon: "file", href: "/content-management" },
 ];
