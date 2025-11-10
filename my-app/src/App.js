@@ -10,6 +10,9 @@ import ManageBusiness from "./ManageBusiness";
 import ManageCoupons from "./ManageCoupons";
 import Notification from "./Notification";
 import EditNotification from "./EditNotification";
+import BusinessDetails from "./BusinessDetails"
+import EditBusiness from "./EditBusiness"
+import BusinessProducts from "./BusinessProducts"
 
 function App() {
   return (
@@ -26,6 +29,9 @@ function App() {
         <Route path="/manage-coupons" element={<ManageCoupons />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="/edit-notification/:id" element={<EditNotification />} />
+        <Route path="/business-details/:id" element={<BusinessDetails />} />
+        <Route path="/edit-business/:id" element={<EditBusiness />} />
+        <Route path="/business-products/:id" element={<BusinessProducts />} />
       </Routes>
     </Router>
   );
