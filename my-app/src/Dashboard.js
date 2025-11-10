@@ -21,7 +21,7 @@ export default function Dashboard() {
       icon: "calendar",
       iconColor: "#6ec2e4",
       value: "—",
-      label: "Newly Registered Business (1 m...",
+      label: "Newly Registered Business",
     },
   ]);
 
@@ -53,7 +53,7 @@ export default function Dashboard() {
             icon: "calendar",
             iconColor: "#6ec2e4",
             value: data.new_businesses_last_24h.toString(),
-            label: "Newly Registered Business (1 mo...)",
+            label: "Newly Registered Business (24h)",
           },
         ]);
       })

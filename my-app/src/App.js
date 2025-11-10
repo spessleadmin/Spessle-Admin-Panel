@@ -6,7 +6,13 @@ import Dashboard from "./Dashboard";
 import AdminUsers from "./AdminUsers";
 import EditProduct from "./EditProduct";
 import ManageProduct from "./ManageProduct";
+import ManageBusiness from "./ManageBusiness";
 import ManageCoupons from "./ManageCoupons";
+import Notification from "./Notification";
+import EditNotification from "./EditNotification";
+import BusinessDetails from "./BusinessDetails"
+import EditBusiness from "./EditBusiness"
+import BusinessProducts from "./BusinessProducts"
 
 function App() {
   return (
@@ -17,9 +23,15 @@ function App() {
         <Route path="/test-page" element={<TestPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit-product/:id" element={<EditProduct />} />
+        <Route path="/manage-business" element={<ManageBusiness />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
+        <Route path="/notification" element={<Notification />} />
+        <Route path="/edit-notification/:id" element={<EditNotification />} />
+        <Route path="/business-details/:id" element={<BusinessDetails />} />
+        <Route path="/edit-business/:id" element={<EditBusiness />} />
+        <Route path="/business-products/:id" element={<BusinessProducts />} />
       </Routes>
     </Router>
   );
