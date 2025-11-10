@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Layout from "./Layout";
 import "./ManageProduct.css"; // Using the same CSS file
 import feather from "feather-icons";
@@ -376,15 +377,14 @@ export default function ManageProduct() {
                                 <td>{new Date(product.dateTime).toLocaleString()}</td>
                                 <td>⭐ {product.rating.toFixed(1)}</td>
                                 <td>
-                                  <a
-                                    href="#"
+                                  <Link
+                                    to={`/edit-product/${product.id}`}
                                     title="Edit"
                                     className="btn btn-xs btn-warning edit-btn"
-                                    onClick={e => e.preventDefault()}
                                   >
                                     <i data-feather="edit"></i>
                                     <span className="hidden-xs hidden-sm">Edit</span>
-                                  </a>
+                                  </Link>
                                   <a
                                     href="#"
                                     className="action-icon text-danger"
