@@ -447,7 +447,7 @@ export default function ManageBusiness() {
                                 <td>{business.category}</td>
                                 <td>
                                   <Link
-                                    to={`/edit-business/${business.id}`} // Assuming an edit route
+                                    to={`/business-details/${business.id}`} // Assuming an edit route
                                     title="Edit"
                                     className="btn btn-xs btn-warning edit-btn"
                                   >
