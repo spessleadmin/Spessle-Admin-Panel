@@ -546,250 +546,469 @@ export default function EditProduct() {
 
 
 
-  const handleProductInfoSave = async () => {
+    const handleProductInfoSave = async () => {
 
 
-    const initialTags = initialProductState.tags.map(t => t.value);
 
 
-    const currentTags = selectedTags.map(t => t.value);
+
+      if (files.length > 0) {
 
 
-    const tagsToAdd = selectedTags.filter(t => !initialTags.includes(t.value));
 
 
-    const tagsToRemove = initialProductState.tags.filter(t => !currentTags.includes(t.value));
+
+        await handleImageUpload();
+
+
+
+
+
+      }
+
+
+
 
 
   
 
 
-    // Add new tags
 
 
-    for (const tag of tagsToAdd) {
+
+      const initialTags = initialProductState.tags.map(t => t.value);
+
+
+
+
+
+      const currentTags = selectedTags.map(t => t.value);
+
+
+
+
+
+      const tagsToAdd = selectedTags.filter(t => !initialTags.includes(t.value));
+
+
+
+
+
+      const tagsToRemove = initialProductState.tags.filter(t => !currentTags.includes(t.value));
+
+
+
+
+
+    
+
+
+
+
+
+      // Add new tags
+
+
+
+
+
+      for (const tag of tagsToAdd) {
+
+
+
+
+
+        try {
+
+
+
+
+
+          const response = await fetch(`http://localhost:5050/product-tags`, {
+
+
+
+
+
+            method: "POST",
+
+
+
+
+
+            headers: {
+
+
+
+
+
+              "Content-Type": "application/json",
+
+
+
+
+
+            },
+
+
+
+
+
+            body: JSON.stringify({ product_id: id, tag_id: tag.value }),
+
+
+
+
+
+          });
+
+
+
+
+
+          if (!response.ok) throw new Error("Failed to add tag");
+
+
+
+
+
+        } catch (error) {
+
+
+
+
+
+          console.error("Error adding tag:", error);
+
+
+
+
+
+        }
+
+
+
+
+
+      }
+
+
+
+
+
+    
+
+
+
+
+
+      // Remove old tags
+
+
+
+
+
+      for (const tag of tagsToRemove) {
+
+
+
+
+
+        try {
+
+
+
+
+
+          const response = await fetch(`http://localhost:5050/products/${id}/tags/${tag.value}`, {
+
+
+
+
+
+            method: "DELETE",
+
+
+
+
+
+          });
+
+
+
+
+
+          if (!response.ok) throw new Error("Failed to remove tag");
+
+
+
+
+
+        } catch (error) {
+
+
+
+
+
+          console.error("Error removing tag:", error);
+
+
+
+
+
+        }
+
+
+
+
+
+      }
+
+
+
+
+
+    
+
+
+
+
+
+      const payload = {
+
+
+
+
+
+        productname: productInfo.productName,
+
+
+
+
+
+        description: productInfo.description,
+
+
+
+
+
+        price: parseFloat(productInfo.cost),
+
+
+
+
+
+        quantity: parseInt(productInfo.quantity, 10),
+
+
+
+
+
+      };
+
+
+
+
+
+    
+
+
+
 
 
       try {
 
 
-        const response = await fetch(`http://localhost:5050/product-tags`, {
 
 
-          method: "POST",
+
+        const response = await fetch(`http://localhost:5050/products/${id}`, {
+
+
+
+
+
+          method: "PUT",
+
+
+
 
 
           headers: {
 
 
+
+
+
             "Content-Type": "application/json",
+
+
+
 
 
           },
 
 
-          body: JSON.stringify({ product_id: id, tag_id: tag.value }),
 
 
-        });
+
+          body: JSON.stringify(payload),
 
 
-        if (!response.ok) throw new Error("Failed to add tag");
 
-
-      } catch (error) {
-
-
-        console.error("Error adding tag:", error);
-
-
-      }
-
-
-    }
-
-
-  
-
-
-    // Remove old tags
-
-
-    for (const tag of tagsToRemove) {
-
-
-      try {
-
-
-        const response = await fetch(`http://localhost:5050/products/${id}/tags/${tag.value}`, {
-
-
-          method: "DELETE",
 
 
         });
 
 
-        if (!response.ok) throw new Error("Failed to remove tag");
+
+
+
+    
+
+
+
+
+
+        if (!response.ok) {
+
+
+
+
+
+          throw new Error(`HTTP error! status: ${response.status}`);
+
+
+
+
+
+        }
+
+
+
+
+
+    
+
+
+
+
+
+        const result = await response.json();
+
+
+
+
+
+        console.log("Product updated successfully:", result);
+
+
+
+
+
+        alert("Product updated successfully!");
+
+
+
 
 
       } catch (error) {
 
 
-        console.error("Error removing tag:", error);
+
+
+
+        console.error("Failed to update product:", error);
+
+
+
+
+
+        alert("Failed to update product.");
+
+
+
 
 
       }
-
-
-    }
-
-
-  
-
-
-    const payload = {
-
-
-      productname: productInfo.productName,
-
-
-      description: productInfo.description,
-
-
-      price: parseFloat(productInfo.cost),
-
-
-      quantity: parseInt(productInfo.quantity, 10),
-
-
-    };
-
-
-  
-
-
-    try {
-
-
-      const response = await fetch(`http://localhost:5050/products/${id}`, {
-
-
-        method: "PUT",
-
-
-        headers: {
-
-
-          "Content-Type": "application/json",
-
-
-        },
-
-
-        body: JSON.stringify(payload),
-
-
-      });
-
-
-  
-
-
-      if (!response.ok) {
-
-
-        throw new Error(`HTTP error! status: ${response.status}`);
-
-
-      }
-
-
-  
-
-
-      const result = await response.json();
-
-
-      console.log("Product updated successfully:", result);
-
-
-      alert("Product updated successfully!");
-
-
-    } catch (error) {
-
-
-      console.error("Failed to update product:", error);
-
-
-      alert("Failed to update product.");
-
-
-    }
-
-
-  };
-
-
-
-
-
-    const handleProductInfoReset = () => {
-
-
-
-
-
-      setProductInfo({
-
-
-
-
-
-        category: initialProductState.category,
-
-
-
-
-
-        productName: initialProductState.productName,
-
-
-
-
-
-        cost: initialProductState.cost,
-
-
-
-
-
-        description: initialProductState.description,
-
-
-
-
-
-        quantity: initialProductState.quantity,
-
-
-
-
-
-      });
-
-
-
-
-
-      setSelectedTags(initialProductState.tags);
 
 
 
 
 
     };
+
+
+
+
+
+  
+
+
+
+
+
+      const handleProductInfoReset = () => {
+
+
+
+
+
+        setProductInfo({
+
+
+
+
+
+          category: initialProductState.category,
+
+
+
+
+
+          productName: initialProductState.productName,
+
+
+
+
+
+          cost: initialProductState.cost,
+
+
+
+
+
+          description: initialProductState.description,
+
+
+
+
+
+          quantity: initialProductState.quantity,
+
+
+
+
+
+        });
+
+
+
+
+
+        setSelectedTags(initialProductState.tags);
+
+
+
+
+
+        setFiles([]);
+
+
+
+
+
+      };
 
 
 
@@ -936,40 +1155,25 @@ export default function EditProduct() {
 
 
 
-    const handleEditProduct = () => {
+        const handleEditProduct = () => {
 
 
 
 
 
-      console.log("Editing Product:", { ...productInfo });
+          console.log("Editing Product:", { ...productInfo });
 
 
 
 
 
-      // Placeholder for API call
+          // Placeholder for API call
 
 
 
 
 
-    };
-
-
-
-
-
-  const handleImageUploadReset = () => {
-
-
-    console.log("Resetting Image Upload");
-
-
-    // Implement image upload reset logic
-
-
-  };
+        };
 
 
 
@@ -1008,271 +1212,679 @@ export default function EditProduct() {
 
 
 
-        <div className="row">
+                        <div className="row">
 
 
-          <div className="col-12">
 
 
-            <div className="admin-card card">
 
+                          <div className="col-12">
 
-              <div className="card-body">
 
 
-                <div className="admin-filter-title header-title">Product Information</div>
 
 
-                <form className="admin-filter-form">
+                            <div className="admin-card card">
 
 
-                  <div className="admin-filter-row">
 
 
-                    <div className="admin-filter-col">
 
+                              <div className="card-body">
 
-                      <label>Category</label>
 
 
-                      <input
 
 
-                        type="text"
+                                <div className="admin-filter-title header-title">Product Information</div>
 
 
-                        className="form-control"
 
 
-                        name="category"
 
+                                <form className="admin-filter-form">
 
-                        value={productInfo.category}
 
 
-                        onChange={handleProductInfoChange}
 
 
-                      />
+                                  <div {...getRootProps({ className: 'dropify-wrapper' })}>
 
 
-                    </div>
 
 
-                    <div className="admin-filter-col">
 
+                                    <input {...getInputProps()} />
 
-                      <label>Product Name</label>
 
 
-                      <input
 
 
-                        type="text"
+                                    {files.length > 0 ? (
 
 
-                        className="form-control"
 
 
-                        name="productName"
 
+                                      <div className="dropify-preview">
 
-                        value={productInfo.productName}
 
 
-                        onChange={handleProductInfoChange}
 
 
-                      />
+                                        <span className="dropify-render">
 
 
-                    </div>
 
 
-                    <div className="admin-filter-col">
 
+                                          <img src={files[0].preview} alt={files[0].name} />
 
-                      <label>Cost</label>
 
 
-                      <input
 
 
-                        type="text"
+                                        </span>
 
 
-                        className="form-control"
 
 
-                        name="cost"
 
+                                        <div className="dropify-infos">
 
-                        value={productInfo.cost}
 
 
-                        onChange={handleProductInfoChange}
 
 
-                      />
+                                          <div className="dropify-infos-inner">
 
 
-                    </div>
 
 
-                    <div className="admin-filter-col">
 
+                                            <p className="dropify-filename">
 
-                      <label>Quantity</label>
 
 
-                      <input
 
 
-                        type="text"
+                                              <span className="file-icon"></span> {files[0].name}
 
 
-                        className="form-control"
 
 
-                        name="quantity"
 
+                                            </p>
 
-                        value={productInfo.quantity}
 
 
-                        onChange={handleProductInfoChange}
 
 
-                      />
+                                            <p className="dropify-infos-message">Drag and drop or click to replace</p>
 
 
-                    </div>
 
 
-                  </div>
 
+                                          </div>
 
-                  <div className="admin-filter-row">
 
 
-                    <div className="admin-filter-col" style={{ width: "100%" }}>
 
 
-                      <label>Description</label>
+                                        </div>
 
 
-                      <textarea
 
 
-                        className="form-control"
 
+                                      </div>
 
-                        name="description"
 
 
-                        rows="4"
 
 
-                        value={productInfo.description}
+                                    ) : (
 
 
-                        onChange={handleProductInfoChange}
 
 
-                      ></textarea>
 
+                                      <div className="dropify-message">
 
-                    </div>
 
 
-                  </div>
 
 
-                  <div className="admin-filter-row">
+                                        <span className="file-icon"></span>
 
 
-                    <div className="admin-filter-col">
 
 
-                      <label>Tags</label>
 
+                                        <p>Drag and drop a file here or click</p>
 
-                      <Select
 
 
-                        isMulti
 
 
-                        name="tags"
+                                      </div>
 
 
-                        options={tagOptions}
 
 
-                        className="basic-multi-select"
 
+                                    )}
 
-                        classNamePrefix="select"
 
 
-                        value={selectedTags}
 
 
-                        onChange={handleTagsChange}
+                                  </div>
 
 
-                      />
 
 
-                    </div>
 
+                
 
-                  </div>
 
 
-                  <div className="admin-filter-row">
 
 
-                    <div className="admin-filter-col filter-actions buttons-row">
+                                  <div className="admin-filter-row" style={{ marginTop: "20px" }}>
 
 
-                      <button type="button" className="btn btn-blue admin-filter-button" onClick={handleProductInfoSave}>
 
 
-                        Save
 
+                                    <div className="admin-filter-col">
 
-                      </button>
 
 
-                      <button type="button" className="btn btn-secondary admin-filter-button" onClick={handleProductInfoReset}>
 
 
-                        Reset
+                                      <label>Category</label>
 
 
-                      </button>
 
 
-                    </div>
 
+                                      <input
 
-                  </div>
 
 
-                </form>
 
 
-              </div>
+                                        type="text"
 
 
-            </div>
 
 
-          </div>
 
+                                        className="form-control"
 
-        </div>
+
+
+
+
+                                        name="category"
+
+
+
+
+
+                                        value={productInfo.category}
+
+
+
+
+
+                                        onChange={handleProductInfoChange}
+
+
+
+
+
+                                      />
+
+
+
+
+
+                                    </div>
+
+
+
+
+
+                                    <div className="admin-filter-col">
+
+
+
+
+
+                                      <label>Product Name</label>
+
+
+
+
+
+                                      <input
+
+
+
+
+
+                                        type="text"
+
+
+
+
+
+                                        className="form-control"
+
+
+
+
+
+                                        name="productName"
+
+
+
+
+
+                                        value={productInfo.productName}
+
+
+
+
+
+                                        onChange={handleProductInfoChange}
+
+
+
+
+
+                                      />
+
+
+
+
+
+                                    </div>
+
+
+
+
+
+                                    <div className="admin-filter-col">
+
+
+
+
+
+                                      <label>Cost</label>
+
+
+
+
+
+                                      <input
+
+
+
+
+
+                                        type="text"
+
+
+
+
+
+                                        className="form-control"
+
+
+
+
+
+                                        name="cost"
+
+
+
+
+
+                                        value={productInfo.cost}
+
+
+
+
+
+                                        onChange={handleProductInfoChange}
+
+
+
+
+
+                                      />
+
+
+
+
+
+                                    </div>
+
+
+
+
+
+                                    <div className="admin-filter-col">
+
+
+
+
+
+                                      <label>Quantity</label>
+
+
+
+
+
+                                      <input
+
+
+
+
+
+                                        type="text"
+
+
+
+
+
+                                        className="form-control"
+
+
+
+
+
+                                        name="quantity"
+
+
+
+
+
+                                        value={productInfo.quantity}
+
+
+
+
+
+                                        onChange={handleProductInfoChange}
+
+
+
+
+
+                                      />
+
+
+
+
+
+                                    </div>
+
+
+
+
+
+                                  </div>
+
+
+
+
+
+                                  <div className="admin-filter-row">
+
+
+
+
+
+                                    <div className="admin-filter-col" style={{ width: "100%" }}>
+
+
+
+
+
+                                      <label>Description</label>
+
+
+
+
+
+                                      <textarea
+
+
+
+
+
+                                        className="form-control"
+
+
+
+
+
+                                        name="description"
+
+
+
+
+
+                                        rows="4"
+
+
+
+
+
+                                        value={productInfo.description}
+
+
+
+
+
+                                        onChange={handleProductInfoChange}
+
+
+
+
+
+                                      ></textarea>
+
+
+
+
+
+                                    </div>
+
+
+
+
+
+                                  </div>
+
+
+
+
+
+                                  <div className="admin-filter-row">
+
+
+
+
+
+                                    <div className="admin-filter-col">
+
+
+
+
+
+                                      <label>Tags</label>
+
+
+
+
+
+                                      <Select
+
+
+
+
+
+                                        isMulti
+
+
+
+
+
+                                        name="tags"
+
+
+
+
+
+                                        options={tagOptions}
+
+
+
+
+
+                                        className="basic-multi-select"
+
+
+
+
+
+                                        classNamePrefix="select"
+
+
+
+
+
+                                        value={selectedTags}
+
+
+
+
+
+                                        onChange={handleTagsChange}
+
+
+
+
+
+                                      />
+
+
+
+
+
+                                    </div>
+
+
+
+
+
+                                  </div>
+
+
+
+
+
+                                  <div className="admin-filter-row">
+
+
+
+
+
+                                    <div className="admin-filter-col filter-actions buttons-row">
+
+
+
+
+
+                                      <button type="button" className="btn btn-blue admin-filter-button" onClick={handleProductInfoSave}>
+
+
+
+
+
+                                        Save
+
+
+
+
+
+                                      </button>
+
+
+
+
+
+                                      <button type="button" className="btn btn-secondary admin-filter-button" onClick={handleProductInfoReset}>
+
+
+
+
+
+                                        Reset
+
+
+
+
+
+                                      </button>
+
+
+
+
+
+                                    </div>
+
+
+
+
+
+                                  </div>
+
+
+
+
+
+                                </form>
+
+
+
+
+
+                              </div>
+
+
+
+
+
+                            </div>
+
+
+
+
+
+                          </div>
+
+
+
+
+
+                        </div>
 
 
 
