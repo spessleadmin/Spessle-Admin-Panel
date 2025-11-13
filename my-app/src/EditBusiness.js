@@ -66,7 +66,7 @@ export default function EditBusiness() {
           },
           tags: business.businesstagss_on_business.map(tag => ({
             value: tag.tag.id,
-            label: tag.tag.name,
+            label: tag.tag.tagname,
           })),
         };
         setInitialBusinessState(initialState);

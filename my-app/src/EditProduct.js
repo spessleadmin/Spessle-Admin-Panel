@@ -102,16 +102,16 @@ const transformApiProduct = (apiProduct) => {
     quantity: apiProduct.quantity,
 
 
-    tags: apiProduct.producttags_on_product.map(tag => ({
+        tags: apiProduct.producttags_on_product.map(tag => ({
 
 
-      value: tag.tag.id,
+          value: tag.tag.id,
 
 
-      label: tag.tag.name,
+          label: tag.tag.tagname,
 
 
-    })),
+        })),
 
 
   };
