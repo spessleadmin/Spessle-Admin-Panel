@@ -3,25 +3,36 @@ import Layout from "./Layout";
 import "./AdminUsers.css";
 import feather from "feather-icons";
 
-const roles = ["Support Admin", "Vendor Admin"];
+const roles = ["business", "customer", "Support Admin", "Vendor Admin"];
 const statuses = ["Active", "Inactive"];
-const sampleUsers = [
-  { name: "Bentley Mooney", email: "mooney@gmail.com", phone: "+1-212-456-7890", business: "Cake Shop", role: "Support Admin", status: "Inactive" },
-  { name: "Daniel Harrell", email: "Daniel@yopmail.com", phone: "+1-212-456-7890", business: "Cake Shop", role: "Support Admin", status: "Active" },
-  { name: "Garrett Winters", email: "stella@yopmail.com", phone: "+1-212-456-7890", business: "Cake Shop", role: "Support Admin", status: "Inactive" },
-  { name: "Jackson Bradshaw", email: "jacksonaus@gmail.com", phone: "+1-212-456-7890", business: "Cake Shop", role: "Vendor Admin", status: "Inactive" },
-  { name: "Tiger Nixon", email: "tigernixon@gmail.com", phone: "+1-212-456-7890", business: "Cake Shop", role: "Vendor Admin", status: "Active" },
-];
 
 export default function AdminUsers() {
   const [filters, setFilters] = useState({
-    business: "", name: "", email: "", phone: "", role: "Support Admin", status: ""
+    name: "", email: "", phone: "", role: "", status: ""
   });
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState("10");
-  const [users, setUsers] = useState(sampleUsers);
+  const [users, setUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:5050/users');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setUsers(data.users);
+        setAllUsers(data.users);
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const sortUsers = (key) => {
     let direction = 'ascending';
@@ -31,10 +42,18 @@ export default function AdminUsers() {
     setSortConfig({ key, direction });
 
     const sortedUsers = [...users].sort((a, b) => {
-      if (a[key] < b[key]) {
+      let aValue = a[key];
+      let bValue = b[key];
+
+      if (key === 'role') {
+        aValue = a.role ? a.role.roleName : '';
+        bValue = b.role ? b.role.roleName : '';
+      }
+
+      if (aValue < bValue) {
         return direction === 'ascending' ? -1 : 1;
       }
-      if (a[key] > b[key]) {
+      if (aValue > bValue) {
         return direction === 'ascending' ? 1 : -1;
       }
       return 0;
@@ -45,11 +64,10 @@ export default function AdminUsers() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const initialFilters = {
-      business: params.get('business') || '',
       name: params.get('name') || '',
       email: params.get('email') || '',
       phone: params.get('phone') || '',
-      role: params.get('role') || 'Support Admin',
+      role: params.get('role') || '',
       status: params.get('status') || '',
     };
     setFilters(initialFilters);
@@ -58,17 +76,15 @@ export default function AdminUsers() {
   // Filter card: preserves your filter functionality
   const handleFilterSearch = (e) => {
     e.preventDefault();
-    let filtered = sampleUsers;
-    if (filters.business)
-      filtered = filtered.filter(u => u.business.toLowerCase().includes(filters.business.toLowerCase()));
+    let filtered = allUsers;
     if (filters.name)
-      filtered = filtered.filter(u => u.name.toLowerCase().includes(filters.name.toLowerCase()));
+      filtered = filtered.filter(u => u.username.toLowerCase().includes(filters.name.toLowerCase()));
     if (filters.email)
       filtered = filtered.filter(u => u.email.toLowerCase().includes(filters.email.toLowerCase()));
     if (filters.phone)
-      filtered = filtered.filter(u => u.phone.includes(filters.phone));
+      filtered = filtered.filter(u => u.phonenum.includes(filters.phone));
     if (filters.role)
-      filtered = filtered.filter(u => u.role === filters.role);
+      filtered = filtered.filter(u => u.role && u.role.roleName === filters.role);
     if (filters.status)
       filtered = filtered.filter(u => u.status === filters.status);
 
@@ -84,8 +100,8 @@ export default function AdminUsers() {
     setCurrentPage(1);
   };
   const handleFilterReset = () => {
-    setFilters({ business: "", name: "", email: "", phone: "", role: "Support Admin", status: "" });
-    setUsers(sampleUsers);
+    setFilters({ name: "", email: "", phone: "", role: "", status: "" });
+    setUsers(allUsers);
     setSearch("");
     setCurrentPage(1);
     window.history.pushState({}, '', window.location.pathname);
@@ -95,16 +111,15 @@ export default function AdminUsers() {
   const handleTableSearch = value => {
     setSearch(value);
     if (!value.trim()) {
-      setUsers(sampleUsers);
+      setUsers(allUsers);
       setCurrentPage(1);
       return;
     }
-    const filtered = sampleUsers.filter(u =>
-      u.name.toLowerCase().includes(value.toLowerCase()) ||
+    const filtered = allUsers.filter(u =>
+      u.username.toLowerCase().includes(value.toLowerCase()) ||
       u.email.toLowerCase().includes(value.toLowerCase()) ||
-      u.phone.includes(value) ||
-      u.business.toLowerCase().includes(value.toLowerCase()) ||
-      u.role.toLowerCase().includes(value.toLowerCase())
+      u.phonenum.includes(value) ||
+      (u.role && u.role.roleName.toLowerCase().includes(value.toLowerCase()))
     );
     setUsers(filtered);
     setCurrentPage(1);
@@ -133,11 +148,15 @@ export default function AdminUsers() {
   useEffect(() => {
     // Initialize toggle buttons
     const toggleButtons = window.$('.toggle-btn');
-    toggleButtons.bootstrapToggle();
+    if (toggleButtons.length > 0) {
+      toggleButtons.bootstrapToggle();
+    }
 
     // Cleanup function to destroy toggle buttons
     return () => {
-      toggleButtons.bootstrapToggle('destroy');
+      if (toggleButtons.length > 0) {
+        toggleButtons.bootstrapToggle('destroy');
+      }
     };
   }, [currentEntries]); // Re-run when entries change to catch new buttons
 
@@ -165,16 +184,6 @@ export default function AdminUsers() {
                   <div className="admin-filter-title header-title">Filter</div>
                   <form className="admin-filter-form" onSubmit={handleFilterSearch}>
                     <div className="admin-filter-row">
-                      <div className="admin-filter-col">
-                        <label>Business Name</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Business Name"
-                          value={filters.business}
-                          onChange={e => setFilters(f => ({ ...f, business: e.target.value }))}
-                        />
-                      </div>
                       <div className="admin-filter-col">
                         <label>Name</label>
                         <input
@@ -213,7 +222,8 @@ export default function AdminUsers() {
                           value={filters.role}
                           onChange={e => setFilters(f => ({ ...f, role: e.target.value }))}
                         >
-                          {roles.map(role => <option key={role}>{role}</option>)}
+                          <option value="">Select Role</option>
+                          {roles.map(role => <option key={role} value={role}>{role}</option>)}
                         </select>
                       </div>
                       <div className="admin-filter-col">
@@ -298,17 +308,17 @@ export default function AdminUsers() {
                         >
                           <thead>
                             <tr>
-                              <th className="sortable-header" onClick={() => sortUsers('name')}>
-                                Name {sortConfig.key === 'name' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                              <th className="sortable-header" onClick={() => sortUsers('id')}>
+                                ID {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                              </th>
+                              <th className="sortable-header" onClick={() => sortUsers('username')}>
+                                Name {sortConfig.key === 'username' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                               </th>
                               <th className="sortable-header" onClick={() => sortUsers('email')}>
                                 Email {sortConfig.key === 'email' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                               </th>
-                              <th className="sortable-header" onClick={() => sortUsers('phone')}>
-                                Phone {sortConfig.key === 'phone' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                              </th>
-                              <th className="sortable-header" onClick={() => sortUsers('business')}>
-                                Business Name {sortConfig.key === 'business' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                              <th className="sortable-header" onClick={() => sortUsers('phonenum')}>
+                                Phone {sortConfig.key === 'phonenum' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                               </th>
                               <th className="sortable-header" onClick={() => sortUsers('role')}>
                                 User Role {sortConfig.key === 'role' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
@@ -318,12 +328,12 @@ export default function AdminUsers() {
                           </thead>
                           <tbody>
                             {currentEntries.map((user, idx) => (
-                              <tr key={user.email} className={idx % 2 === 0 ? "odd" : "even"}>
-                                <td>{user.name}</td>
+                              <tr key={user.id} className={idx % 2 === 0 ? "odd" : "even"}>
+                                <td>{user.id}</td>
+                                <td>{user.username}</td>
                                 <td>{user.email}</td>
-                                <td>{user.phone}</td>
-                                <td>{user.business}</td>
-                                <td>{user.role}</td>
+                                <td>{user.phonenum}</td>
+                                <td>{user.role ? user.role.roleName : ''}</td>
                                 <td>
                                   <input
                                     type="checkbox"

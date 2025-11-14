@@ -241,21 +241,20 @@ body,
 
 /* --- SIDEBAR SLIDE ANIMATION --- */
 .sidebar-submenu {
-  max-height: 0;
+  height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: max-height 0.32s cubic-bezier(.4, 0, .2, 1), opacity 0.17s;
   margin-left: 55px;
   display: flex;
   flex-direction: column;
   pointer-events: none;
   padding-left: 0;
   background: transparent;
+  transition: all 0.3s ease-in-out;
 }
 
 .sidebar-submenu.open {
-  max-height: 200px;
-  /* must be big enough for all items */
+  height: auto;
   opacity: 1;
   pointer-events: auto;
 }
