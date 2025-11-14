@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import Layout from "./Layout";
 import "./ManageTags.css";
 import feather from "feather-icons";
@@ -24,32 +23,70 @@ export default function ManageTags() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
-  useEffect(() => {
-    const fetchTags = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch('http://localhost:5050/tags');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        
-        const transformedTags = data.tags.map(transformApiTag);
-        
-        setMasterTagList(transformedTags);
-        setTags(transformedTags);
-        
-      } catch (e) {
-        console.error("Failed to fetch tags:", e);
-        setError(e.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  
+  const [editingTagId, setEditingTagId] = useState(null);
+  const [editingTagName, setEditingTagName] = useState("");
 
+  const fetchTags = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('http://localhost:5050/tags');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      
+      const transformedTags = data.tags.map(transformApiTag);
+      
+      setMasterTagList(transformedTags);
+      setTags(transformedTags);
+      
+    } catch (e) {
+      console.error("Failed to fetch tags:", e);
+      setError(e.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchTags();
   }, []);
+
+  const handleEditClick = (tag) => {
+    setEditingTagId(tag.id);
+    setEditingTagName(tag.tagname);
+  };
+
+  const handleCancelClick = () => {
+    setEditingTagId(null);
+    setEditingTagName("");
+  };
+
+  const handleConfirmClick = async (tagId) => {
+    try {
+      const response = await fetch(`http://localhost:5050/tags/${tagId}/name`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: editingTagName }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      await fetchTags(); // Re-fetch to get the latest data
+      setEditingTagId(null);
+      setEditingTagName("");
+
+    } catch (error) {
+      console.error("Failed to update tag name:", error);
+      // Optionally, show an error message to the user
+    }
+  };
 
   const sortTags = (key) => {
     let direction = 'ascending';
@@ -119,10 +156,6 @@ export default function ManageTags() {
   const currentEntries = tags.slice(indexOfFirstEntry, indexOfLastEntry);
   const totalPages = Math.ceil(tags.length / parseInt(entriesPerPage));
   
-  useEffect(() => {
-    feather.replace();
-  }, [currentEntries, isLoading, error]);
-
   return (
     <Layout>
       <main className="manage-tags-page dashboard-main" style={{ width: '100%' }}>
@@ -220,7 +253,8 @@ export default function ManageTags() {
                         className="btn btn-blue btn-sm ms-2 add-user-table-btn"
                         onClick={e => e.preventDefault()}
                       >
-                        <i data-feather="plus"></i>Add Tag
+                        <span dangerouslySetInnerHTML={{ __html: feather.icons.plus.toSvg({ width: 16, height: 16 }) }} />
+                        Add Tag
                       </button>
                     </div>
                   </div>
@@ -260,28 +294,59 @@ export default function ManageTags() {
                             currentEntries.map((tag, idx) => (
                               <tr key={tag.id} className={idx % 2 === 0 ? "odd" : "even"}>
                                 <td>{tag.id.substring(0, 8)}...</td>
-                                <td>{tag.tagname}</td>
+                                <td>
+                                  {editingTagId === tag.id ? (
+                                    <input
+                                      type="text"
+                                      className="form-control"
+                                      value={editingTagName}
+                                      onChange={(e) => setEditingTagName(e.target.value)}
+                                    />
+                                  ) : (
+                                    tag.tagname
+                                  )}
+                                </td>
                                 <td>{new Date(tag.createddate).toLocaleString()}</td>
                                 <td>{new Date(tag.updateddate).toLocaleString()}</td>
                                 <td>
-                                  <Link
-                                    to={`/edit-tag/${tag.id}`}
-                                    title="Edit"
-                                    className="btn btn-xs btn-warning edit-btn"
-                                  >
-                                    <i data-feather="edit"></i>
-                                    <span className="hidden-xs hidden-sm">Edit</span>
-                                  </Link>
-                                  <a
-                                    href="#"
-                                    className="action-icon text-danger"
-                                    onClick={e => {
-                                      e.preventDefault();
-                                      handleDelete(tag.id);
-                                    }}
-                                  >
-                                    <i data-feather="trash-2"></i>
-                                  </a>
+                                  {editingTagId === tag.id ? (
+                                    <>
+                                      <button
+                                        className="btn btn-xs btn-success"
+                                        onClick={() => handleConfirmClick(tag.id)}
+                                      >
+                                        Confirm
+                                      </button>
+                                      <button
+                                        className="btn btn-xs btn-secondary"
+                                        onClick={handleCancelClick}
+                                        style={{ marginLeft: '5px' }}
+                                      >
+                                        Cancel
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <button
+                                        title="Edit"
+                                        className="btn btn-xs btn-warning edit-btn"
+                                        onClick={() => handleEditClick(tag)}
+                                      >
+                                        <span dangerouslySetInnerHTML={{ __html: feather.icons.edit.toSvg({ width: 16, height: 16 }) }} />
+                                        <span className="hidden-xs hidden-sm">Edit</span>
+                                      </button>
+                                      <a
+                                        href="#"
+                                        className="action-icon text-danger"
+                                        onClick={e => {
+                                          e.preventDefault();
+                                          handleDelete(tag.id);
+                                        }}
+                                      >
+                                        <span dangerouslySetInnerHTML={{ __html: feather.icons['trash-2'].toSvg({ width: 16, height: 16 }) }} />
+                                      </a>
+                                    </>
+                                  )}
                                 </td>
                               </tr>
                             ))
@@ -309,7 +374,7 @@ export default function ManageTags() {
                                 if (currentPage > 1) setCurrentPage(currentPage - 1);
                               }}
                             >
-                              <i data-feather="chevron-left"></i>
+                              <span dangerouslySetInnerHTML={{ __html: feather.icons['chevron-left'].toSvg({ width: 16, height: 16 }) }} />
                             </a>
                           </li>
                           {[...Array(totalPages)].map((_, i) => (
@@ -333,7 +398,7 @@ export default function ManageTags() {
                                 if (currentPage < totalPages) setCurrentPage(currentPage + 1);
                               }}
                             >
-                              <i data-feather="chevron-right"></i>
+                              <span dangerouslySetInnerHTML={{ __html: feather.icons['chevron-right'].toSvg({ width: 16, height: 16 }) }} />
                             </a>
                           </li>
                         </ul>
