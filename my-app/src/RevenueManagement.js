@@ -3,13 +3,10 @@ import Layout from "./Layout";
 import "./RevenueManagement.css";
 import feather from "feather-icons";
 
+
 export default function RevenueManagement() {
   const [filters, setFilters] = useState({ businessName: "", dateRange: "" });
   const [activeTimeRange, setActiveTimeRange] = useState("1 Month");
-
-  useEffect(() => {
-    feather.replace();
-  }, []);
 
   const handleFilterSearch = (e) => {
     e.preventDefault();
@@ -120,46 +117,51 @@ export default function RevenueManagement() {
           <div className="col-12">
             <div className="admin-card card revenue-card">
               <div className="card-body">
-                <h4 className="card-title">Revenue</h4>
-                <div className="btn-group" role="group">
-                  {["All", "1 Month", "6 months", "1 year"].map(range => (
-                    <button
-                      key={range}
-                      type="button"
-                      className={`btn ${activeTimeRange === range ? 'btn-primary' : 'btn-secondary'}`}
-                      onClick={() => setActiveTimeRange(range)}
-                    >
-                      {range}
-                    </button>
-                  ))}
+                <div className="d-flex justify-content-between align-items-center">
+                  <h4 className="card-title">Revenue</h4>
+                  <div className="btn-group" role="group">
+                    {["All", "1 Month", "6 months", "1 year"].map(range => (
+                      <button
+                        key={range}
+                        type="button"
+                        className={`btn ${activeTimeRange === range ? 'btn-primary' : ''}`}
+                        onClick={() => setActiveTimeRange(range)}
+                      >
+                        {range}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 
                 <div className="revenue-stats-container">
-                  <div className="revenue-stat">
-                    <div className="icon bg-primary">
-                      <i data-feather="shopping-cart"></i>
+                  <div className="revenue-stat-item orders">
+                    <div className="stat-header">
+                      <span className="stat-label">Orders</span>
+                      <span dangerouslySetInnerHTML={{ __html: feather.icons['shopping-cart'].toSvg({ color: '#fff', width: 20, height: 20 }) }} />
                     </div>
-                    <div className="info">
-                      <div className="stat-value">683</div>
-                      <div className="stat-label">Orders</div>
-                    </div>
-                  </div>
-                  <div className="revenue-stat">
-                    <div className="icon bg-success">
-                      <i data-feather="dollar-sign"></i>
-                    </div>
-                    <div className="info">
-                      <div className="stat-value">$31,570</div>
-                      <div className="stat-label">Earnings</div>
+                    <div className="stat-value">683</div>
+                    <div className="progress-bar-container">
+                      <div className="progress-bar" style={{ width: '75%' }}></div>
                     </div>
                   </div>
-                  <div className="revenue-stat">
-                    <div className="icon bg-danger">
-                      <i data-feather="refresh-cw"></i>
+                  <div className="revenue-stat-item earnings">
+                    <div className="stat-header">
+                      <span className="stat-label">Earnings</span>
+                      <span dangerouslySetInnerHTML={{ __html: feather.icons['dollar-sign'].toSvg({ color: '#fff', width: 20, height: 20 }) }} />
                     </div>
-                    <div className="info">
-                      <div className="stat-value">367</div>
-                      <div className="stat-label">Refunds</div>
+                    <div className="stat-value">$31,570</div>
+                    <div className="progress-bar-container">
+                      <div className="progress-bar" style={{ width: '60%' }}></div>
+                    </div>
+                  </div>
+                  <div className="revenue-stat-item refunds">
+                    <div className="stat-header">
+                      <span className="stat-label">Refunds</span>
+                      <span dangerouslySetInnerHTML={{ __html: feather.icons['refresh-cw'].toSvg({ color: '#fff', width: 20, height: 20 }) }} />
+                    </div>
+                    <div className="stat-value">367</div>
+                    <div className="progress-bar-container">
+                      <div className="progress-bar" style={{ width: '30%' }}></div>
                     </div>
                   </div>
                 </div>

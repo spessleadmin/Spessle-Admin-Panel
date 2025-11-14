@@ -47,50 +47,74 @@
 }
 
 .revenue-card .btn-group {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .revenue-card .btn-group .btn {
-  margin-right: 5px;
+  background-color: #f0f2f5;
+  border: none;
+  color: #6c757d;
+  font-weight: 500;
+  margin-right: 8px;
+  border-radius: 20px;
+  padding: 8px 20px;
 }
 
-.revenue-stat {
+.revenue-card .btn-group .btn.btn-primary {
+  background-color: #15adad;
+  color: #fff;
+}
+
+.revenue-stats-container {
   display: flex;
-  align-items: center;
-  margin-bottom: 15px;
+  gap: 24px;
 }
 
-.revenue-stat .icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.revenue-stat-item {
+  flex: 1;
+  padding: 20px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.revenue-stat-item.orders {
+  background: linear-gradient(135deg, #15adad, #18c2c2);
+}
+
+.revenue-stat-item.earnings {
+  background: linear-gradient(135deg, #00c9a7, #00d9b5);
+}
+
+.revenue-stat-item.refunds {
+  background: linear-gradient(135deg, #ff5630, #ff6e4a);
+}
+
+.revenue-stat-item .stat-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  margin-right: 15px;
+  margin-bottom: 10px;
 }
 
-.revenue-stat .icon.bg-primary {
-  background-color: rgba(21,173,173, 0.2);
-  color: #15adad;
+.revenue-stat-item .stat-label {
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-.revenue-stat .icon.bg-success {
-  background-color: rgba(0, 201, 167, 0.2);
-  color: #00c9a7;
-}
-
-.revenue-stat .icon.bg-danger {
-  background-color: rgba(255, 86, 48, 0.2);
-  color: #ff5630;
-}
-
-.revenue-stat .info .stat-value {
-  font-size: 1.2rem;
+.revenue-stat-item .stat-value {
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
-.revenue-stat .info .stat-label {
-  font-size: 0.9rem;
-  color: #6c757d;
+.progress-bar-container {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  height: 8px;
+  width: 100%;
+}
+
+.progress-bar {
+  background-color: #fff;
+  height: 100%;
+  border-radius: 10px;
 }
