@@ -12,6 +12,7 @@ const transformApiTag = (apiTag) => ({
 });
 
 export default function ManageTags() {
+  const [filters, setFilters] = useState({ tagname: "", dateRange: "" });
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState("10");
   
@@ -69,6 +70,26 @@ export default function ManageTags() {
     setTags(sortedTags);
   };
 
+  const handleFilterSearch = (e) => {
+    e.preventDefault();
+    let filtered = masterTagList;
+    if (filters.tagname) {
+      filtered = filtered.filter(t => t.tagname.toLowerCase().includes(filters.tagname.toLowerCase()));
+    }
+    if (filters.dateRange) {
+      // This is a placeholder for date range filtering logic
+    }
+    setTags(filtered);
+    setCurrentPage(1);
+  };
+
+  const handleFilterReset = () => {
+    setFilters({ tagname: "", dateRange: "" });
+    setTags(masterTagList);
+    setSearch("");
+    setCurrentPage(1);
+  };
+
   const handleTableSearch = value => {
     setSearch(value);
     if (!value.trim()) {
@@ -85,8 +106,6 @@ export default function ManageTags() {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this tag?")) {
-      // Here you would typically make an API call to delete the tag
-      // For now, we'll just filter it out from the state
       const updatedTags = tags.filter(t => t.id !== id);
       const updatedMasterList = masterTagList.filter(t => t.id !== id);
 
@@ -111,6 +130,48 @@ export default function ManageTags() {
           <div className="col-12">
             <div className="page-title-box">
               <h4 className="page-title">Manage Tags</h4>
+            </div>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-12">
+            <div className="admin-card card">
+              <div className="card-body">
+                <div className="admin-filter-title header-title">Filter</div>
+                <form className="admin-filter-form" onSubmit={handleFilterSearch}>
+                  <div className="admin-filter-row">
+                    <div className="admin-filter-col">
+                      <label>Tag Name</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Tag Name"
+                        value={filters.tagname}
+                        onChange={e => setFilters(f => ({ ...f, tagname: e.target.value }))}
+                      />
+                    </div>
+                    <div className="admin-filter-col">
+                      <label>Date Range</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Select date range"
+                        value={filters.dateRange}
+                        onChange={e => setFilters(f => ({ ...f, dateRange: e.target.value }))}
+                      />
+                    </div>
+                    <div className="admin-filter-col filter-actions buttons-row" style={{ alignSelf: 'flex-end' }}>
+                      <button type="submit" className="btn btn-blue admin-filter-button">
+                        Filter
+                      </button>
+                      <button type="button" className="btn btn-secondary admin-filter-button" onClick={handleFilterReset}>
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
