@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Layout from "./Layout";
 import "./AdminUsers.css";
 import feather from "feather-icons";
 
 const roles = ["business", "customer", "Support Admin", "Vendor Admin"];
-const statuses = ["Active", "Inactive"];
+
+const formatRoleName = (roleName) => {
+  if (!roleName) return '';
+  return roleName.charAt(0).toUpperCase() + roleName.slice(1);
+};
 
 export default function AdminUsers() {
   const [filters, setFilters] = useState({
-    name: "", email: "", phone: "", role: "", status: ""
+    name: "", email: "", phone: "", role: ""
   });
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState("10");
@@ -85,8 +90,6 @@ export default function AdminUsers() {
       filtered = filtered.filter(u => u.phonenum.includes(filters.phone));
     if (filters.role)
       filtered = filtered.filter(u => u.role && u.role.roleName === filters.role);
-    if (filters.status)
-      filtered = filtered.filter(u => u.status === filters.status);
 
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
@@ -100,7 +103,7 @@ export default function AdminUsers() {
     setCurrentPage(1);
   };
   const handleFilterReset = () => {
-    setFilters({ name: "", email: "", phone: "", role: "", status: "" });
+    setFilters({ name: "", email: "", phone: "", role: "" });
     setUsers(allUsers);
     setSearch("");
     setCurrentPage(1);
@@ -125,14 +128,6 @@ export default function AdminUsers() {
     setCurrentPage(1);
   };
 
-  const toggleUserStatus = (email) => {
-    setUsers(users.map(u =>
-      u.email === email
-        ? { ...u, status: u.status === "Active" ? "Inactive" : "Active" }
-        : u
-    ));
-  };
-
   const handleDelete = (email) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       setUsers(users.filter(u => u.email !== email));
@@ -146,23 +141,8 @@ export default function AdminUsers() {
   const totalPages = Math.ceil(users.length / parseInt(entriesPerPage));
 
   useEffect(() => {
-    // Initialize toggle buttons
-    const toggleButtons = window.$('.toggle-btn');
-    if (toggleButtons.length > 0) {
-      toggleButtons.bootstrapToggle();
-    }
-
-    // Cleanup function to destroy toggle buttons
-    return () => {
-      if (toggleButtons.length > 0) {
-        toggleButtons.bootstrapToggle('destroy');
-      }
-    };
-  }, [currentEntries]); // Re-run when entries change to catch new buttons
-
-  useEffect(() => {
     feather.replace();
-  }, []);
+  }, [currentEntries]);
 
   return (
     <Layout>
@@ -223,17 +203,7 @@ export default function AdminUsers() {
                           onChange={e => setFilters(f => ({ ...f, role: e.target.value }))}
                         >
                           <option value="">Select Role</option>
-                          {roles.map(role => <option key={role} value={role}>{role}</option>)}
-                        </select>
-                      </div>
-                      <div className="admin-filter-col">
-                        <label>Status</label>
-                        <select
-                          value={filters.status}
-                          onChange={e => setFilters(f => ({ ...f, status: e.target.value }))}
-                        >
-                          <option value="">Select status</option>
-                          {statuses.map(status => <option key={status}>{status}</option>)}
+                          {roles.map(role => <option key={role} value={role}>{formatRoleName(role)}</option>)}
                         </select>
                       </div>
                       <div className="admin-filter-col filter-actions buttons-row">
@@ -333,28 +303,16 @@ export default function AdminUsers() {
                                 <td>{user.username}</td>
                                 <td>{user.email}</td>
                                 <td>{user.phonenum}</td>
-                                <td>{user.role ? user.role.roleName : ''}</td>
+                                <td>{user.role ? formatRoleName(user.role.roleName) : ''}</td>
                                 <td>
-                                  <input
-                                    type="checkbox"
-                                    className="toggle-btn"
-                                    data-toggle="toggle"
-                                    data-on="Active"
-                                    data-off="Inactive"
-                                    data-onstyle="success"
-                                    data-offstyle="danger"
-                                    checked={user.status === "Active"}
-                                    onChange={() => toggleUserStatus(user.email)}
-                                  />
-                                  <a
-                                    href="#"
+                                  <Link
+                                    to={`/edit-user/${user.id}`}
                                     title="Edit"
                                     className="btn btn-xs btn-warning edit-btn"
-                                    onClick={e => e.preventDefault()}
                                   >
                                     <i data-feather="edit"></i>
                                     <span className="hidden-xs hidden-sm">Edit</span>
-                                  </a>
+                                  </Link>
                                   <a
                                     href="#"
                                     className="action-icon text-danger"
