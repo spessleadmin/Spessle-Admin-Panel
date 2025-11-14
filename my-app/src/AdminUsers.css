@@ -367,6 +367,11 @@ ease-in-out;
 .edit-btn {
   background: #feeddb;
   color: #8c6623;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  margin-right: 0.5rem;
+  border: none;
+  font-weight: 600;
 }
 .edit-btn:hover {
   background: #f6e3b0;
@@ -383,6 +388,14 @@ ease-in-out;
 }
 .delete-btn:hover {
   background: #eee3e9;
+}
+
+.action-icon {
+  color: #eb4762;
+  cursor: pointer;
+}
+.action-icon:hover {
+  color: #c72d46;
 }
 
 .admin-table-footer {

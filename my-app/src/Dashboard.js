@@ -15,13 +15,13 @@ export default function Dashboard() {
       icon: "settings",
       iconColor: "#73c4b9",
       value: "—",
-      label: "Totals Registered Business",
+      label: "Total Registered Businesses",
     },
     {
       icon: "calendar",
       iconColor: "#6ec2e4",
       value: "—",
-      label: "Newly Registered Business",
+      label: "Total Registered Businesses",
     },
   ]);
 
@@ -53,7 +53,7 @@ export default function Dashboard() {
             icon: "calendar",
             iconColor: "#6ec2e4",
             value: data.new_businesses_last_24h.toString(),
-            label: "Newly Registered Business (24h)",
+            label: "Newly Registered Businesses (24h)",
           },
         ]);
       })

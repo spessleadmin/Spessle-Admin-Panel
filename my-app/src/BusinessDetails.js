@@ -43,8 +43,8 @@ export default function BusinessDetails() {
     Ratings: businessDetails.businessreviews_on_business.length > 0 ? `${businessDetails.businessreviews_on_business.reduce((acc, review) => acc + review.rating, 0) / businessDetails.businessreviews_on_business.length}/5` : 'No ratings yet',
     Address: `${businessDetails.address}, ${businessDetails.city}, ${businessDetails.state} ${businessDetails.zipcode}`,
     Category: businessDetails.category.categoryname,
-    Tags: businessDetails.businesstagss_on_business.map(tag => tag.tag.name).join(', '),
-    Status: 'Unknown', // Status is not in the provided response
+    Tags: businessDetails.businesstagss_on_business.map(tag => tag.tag.tagname).join(', ') || 'None',
+    //Status: 'Unknown', // Status is not in the provided response
   } : {};
 
   return (
