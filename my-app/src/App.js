@@ -13,6 +13,7 @@ import EditNotification from "./EditNotification";
 import BusinessDetails from "./BusinessDetails"
 import EditBusiness from "./EditBusiness"
 import BusinessProducts from "./BusinessProducts"
+import EditUser from "./EditUser";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/business-details/:id" element={<BusinessDetails />} />
         <Route path="/edit-business/:id" element={<EditBusiness />} />
         <Route path="/business-products/:id" element={<BusinessProducts />} />
+        <Route path="/edit-user/:id" element={<EditUser />} />
       </Routes>
     </Router>
   );
