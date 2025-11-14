@@ -8,11 +8,14 @@ import EditProduct from "./EditProduct";
 import ManageProduct from "./ManageProduct";
 import ManageBusiness from "./ManageBusiness";
 import ManageCoupons from "./ManageCoupons";
+import ManageCategories from "./ManageCategories";
 import Notification from "./Notification";
 import EditNotification from "./EditNotification";
 import BusinessDetails from "./BusinessDetails"
 import EditBusiness from "./EditBusiness"
 import BusinessProducts from "./BusinessProducts"
+import ManageOrders from "./ManageOrders";
+import EditOrder from "./EditOrder";
 
 function App() {
   return (
@@ -26,6 +29,9 @@ function App() {
         <Route path="/manage-business" element={<ManageBusiness />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
+        <Route path="/manage-orders" element={<ManageOrders />} />
+        <Route path="/edit-order" element={<EditOrder />} />
+        <Route path="/manage-categories" element={<ManageCategories />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="/edit-notification/:id" element={<EditNotification />} />

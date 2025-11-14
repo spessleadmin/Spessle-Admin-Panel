@@ -1,0 +1,32 @@
+@import url('./ManageProduct.css');
+
+.rectangular-slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  position: relative;
+}
+
+.rectangular-slider.active {
+  background: linear-gradient(to right, #007bff 0%, #007bff 75%, white 75%, white 95%, #007bff 95%, #007bff 100%);
+}
+
+.rectangular-slider.inactive {
+  background: linear-gradient(to left, #dc3545 0%, #dc3545 75%, white 75%, white 95%, #dc3545 95%, #dc3545 100%);
+}
+
+.slider-text {
+  pointer-events: none; /* So the text doesn't interfere with the click */
+  z-index: 1;
+  font-size: 10px; /* Smaller font size */
+  text-align: center; /* Center the text */
+  width: 100%; /* Ensure it takes full width to center */
+}
