@@ -4,7 +4,7 @@ import Layout from "./Layout";
 import "./AdminUsers.css";
 import feather from "feather-icons";
 
-const roles = ["business", "customer", "Support Admin", "Vendor Admin"];
+const roles = ["business", "customer"];
 
 const formatRoleName = (roleName) => {
   if (!roleName) return '';
