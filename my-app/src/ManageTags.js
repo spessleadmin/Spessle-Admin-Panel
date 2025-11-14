@@ -1,0 +1,290 @@
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Layout from "./Layout";
+import "./ManageTags.css";
+import feather from "feather-icons";
+
+const transformApiTag = (apiTag) => ({
+  id: apiTag.id,
+  tagname: apiTag.tagname,
+  createddate: apiTag.createddate,
+  updateddate: apiTag.updateddate,
+});
+
+export default function ManageTags() {
+  const [search, setSearch] = useState("");
+  const [entriesPerPage, setEntriesPerPage] = useState("10");
+  
+  const [masterTagList, setMasterTagList] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('http://localhost:5050/tags');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        const transformedTags = data.tags.map(transformApiTag);
+        
+        setMasterTagList(transformedTags);
+        setTags(transformedTags);
+        
+      } catch (e) {
+        console.error("Failed to fetch tags:", e);
+        setError(e.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTags();
+  }, []);
+
+  const sortTags = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+
+    const sortedTags = [...tags].sort((a, b) => {
+      if (a[key] < b[key]) {
+        return direction === 'ascending' ? -1 : 1;
+      }
+      if (a[key] > b[key]) {
+        return direction === 'ascending' ? 1 : -1;
+      }
+      return 0;
+    });
+    setTags(sortedTags);
+  };
+
+  const handleTableSearch = value => {
+    setSearch(value);
+    if (!value.trim()) {
+      setTags(masterTagList);
+      setCurrentPage(1);
+      return;
+    }
+    const filtered = masterTagList.filter(t =>
+      t.tagname.toLowerCase().includes(value.toLowerCase())
+    );
+    setTags(filtered);
+    setCurrentPage(1);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this tag?")) {
+      // Here you would typically make an API call to delete the tag
+      // For now, we'll just filter it out from the state
+      const updatedTags = tags.filter(t => t.id !== id);
+      const updatedMasterList = masterTagList.filter(t => t.id !== id);
+
+      setTags(updatedTags);
+      setMasterTagList(updatedMasterList);
+    }
+  };
+
+  const indexOfLastEntry = currentPage * parseInt(entriesPerPage);
+  const indexOfFirstEntry = indexOfLastEntry - parseInt(entriesPerPage);
+  const currentEntries = tags.slice(indexOfFirstEntry, indexOfLastEntry);
+  const totalPages = Math.ceil(tags.length / parseInt(entriesPerPage));
+  
+  useEffect(() => {
+    feather.replace();
+  }, [currentEntries, isLoading, error]);
+
+  return (
+    <Layout>
+      <main className="manage-tags-page dashboard-main" style={{ width: '100%' }}>
+        <div className="row">
+          <div className="col-12">
+            <div className="page-title-box">
+              <h4 className="page-title">Manage Tags</h4>
+            </div>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-12">
+            <div className="card">
+              <div className="card-body">
+                <div className="dataTables_wrapper dt-bootstrap5 no-footer">
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <div className="dataTables_length" id="basic-datatable_length">
+                      <label className="form-label">
+                        Show{" "}
+                        <select
+                          name="basic-datatable_length"
+                          aria-controls="basic-datatable"
+                          className="form-select form-select-sm"
+                          value={entriesPerPage}
+                          onChange={e => {
+                            setEntriesPerPage(e.target.value);
+                            setCurrentPage(1);
+                          }}
+                        >
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                        </select>entries
+                      </label>
+                    </div>
+                    <div className="d-flex">
+                      <div id="basic-datatable_filter" className="dataTables_filter">
+                        <label>
+                          <input
+                            type="search"
+                            className="form-control form-control-sm"
+                            placeholder="Search..."
+                            aria-controls="basic-datatable"
+                            value={search}
+                            onChange={e => handleTableSearch(e.target.value)}
+                            style={{ width: '200px', height: '38px' }}
+                          />
+                        </label>
+                      </div>
+                      <button
+                        className="btn btn-blue btn-sm ms-2 add-user-table-btn"
+                        onClick={e => e.preventDefault()}
+                      >
+                        <i data-feather="plus"></i>Add Tag
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-sm-12">
+                      <table
+                        className="table dt-responsive nowrap w-100 dataTable no-footer dtr-inline"
+                        aria-describedby="basic-datatable_info"
+                      >
+                        <thead>
+                          <tr>
+                            <th className="sortable-header" onClick={() => sortTags('id')}>
+                              ID {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            </th>
+                            <th className="sortable-header" onClick={() => sortTags('tagname')}>
+                              Tag Name {sortConfig.key === 'tagname' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            </th>
+                            <th className="sortable-header" onClick={() => sortTags('createddate')}>
+                              Created Date {sortConfig.key === 'createddate' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            </th>
+                            <th className="sortable-header" onClick={() => sortTags('updateddate')}>
+                              Updated Date {sortConfig.key === 'updateddate' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            </th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        
+                        <tbody>
+                          {isLoading ? (
+                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Loading tags...</td></tr>
+                          ) : error ? (
+                            <tr><td colSpan="5" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                          ) : currentEntries.length === 0 ? (
+                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>No tags found.</td></tr>
+                          ) : (
+                            currentEntries.map((tag, idx) => (
+                              <tr key={tag.id} className={idx % 2 === 0 ? "odd" : "even"}>
+                                <td>{tag.id.substring(0, 8)}...</td>
+                                <td>{tag.tagname}</td>
+                                <td>{new Date(tag.createddate).toLocaleString()}</td>
+                                <td>{new Date(tag.updateddate).toLocaleString()}</td>
+                                <td>
+                                  <Link
+                                    to={`/edit-tag/${tag.id}`}
+                                    title="Edit"
+                                    className="btn btn-xs btn-warning edit-btn"
+                                  >
+                                    <i data-feather="edit"></i>
+                                    <span className="hidden-xs hidden-sm">Edit</span>
+                                  </Link>
+                                  <a
+                                    href="#"
+                                    className="action-icon text-danger"
+                                    onClick={e => {
+                                      e.preventDefault();
+                                      handleDelete(tag.id);
+                                    }}
+                                  >
+                                    <i data-feather="trash-2"></i>
+                                  </a>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-sm-12 col-md-5">
+                      <div className="dataTables_info" id="basic-datatable_info" role="status" aria-live="polite">
+                        Showing {tags.length > 0 ? indexOfFirstEntry + 1 : 0} to {Math.min(indexOfLastEntry, tags.length)} of {tags.length} entries
+                      </div>
+                    </div>
+                    <div className="col-sm-12 col-md-7">
+                      <div className="dataTables_paginate paging_simple_numbers" id="basic-datatable_paginate">
+                        <ul className="pagination pagination-rounded">
+                          <li className={`paginate_button page-item previous ${currentPage === 1 ? "disabled" : ""}`}>
+                            <a
+                              href="#"
+                              className="page-link"
+                              onClick={e => {
+                                e.preventDefault();
+                                if (currentPage > 1) setCurrentPage(currentPage - 1);
+                              }}
+                            >
+                              <i data-feather="chevron-left"></i>
+                            </a>
+                          </li>
+                          {[...Array(totalPages)].map((_, i) => (
+                            <li key={i} className={`paginate_button page-item ${currentPage === i + 1 ? "active" : ""}`}>
+                              <a
+                                href="#"
+                                className="page-link"
+                                onClick={e => {
+                                  e.preventDefault();
+                                  setCurrentPage(i + 1);
+                                }}
+                              >{i + 1}</a>
+                            </li>
+                          ))}
+                          <li className={`paginate_button page-item next ${currentPage === totalPages || totalPages === 0 ? "disabled" : ""}`}>
+                            <a
+                              href="#"
+                              className="page-link"
+                              onClick={e => {
+                                e.preventDefault();
+                                if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                              }}
+                            >
+                              <i data-feather="chevron-right"></i>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </Layout>
+  );
+}
