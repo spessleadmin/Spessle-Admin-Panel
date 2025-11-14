@@ -1,0 +1,96 @@
+.revenue-management-page .admin-card {
+  margin-bottom: 24px;
+}
+
+.stats-card-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.stat-box {
+  flex: 1;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 0.75rem 6rem rgba(56,65,74,.03);
+  border: 1px solid #f7f7f7;
+}
+
+.stat-box h5 {
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.stat-box .main-stat {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.stat-box .sub-stat {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.stat-box .sub-stat .text-success {
+  color: #0acf97;
+}
+
+.revenue-card .card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.revenue-card .btn-group {
+  margin-bottom: 20px;
+}
+
+.revenue-card .btn-group .btn {
+  margin-right: 5px;
+}
+
+.revenue-stat {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.revenue-stat .icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+}
+
+.revenue-stat .icon.bg-primary {
+  background-color: rgba(21,173,173, 0.2);
+  color: #15adad;
+}
+
+.revenue-stat .icon.bg-success {
+  background-color: rgba(0, 201, 167, 0.2);
+  color: #00c9a7;
+}
+
+.revenue-stat .icon.bg-danger {
+  background-color: rgba(255, 86, 48, 0.2);
+  color: #ff5630;
+}
+
+.revenue-stat .info .stat-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.revenue-stat .info .stat-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+}

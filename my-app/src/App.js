@@ -15,6 +15,7 @@ import EditBusiness from "./EditBusiness"
 import BusinessProducts from "./BusinessProducts"
 import EditUser from "./EditUser";
 import ManageTags from "./ManageTags";
+import RevenueManagement from "./RevenueManagement";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/business-products/:id" element={<BusinessProducts />} />
         <Route path="/edit-user/:id" element={<EditUser />} />
         <Route path="/manage-tags" element={<ManageTags />} />
+        <Route path="/revenue-management" element={<RevenueManagement />} />
       </Routes>
     </Router>
   );
