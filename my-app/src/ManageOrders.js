@@ -7,27 +7,19 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./ManageOrders.css"; 
 import feather from "feather-icons";
 
+const transformApiOrder = (apiOrder) => ({
+  orderNo: apiOrder.id,
+  customerName: apiOrder.user.username,
+  businessName: apiOrder.business.businessname,
+  orderDate: new Date(apiOrder.createddate).toLocaleString(),
+  totalAmount: `$${apiOrder.totalamount}`,
+  orderStatus: apiOrder.status || "Processing",
+});
+
 const ManageOrders = () => {
-  const orders = [
-    {
-      orderNo: "124",
-      customerName: "John Doe",
-      businessName: "Business A",
-      orderDate: "09/05/2025 12:25 PM",
-      orderMode: "Pickup",
-      totalAmount: "$150",
-      orderStatus: "Processing",
-    },
-    {
-      orderNo: "125",
-      customerName: "Jane Smith",
-      businessName: "Business B",
-      orderDate: "09/05/2025 12:30 PM",
-      orderMode: "Delivery",
-      totalAmount: "$200",
-      orderStatus: "Completed",
-    },
-  ];
+  const [masterOrderList, setMasterOrderList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [filters, setFilters] = useState({
     orderNo: "",
@@ -36,18 +28,44 @@ const ManageOrders = () => {
     orderDate: [null, null],
     status: "",
   });
-  const [filteredOrders, setFilteredOrders] = useState(orders);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
 
+  const fetchOrders = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('http://localhost:5050/orders');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      const transformedOrders = data.orders.map(transformApiOrder);
+      setMasterOrderList(transformedOrders);
+      setFilteredOrders(transformedOrders);
+    } catch (e) {
+      console.error("Failed to fetch orders:", e);
+      setError(e.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    feather.replace();
+    fetchOrders();
   }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      feather.replace();
+    }
+  }, [isLoading, filteredOrders, currentPage, entriesPerPage]);
 
   const handleFilterSearch = (e) => {
     e.preventDefault();
-    let filtered = orders.filter(order => {
+    let filtered = masterOrderList.filter(order => {
       const orderDate = new Date(order.orderDate);
       const [startDate, endDate] = filters.orderDate;
 
@@ -71,18 +89,18 @@ const ManageOrders = () => {
       orderDate: [null, null],
       status: "",
     });
-    setFilteredOrders(orders);
+    setFilteredOrders(masterOrderList);
     setCurrentPage(1);
   };
 
   const handleTableSearch = (value) => {
     setSearch(value);
     if (!value.trim()) {
-      setFilteredOrders(orders);
+      setFilteredOrders(masterOrderList);
       setCurrentPage(1);
       return;
     }
-    const filtered = orders.filter(order =>
+    const filtered = masterOrderList.filter(order =>
       order.customerName.toLowerCase().includes(value.toLowerCase()) ||
       order.businessName.toLowerCase().includes(value.toLowerCase()) ||
       order.orderNo.toLowerCase().includes(value.toLowerCase())
@@ -265,29 +283,37 @@ const ManageOrders = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {currentEntries.map((order, idx) => (
-                            <tr key={idx} className={idx % 2 === 0 ? "odd" : "even"}>
-                              <td>{order.orderNo}</td>
-                              <td>{order.customerName}</td>
-                              <td>{order.businessName}</td>
-                              <td>{order.orderDate}</td>
-                              <td>{order.totalAmount}</td>
-                              <td>
-                                <select className="form-control form-select form-select-sm" defaultValue={order.orderStatus}>
-                                  <option>Processing</option>
-                                  <option>Completed</option>
-                                  <option>Cancelled</option>
-                                  <option>New</option>
-                                </select>
-                              </td>
-                              <td className="action-cell">
-                                <Link to="/edit-order" className="tooltip-wrapper blue-square-icon">
-                                  <i data-feather="eye" className="blue-eye"></i>
-                                  <span className="tooltip-text">View Order Detail</span>
-                                </Link>
-                              </td>
-                            </tr>
-                          ))}
+                          {isLoading ? (
+                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>Loading orders...</td></tr>
+                          ) : error ? (
+                            <tr><td colSpan="7" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                          ) : currentEntries.length === 0 ? (
+                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>No orders found.</td></tr>
+                          ) : (
+                            currentEntries.map((order, idx) => (
+                              <tr key={order.orderNo} className={idx % 2 === 0 ? "odd" : "even"}>
+                                <td>{order.orderNo.substring(0, 8)}...</td>
+                                <td>{order.customerName}</td>
+                                <td>{order.businessName}</td>
+                                <td>{order.orderDate}</td>
+                                <td>{order.totalAmount}</td>
+                                <td>
+                                  <select className="form-control form-select form-select-sm" defaultValue={order.orderStatus}>
+                                    <option>Processing</option>
+                                    <option>Completed</option>
+                                    <option>Cancelled</option>
+                                    <option>New</option>
+                                  </select>
+                                </td>
+                                <td className="action-cell">
+                                  <Link to="/edit-order" className="tooltip-wrapper blue-square-icon">
+                                    <i data-feather="eye" className="blue-eye"></i>
+                                    <span className="tooltip-text">View Order Detail</span>
+                                  </Link>
+                                </td>
+                              </tr>
+                            ))
+                          )}
                         </tbody>
                       </table>
                     </div>
