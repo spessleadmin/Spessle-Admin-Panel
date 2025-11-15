@@ -8,7 +8,7 @@ const initialSidebarLinks = [
   { label: "User Management", icon: "users", href: "/admin-users" },
   { label: "Manage Business", icon: "briefcase", href: "/manage-business" },
   { label: "Manage Categories", icon: "grid", href: "/manage-categories" },
-  { label: "Manage Attributes", icon: "file-text", href: "/manage-attributes" },
+  { label: "Manage Tags", icon: "tag", href: "/manage-tags" },
   { label: "Manage Product", icon: "package", href: "/manage-product" },
   { label: "Manage Orders", icon: "shopping-cart", href: "/manage-orders" },
   { label: "Manage Reviews & Ratings", icon: "star", href: "/manage-reviews" },
@@ -117,18 +117,6 @@ export default function Sidebar({ isCollapsed }) {
           );
         })}
       </div>
-      {!isCollapsed && (
-        <footer className="sidebar-footer">
-          2025 © wesite design by{" "}
-          <a
-            href="https://ncrts.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ncrts.com
-          </a>
-        </footer>
-      )}
     </aside>
   );
 }
