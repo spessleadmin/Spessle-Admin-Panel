@@ -306,7 +306,7 @@ const ManageOrders = () => {
                                   </select>
                                 </td>
                                 <td className="action-cell">
-                                  <Link to="/edit-order" className="tooltip-wrapper blue-square-icon">
+                                  <Link to={`/edit-order/${order.orderNo}`} className="tooltip-wrapper blue-square-icon">
                                     <i data-feather="eye" className="blue-eye"></i>
                                     <span className="tooltip-text">View Order Detail</span>
                                   </Link>

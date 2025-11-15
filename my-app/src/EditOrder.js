@@ -6,59 +6,65 @@ import "./EditOrder.css";
 import feather from "feather-icons";
 
 const EditOrder = () => {
-  const { id } = useParams(); // If you plan to use dynamic order IDs
-  const [orderInfo, setOrderInfo] = useState({
-    orderNumber: "124",
-    orderPrice: "$150",
-    orderDate: "09/05/2025 12:25 PM",
-    customerName: "John Doe",
-    customerEmail: "john.doe@example.com",
-    customerPhone: "+1234567890",
-    businessName: "Business A",
-    businessAddress: "123 Main St, Anytown, USA",
-    businessPhone: "+1987654321",
-    orderStatus: "Processing",
-    notes: "Order confirmed by the business.",
-  });
-
-  const [itemDetails, setItemDetails] = useState([
-    { itemName: "Item 1", price: 50, quantity: 2, amount: 100 },
-    { itemName: "Item 2", price: 50, quantity: 1, amount: 50 },
-  ]);
+  const { orderID } = useParams();
+  const [orderInfo, setOrderInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    feather.replace();
-  }, []);
+    const fetchOrderDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:5050/orders/${orderID}`);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setOrderInfo(data.order);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
+    };
 
-  const handleOrderInfoChange = (e) => {
-    const { name, value } = e.target;
-    setOrderInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
+    fetchOrderDetails();
+  }, [orderID]);
+
+  useEffect(() => {
+    if (!loading) {
+      feather.replace();
+    }
+  }, [loading]);
+
+  const handleStatusChange = (e) => {
+    const { value } = e.target;
+    setOrderInfo((prevInfo) => ({ ...prevInfo, status: value }));
   };
 
-  const handleSaveOrderInfo = () => {
-    console.log("Saving Order Information:", orderInfo);
-    // API call to save order info
+  const handleSaveStatus = () => {
+    console.log("Saving Order Status:", orderInfo.status);
+    // API call to save order status
   };
 
-  const handleResetOrderInfo = () => {
-    // Reset to initial state or fetched state
-    console.log("Resetting Order Information");
-  };
+  if (loading) {
+    return (
+      <Layout>
+        <main className="manage-product-page dashboard-main" style={{ width: "100%" }}>
+          <div>Loading...</div>
+        </main>
+      </Layout>
+    );
+  }
 
-  const handleAddNote = () => {
-    console.log("Adding note:", orderInfo.notes);
-    // API call to add note
-  };
-
-  const calculateSubTotal = () => {
-    return itemDetails.reduce((sum, item) => sum + item.amount, 0);
-  };
-
-  const subTotal = calculateSubTotal();
-  const serviceCharge = subTotal * 0.10;
-  const tax = subTotal * 0.064;
-  const deliveryCharge = 7.00;
-  const netAmount = subTotal + serviceCharge + tax + deliveryCharge;
+  if (error) {
+    return (
+      <Layout>
+        <main className="manage-product-page dashboard-main" style={{ width: "100%" }}>
+          <div>Error: {error.message}</div>
+        </main>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -84,8 +90,8 @@ const EditOrder = () => {
                       <select
                         className="form-control form-select form-select-sm"
                         name="orderStatus"
-                        value={orderInfo.orderStatus}
-                        onChange={handleOrderInfoChange}
+                        value={orderInfo.status || "New"}
+                        onChange={handleStatusChange}
                       >
                         <option>Processing</option>
                         <option>Completed</option>
@@ -94,11 +100,8 @@ const EditOrder = () => {
                       </select>
                     </div>
                     <div className="admin-filter-col filter-actions buttons-row">
-                      <button type="button" className="btn btn-blue admin-filter-button" onClick={handleSaveOrderInfo}>
+                      <button type="button" className="btn btn-blue admin-filter-button" onClick={handleSaveStatus}>
                         Save
-                      </button>
-                      <button type="button" className="btn btn-secondary admin-filter-button" onClick={handleResetOrderInfo}>
-                        Reset
                       </button>
                     </div>
                   </div>
@@ -122,8 +125,7 @@ const EditOrder = () => {
                         type="text"
                         className="form-control"
                         name="orderNumber"
-                        value={orderInfo.orderNumber}
-                        onChange={handleOrderInfoChange}
+                        value={orderInfo.id}
                         readOnly
                       />
                     </div>
@@ -133,8 +135,7 @@ const EditOrder = () => {
                         type="text"
                         className="form-control"
                         name="orderPrice"
-                        value={orderInfo.orderPrice}
-                        onChange={handleOrderInfoChange}
+                        value={`$${orderInfo.totalamount}`}
                         readOnly
                       />
                     </div>
@@ -144,8 +145,7 @@ const EditOrder = () => {
                         type="text"
                         className="form-control"
                         name="orderDate"
-                        value={orderInfo.orderDate}
-                        onChange={handleOrderInfoChange}
+                        value={new Date(orderInfo.createddate).toLocaleString()}
                         readOnly
                       />
                     </div>
@@ -170,8 +170,7 @@ const EditOrder = () => {
                         type="text"
                         className="form-control"
                         name="customerName"
-                        value={orderInfo.customerName}
-                        onChange={handleOrderInfoChange}
+                        value={orderInfo.user.username}
                         readOnly
                       />
                     </div>
@@ -181,8 +180,7 @@ const EditOrder = () => {
                         type="text"
                         className="form-control"
                         name="customerEmail"
-                        value={orderInfo.customerEmail}
-                        onChange={handleOrderInfoChange}
+                        value={orderInfo.user.email}
                         readOnly
                       />
                     </div>
@@ -192,8 +190,7 @@ const EditOrder = () => {
                         type="text"
                         className="form-control"
                         name="customerPhone"
-                        value={orderInfo.customerPhone}
-                        onChange={handleOrderInfoChange}
+                        value={orderInfo.user.phonenum || "N/A"}
                         readOnly
                       />
                     </div>
@@ -218,8 +215,7 @@ const EditOrder = () => {
                         type="text"
                         className="form-control"
                         name="businessName"
-                        value={orderInfo.businessName}
-                        onChange={handleOrderInfoChange}
+                        value={orderInfo.business.businessname}
                         readOnly
                       />
                     </div>
@@ -229,8 +225,7 @@ const EditOrder = () => {
                         type="text"
                         className="form-control"
                         name="businessAddress"
-                        value={orderInfo.businessAddress}
-                        onChange={handleOrderInfoChange}
+                        value={`${orderInfo.business.address}, ${orderInfo.business.city}, ${orderInfo.business.state} ${orderInfo.business.zipcode}`}
                         readOnly
                       />
                     </div>
@@ -240,42 +235,9 @@ const EditOrder = () => {
                         type="text"
                         className="form-control"
                         name="businessPhone"
-                        value={orderInfo.businessPhone}
-                        onChange={handleOrderInfoChange}
+                        value={orderInfo.business.phonenum}
                         readOnly
                       />
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Notes Card */}
-        <div className="row">
-          <div className="col-12">
-            <div className="admin-card card">
-              <div className="card-body">
-                <div className="admin-filter-title header-title">Notes</div>
-                <form className="admin-filter-form">
-                  <div className="admin-filter-row">
-                    <div className="admin-filter-col" style={{ flex: '1 1 100%' }}>
-                      <label>Add New Note</label>
-                      <textarea
-                        className="form-control"
-                        name="notes"
-                        rows="3"
-                        value={orderInfo.notes}
-                        onChange={handleOrderInfoChange}
-                      ></textarea>
-                    </div>
-                  </div>
-                  <div className="admin-filter-row">
-                    <div className="admin-filter-col filter-actions buttons-row">
-                      <button type="button" className="btn btn-blue admin-filter-button" onClick={handleAddNote}>
-                        Add Note
-                      </button>
                     </div>
                   </div>
                 </form>
@@ -290,47 +252,17 @@ const EditOrder = () => {
             <div className="admin-card card">
               <div className="card-body">
                 <div className="admin-filter-title header-title">Item Details</div>
-                <div className="table-responsive">
-                  <table className="table item-details-table">
-                    <thead>
-                      <tr>
-                        <th>Item Name</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {itemDetails.map((item, idx) => (
-                        <tr key={idx}>
-                          <td>{item.itemName}</td>
-                          <td>${item.price.toFixed(2)}</td>
-                          <td>{item.quantity}</td>
-                          <td>${item.amount.toFixed(2)}</td>
-                        </tr>
-                      ))}
-                      <tr>
-                        <td colSpan="3" className="text-right"><strong>Sub Total:</strong></td>
-                        <td>${subTotal.toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan="3" className="text-right"><strong>Service Charge:</strong></td>
-                        <td>${serviceCharge.toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan="3" className="text-right"><strong>Tax:</strong></td>
-                        <td>${tax.toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan="3" className="text-right"><strong>Delivery Charge:</strong></td>
-                        <td>${deliveryCharge.toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan="3" className="text-right"><strong>Net Amount:</strong></td>
-                        <td>${netAmount.toFixed(2)}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <div className="admin-filter-row">
+                  <div className="admin-filter-col">
+                    <label>Net Amount</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="netAmount"
+                      value={`$${orderInfo.totalamount}`}
+                      readOnly
+                    />
+                  </div>
                 </div>
               </div>
             </div>
