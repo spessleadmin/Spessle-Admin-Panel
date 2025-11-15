@@ -38,6 +38,9 @@ function App() {
         <Route path="/business-details/:id" element={<BusinessDetails />} />
         <Route path="/edit-business/:id" element={<EditBusiness />} />
         <Route path="/business-products/:id" element={<BusinessProducts />} />
+        <Route path="/edit-user/:id" element={<EditUser />} />
+        <Route path="/manage-tags" element={<ManageTags />} />
+        <Route path="/revenue-management" element={<RevenueManagement />} />
       </Routes>
     </Router>
   );

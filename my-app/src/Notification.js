@@ -5,11 +5,11 @@ import "./Notification.css";
 import feather from "feather-icons";
 
 const placeholderNotifications = [
-  { id: 1, name: 'Business A', dateTime: '2022-08-21 10:00', medium: 'Email', message: 'Your order has been shipped.' },
-  { id: 2, name: 'Customer B', dateTime: '2022-08-22 11:30', medium: 'SMS', message: 'Your appointment is confirmed.' },
-  { id: 3, name: 'Business C', dateTime: '2022-08-23 14:00', medium: 'App', message: 'New promotion available.' },
-  { id: 4, name: 'Customer D', dateTime: '2022-08-24 16:45', medium: 'Email', message: 'Your invoice is ready.' },
-  { id: 5, name: 'Business E', dateTime: '2022-08-25 09:00', medium: 'SMS', message: 'Your table reservation is successful.' },
+  { id: 1, name: 'Business A', dateTime: '2022-08-21 10:00', orderId: '12345', message: 'Your order has been shipped.' },
+  { id: 2, name: 'Customer B', dateTime: '2022-08-22 11:30', orderId: '12346', message: 'Your appointment is confirmed.' },
+  { id: 3, name: 'Business C', dateTime: '2022-08-23 14:00', orderId: '12347', message: 'New promotion available.' },
+  { id: 4, name: 'Customer D', dateTime: '2022-08-24 16:45', orderId: '12348', message: 'Your invoice is ready.' },
+  { id: 5, name: 'Business E', dateTime: '2022-08-25 09:00', orderId: '12349', message: 'Your table reservation is successful.' },
 ];
 
 export default function Notification() {
@@ -53,7 +53,7 @@ export default function Notification() {
     }
     const filtered = placeholderNotifications.filter(n =>
       n.name.toLowerCase().includes(value.toLowerCase()) ||
-      n.medium.toLowerCase().includes(value.toLowerCase()) ||
+      n.orderId.toLowerCase().includes(value.toLowerCase()) ||
       n.message.toLowerCase().includes(value.toLowerCase())
     );
     setNotifications(filtered);
@@ -188,7 +188,7 @@ export default function Notification() {
                           <tr>
                             <th>Name</th>
                             <th>Date & Time</th>
-                            <th>Notification Medium</th>
+                            <th>Order ID</th>
                             <th>Notification Message</th>
                             <th>Action</th>
                           </tr>
@@ -202,7 +202,7 @@ export default function Notification() {
                               <tr key={notification.id} className={idx % 2 === 0 ? "odd" : "even"}>
                                 <td>{notification.name}</td>
                                 <td>{notification.dateTime}</td>
-                                <td>{notification.medium}</td>
+                                <td>{notification.orderId}</td>
                                 <td>{notification.message}</td>
                                 <td>
                                   <Link

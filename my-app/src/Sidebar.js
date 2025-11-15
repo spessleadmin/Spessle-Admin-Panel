@@ -5,19 +5,10 @@ import "./Sidebar.css";
 
 const initialSidebarLinks = [
   { label: "Dashboard", icon: "layout", href: "/dashboard" },
-  {
-    label: "User Management",
-    icon: "users",
-    hasSub: true,
-    isOpen: false,
-    subItems: [
-      { label: "Manage Admin Users", href: "/admin-users" },
-      { label: "Customer Management", href: "/customer-management" },
-    ],
-  },
+  { label: "User Management", icon: "users", href: "/admin-users" },
   { label: "Manage Business", icon: "briefcase", href: "/manage-business" },
   { label: "Manage Categories", icon: "grid", href: "/manage-categories" },
-  { label: "Manage Attributes", icon: "file-text", href: "/manage-attributes" },
+  { label: "Manage Tags", icon: "tag", href: "/manage-tags" },
   { label: "Manage Product", icon: "package", href: "/manage-product" },
   { label: "Manage Orders", icon: "shopping-cart", href: "/manage-orders" },
   { label: "Manage Reviews & Ratings", icon: "star", href: "/manage-reviews" },
@@ -59,7 +50,7 @@ export default function Sidebar({ isCollapsed }) {
 
   useEffect(() => {
     feather.replace();
-  }, [location.pathname, isCollapsed, sidebarLinks]);
+  }, [location.pathname, isCollapsed]);
 
   const handleLinkClick = (index) => {
     const newSidebarLinks = [...sidebarLinks];
