@@ -66,12 +66,12 @@ export default function ManageTags() {
 
   const handleConfirmClick = async (tagId) => {
     try {
-      const response = await fetch(`http://localhost:5050/tags/${tagId}/name`, {
-        method: 'POST',
+      const response = await fetch(`http://localhost:5050/tags/${tagId}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: editingTagName }),
+        body: JSON.stringify({ "tagname": editingTagName }),
       });
 
       if (!response.ok) {
@@ -141,13 +141,43 @@ export default function ManageTags() {
     setCurrentPage(1);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this tag?")) {
-      const updatedTags = tags.filter(t => t.id !== id);
-      const updatedMasterList = masterTagList.filter(t => t.id !== id);
+      try {
+        const response = await fetch(`http://localhost:5050/tags/${id}`, {
+          method: 'DELETE',
+        });
 
-      setTags(updatedTags);
-      setMasterTagList(updatedMasterList);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        await fetchTags(); // Re-fetch to get the latest data
+      } catch (error) {
+        console.error("Failed to delete tag:", error);
+        // Optionally, show an error message to the user
+      }
+    }
+  };
+
+  const handleAddTag = async () => {
+    try {
+      const response = await fetch('http://localhost:5050/tags', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tagname: 'New Tag' }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      await fetchTags(); // Re-fetch to get the latest data
+    } catch (error) {
+      console.error("Failed to add tag:", error);
+      // Optionally, show an error message to the user
     }
   };
 
@@ -251,7 +281,7 @@ export default function ManageTags() {
                       </div>
                       <button
                         className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                        onClick={e => e.preventDefault()}
+                        onClick={handleAddTag}
                       >
                         <span dangerouslySetInnerHTML={{ __html: feather.icons.plus.toSvg({ width: 16, height: 16 }) }} />
                         Add Tag

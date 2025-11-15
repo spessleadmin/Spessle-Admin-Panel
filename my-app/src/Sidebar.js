@@ -117,18 +117,6 @@ export default function Sidebar({ isCollapsed }) {
           );
         })}
       </div>
-      {!isCollapsed && (
-        <footer className="sidebar-footer">
-          2025 © wesite design by{" "}
-          <a
-            href="https://ncrts.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ncrts.com
-          </a>
-        </footer>
-      )}
     </aside>
   );
 }
