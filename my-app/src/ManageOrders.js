@@ -8,17 +8,6 @@ import "./ManageOrders.css";
 import feather from "feather-icons";
 
 const ManageOrders = () => {
-  const [filters, setFilters] = useState({
-    orderNo: "",
-    customerName: "",
-    businessName: "",
-    orderDate: [null, null],
-    status: "",
-  });
-  const [search, setSearch] = useState("");
-  const [entriesPerPage, setEntriesPerPage] = useState("10");
-  const [currentPage, setCurrentPage] = useState(1);
-
   const orders = [
     {
       orderNo: "124",
@@ -40,32 +29,72 @@ const ManageOrders = () => {
     },
   ];
 
+  const [filters, setFilters] = useState({
+    orderNo: "",
+    username: "",
+    businessName: "",
+    orderDate: [null, null],
+    status: "",
+  });
+  const [filteredOrders, setFilteredOrders] = useState(orders);
+  const [search, setSearch] = useState("");
+  const [entriesPerPage, setEntriesPerPage] = useState("10");
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     feather.replace();
   }, []);
 
   const handleFilterSearch = (e) => {
     e.preventDefault();
+    let filtered = orders.filter(order => {
+      const orderDate = new Date(order.orderDate);
+      const [startDate, endDate] = filters.orderDate;
+
+      return (
+        (filters.orderNo ? order.orderNo.includes(filters.orderNo) : true) &&
+        (filters.username ? order.customerName.toLowerCase().includes(filters.username.toLowerCase()) : true) &&
+        (filters.businessName ? order.businessName.toLowerCase().includes(filters.businessName.toLowerCase()) : true) &&
+        (filters.status ? order.orderStatus === filters.status : true) &&
+        (startDate && endDate ? orderDate >= startDate && orderDate <= endDate : true)
+      );
+    });
+    setFilteredOrders(filtered);
+    setCurrentPage(1);
   };
 
   const handleFilterReset = () => {
     setFilters({
       orderNo: "",
-      customerName: "",
+      username: "",
       businessName: "",
       orderDate: [null, null],
       status: "",
     });
+    setFilteredOrders(orders);
+    setCurrentPage(1);
   };
 
   const handleTableSearch = (value) => {
     setSearch(value);
+    if (!value.trim()) {
+      setFilteredOrders(orders);
+      setCurrentPage(1);
+      return;
+    }
+    const filtered = orders.filter(order =>
+      order.customerName.toLowerCase().includes(value.toLowerCase()) ||
+      order.businessName.toLowerCase().includes(value.toLowerCase()) ||
+      order.orderNo.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredOrders(filtered);
+    setCurrentPage(1);
   };
 
   const indexOfLastEntry = currentPage * parseInt(entriesPerPage);
   const indexOfFirstEntry = indexOfLastEntry - parseInt(entriesPerPage);
-  const currentEntries = orders.slice(indexOfFirstEntry, indexOfLastEntry);
-  const totalPages = Math.ceil(orders.length / parseInt(entriesPerPage));
+  const currentEntries = filteredOrders.slice(indexOfFirstEntry, indexOfLastEntry);
+  const totalPages = Math.ceil(filteredOrders.length / parseInt(entriesPerPage));
 
   return (
     <Layout>
@@ -98,16 +127,16 @@ const ManageOrders = () => {
                       />
                     </div>
                     <div className="admin-filter-col">
-                      <label>Customer Name</label>
+                      <label>Username</label>
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Customer Name"
-                        value={filters.customerName}
+                        placeholder="Username"
+                        value={filters.username}
                         onChange={(e) =>
                           setFilters({
                             ...filters,
-                            customerName: e.target.value,
+                            username: e.target.value,
                           })
                         }
                       />
@@ -226,11 +255,10 @@ const ManageOrders = () => {
                       >
                         <thead>
                           <tr>
-                            <th>Order No.</th>
-                            <th>Customer Name</th>
+                            <th>ID</th>
+                            <th>Username</th>
                             <th>Business Name</th>
                             <th>Order Date</th>
-                            <th>Order Mode</th>
                             <th>Total Amount</th>
                             <th>Order Status</th>
                             <th>Action</th>
@@ -243,7 +271,6 @@ const ManageOrders = () => {
                               <td>{order.customerName}</td>
                               <td>{order.businessName}</td>
                               <td>{order.orderDate}</td>
-                              <td>{order.orderMode}</td>
                               <td>{order.totalAmount}</td>
                               <td>
                                 <select className="form-control form-select form-select-sm" defaultValue={order.orderStatus}>
@@ -274,8 +301,8 @@ const ManageOrders = () => {
                         role="status"
                         aria-live="polite"
                       >
-                        Showing {orders.length > 0 ? indexOfFirstEntry + 1 : 0} to{" "}
-                        {Math.min(indexOfLastEntry, orders.length)} of {orders.length} entries
+                        Showing {filteredOrders.length > 0 ? indexOfFirstEntry + 1 : 0} to{" "}
+                        {Math.min(indexOfLastEntry, filteredOrders.length)} of {filteredOrders.length} entries
                       </div>
                     </div>
                     <div className="col-sm-12 col-md-7">
