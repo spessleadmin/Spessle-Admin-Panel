@@ -32,6 +32,9 @@ function App() {
         <Route path="/manage-business" element={<ManageBusiness />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
+        <Route path="/manage-orders" element={<ManageOrders />} />
+        <Route path="/edit-order" element={<EditOrder />} />
+        <Route path="/manage-categories" element={<ManageCategories />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
         <Route path="/manage-categories" element={<ManageCategories />} />
         <Route path="/manage-orders" element={<ManageOrders />} />
