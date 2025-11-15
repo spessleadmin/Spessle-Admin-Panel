@@ -33,16 +33,13 @@ function App() {
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/manage-orders" element={<ManageOrders />} />
-        <Route path="/edit-order" element={<EditOrder />} />
         <Route path="/manage-categories" element={<ManageCategories />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
-        <Route path="/manage-categories" element={<ManageCategories />} />
-        <Route path="/manage-orders" element={<ManageOrders />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="/edit-notification/:id" element={<EditNotification />} />
         <Route path="/business-details/:id" element={<BusinessDetails />} />
         <Route path="/edit-business/:id" element={<EditBusiness />} />
-        <Route path="/edit-order/:id" element={<EditOrder />} />
+        <Route path="/edit-order/:orderID" element={<EditOrder />} />
         <Route path="/business-products/:id" element={<BusinessProducts />} />
         <Route path="/edit-user/:id" element={<EditUser />} />
         <Route path="/manage-tags" element={<ManageTags />} />
