@@ -23,6 +23,12 @@ export default function Dashboard() {
       value: "—",
       label: "Total Registered Businesses",
     },
+    {
+      icon: "settings",
+      iconColor: "#73c4b9",
+      value: "—",
+      label: "Newly Registered Businesses (24h)",
+    },
   ]);
 
   // ✅ Fetch real data from backend on component mount
@@ -53,7 +59,7 @@ export default function Dashboard() {
             icon: "settings",
             iconColor: "#73c4b9",
             value: data.total_businesses.toLocaleString(),
-            label: "Total Registered Businesseses",
+            label: "Total Registered Businesses",
           },
           {
             icon: "calendar",
