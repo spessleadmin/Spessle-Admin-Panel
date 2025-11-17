@@ -19,6 +19,7 @@ import EditUser from "./EditUser";
 import ManageTags from "./ManageTags";
 import RevenueManagement from "./RevenueManagement";
 import ManageCategories from "./ManageCategories";
+import BusinessOrders from "./BusinessOrders";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path="/edit-business/:id" element={<EditBusiness />} />
         <Route path="/edit-order/:orderID" element={<EditOrder />} />
         <Route path="/business-products/:id" element={<BusinessProducts />} />
+        <Route path="/business-orders/:businessID" element={<BusinessOrders />} />
         <Route path="/edit-user/:id" element={<EditUser />} />
         <Route path="/manage-tags" element={<ManageTags />} />
         <Route path="/revenue-management" element={<RevenueManagement />} />
