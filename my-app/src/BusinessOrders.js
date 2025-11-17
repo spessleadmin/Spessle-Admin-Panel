@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Layout from "./Layout";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./ManageOrders.css"; 
+import "./BusinessOrders.css"; 
 import feather from "feather-icons";
 
 const transformApiOrder = (apiOrder) => ({
@@ -16,7 +16,8 @@ const transformApiOrder = (apiOrder) => ({
   orderStatus: apiOrder.status || "Processing",
 });
 
-const ManageOrders = () => {
+const BusinessOrders = () => {
+  const { businessID } = useParams();
   const [masterOrderList, setMasterOrderList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,15 +38,15 @@ const ManageOrders = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:5050/orders');
+      const response = await fetch(`http://localhost:5050/businesses/${businessID}/orders`);
       if (!response.ok) {
         if (response.status === 404) {
           const errorData = await response.json();
-          if (errorData.message === 'No orders found') {
+          if (errorData.message === 'No orders found for this business') {
             setMasterOrderList([]);
             setFilteredOrders([]);
-            setError(null);
-            return;
+            setError(null); 
+            return; 
           }
         }
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -64,7 +65,7 @@ const ManageOrders = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [businessID]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -414,4 +415,4 @@ const ManageOrders = () => {
   );
 };
 
-export default ManageOrders;
+export default BusinessOrders;

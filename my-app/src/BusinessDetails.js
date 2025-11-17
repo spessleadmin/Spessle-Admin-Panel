@@ -65,7 +65,7 @@ export default function BusinessDetails() {
                 <div className="header-buttons">
                   <Link to={`/business-products/${id}`} className="btn btn-blue">Products</Link>
                   <button className="btn btn-blue">Users</button>
-                  <button className="btn btn-blue">Orders</button>
+                  <Link to={`/business-orders/${id}`} className="btn btn-blue">Orders</Link>
                   <button className="btn btn-blue">Financies</button>
                 </div>
                 <Link to={`/edit-business/${id}`} className="btn btn-red">
