@@ -9,17 +9,17 @@ export default function Dashboard() {
       icon: "users",
       iconColor: "#9178e3",
       value: "—", // placeholder
-      label: "Total Registered Customers",
+      label: "Total Customers",
+    },
+    {
+      icon: "users",
+      iconColor: "#9178e3",
+      value: "—", // placeholder
+      label: "Total Registered Users",
     },
     {
       icon: "settings",
       iconColor: "#73c4b9",
-      value: "—",
-      label: "Total Registered Businesses",
-    },
-    {
-      icon: "calendar",
-      iconColor: "#6ec2e4",
       value: "—",
       label: "Total Registered Businesses",
     },
@@ -41,13 +41,19 @@ export default function Dashboard() {
             icon: "users",
             iconColor: "#9178e3",
             value: data.total_customers.toLocaleString(),
-            label: "Total Registered Customers",
+            label: "Total Customers",
+          },
+          {
+            icon: "users",
+            iconColor: "#9178e3",
+            value: data.total_users.toLocaleString(),
+            label: "Total Registered Users",
           },
           {
             icon: "settings",
             iconColor: "#73c4b9",
             value: data.total_businesses.toLocaleString(),
-            label: "Totals Registered Business",
+            label: "Total Registered Businesseses",
           },
           {
             icon: "calendar",

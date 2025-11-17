@@ -64,7 +64,7 @@ export default function BusinessDetails() {
               <div className="card-header">
                 <div className="header-buttons">
                   <Link to={`/business-products/${id}`} className="btn btn-blue">Products</Link>
-                  <button className="btn btn-blue">Users</button>
+                  <Link to={`/business-reviews/${id}`} className="btn btn-blue">Reviews</Link>
                   <Link to={`/business-orders/${id}`} className="btn btn-blue">Orders</Link>
                   <button className="btn btn-blue">Financies</button>
                 </div>
