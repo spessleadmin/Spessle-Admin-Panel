@@ -40,6 +40,15 @@ const BusinessOrders = () => {
     try {
       const response = await fetch(`http://localhost:5050/businesses/${businessID}/orders`);
       if (!response.ok) {
+        if (response.status === 404) {
+          const errorData = await response.json();
+          if (errorData.message === 'No orders found for this business') {
+            setMasterOrderList([]);
+            setFilteredOrders([]);
+            setError(null); 
+            return; 
+          }
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
