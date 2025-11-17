@@ -81,13 +81,13 @@ const transformApiProduct = (apiProduct) => {
 
 
 
-  return {
+    return {
 
 
-    category: apiProduct.business.category.categoryname,
 
 
-    productName: apiProduct.productname,
+
+      productName: apiProduct.productname,
 
 
     cost: apiProduct.price,
@@ -132,25 +132,22 @@ export default function EditProduct() {
   const [initialProductState, setInitialProductState] = useState({});
 
 
-  const [productInfo, setProductInfo] = useState({
+    const [productInfo, setProductInfo] = useState({
 
 
-    category: "",
+      productName: "",
 
 
-    productName: "",
+      cost: "",
 
 
-    cost: "",
+      description: "",
 
 
-    description: "",
+      quantity: "",
 
 
-    quantity: "",
-
-
-  });
+    });
 
 
 
@@ -375,25 +372,22 @@ export default function EditProduct() {
         setInitialProductState(transformed);
 
 
-                setProductInfo({
+                                setProductInfo({
 
 
-                  category: transformed.category,
+                                  productName: transformed.productName,
 
 
-                  productName: transformed.productName,
+                                  cost: transformed.cost,
 
 
-                  cost: transformed.cost,
+                                  description: transformed.description,
 
 
-                  description: transformed.description,
+                                  quantity: transformed.quantity,
 
 
-                  quantity: transformed.quantity,
-
-
-                });
+                                });
 
 
                 setSelectedTags(transformed.tags);
@@ -948,49 +942,79 @@ export default function EditProduct() {
 
 
 
-      const handleProductInfoReset = () => {
+            const handleProductInfoReset = () => {
 
 
 
 
 
-        setProductInfo({
+  
 
 
 
 
 
-          category: initialProductState.category,
+              setProductInfo({
 
 
 
 
 
-          productName: initialProductState.productName,
+  
 
 
 
 
 
-          cost: initialProductState.cost,
+                productName: initialProductState.productName,
 
 
 
 
 
-          description: initialProductState.description,
+  
 
 
 
 
 
-          quantity: initialProductState.quantity,
+                cost: initialProductState.cost,
 
 
 
 
 
-        });
+  
+
+
+
+
+
+                description: initialProductState.description,
+
+
+
+
+
+  
+
+
+
+
+
+                quantity: initialProductState.quantity,
+
+
+
+
+
+  
+
+
+
+
+
+              });
 
 
 
@@ -1398,121 +1422,61 @@ export default function EditProduct() {
 
 
 
-                                    <div className="admin-filter-col">
+                                                                        <div className="admin-filter-col">
 
 
 
 
 
-                                      <label>Category</label>
+                                                                          <label>Product Name</label>
 
 
 
 
 
-                                      <input
+                                                                          <input
 
 
 
 
 
-                                        type="text"
+                                                                            type="text"
 
 
 
 
 
-                                        className="form-control"
+                                                                            className="form-control"
 
 
 
 
 
-                                        name="category"
+                                                                            name="productName"
 
 
 
 
 
-                                        value={productInfo.category}
+                                                                            value={productInfo.productName}
 
 
 
 
 
-                                        onChange={handleProductInfoChange}
+                                                                            onChange={handleProductInfoChange}
 
 
 
 
 
-                                      />
+                                                                          />
 
 
 
 
 
-                                    </div>
-
-
-
-
-
-                                    <div className="admin-filter-col">
-
-
-
-
-
-                                      <label>Product Name</label>
-
-
-
-
-
-                                      <input
-
-
-
-
-
-                                        type="text"
-
-
-
-
-
-                                        className="form-control"
-
-
-
-
-
-                                        name="productName"
-
-
-
-
-
-                                        value={productInfo.productName}
-
-
-
-
-
-                                        onChange={handleProductInfoChange}
-
-
-
-
-
-                                      />
-
-
-
-
-
-                                    </div>
+                                                                        </div>
 
 
 
