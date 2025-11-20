@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "./Layout";
+import api from "./utils/api";
 import "./BusinessProducts.css"; // Using the new CSS file
 import feather from "feather-icons";
 
@@ -46,7 +47,7 @@ export default function BusinessProducts() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:5050/businesses/${id}/products`);
+        const response = await api(`http://localhost:5050/businesses/${id}/products`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

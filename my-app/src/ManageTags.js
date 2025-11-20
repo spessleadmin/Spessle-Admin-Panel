@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./Layout";
+import api from "./utils/api";
 import "./ManageTags.css";
 import feather from "feather-icons";
 
@@ -31,7 +32,7 @@ export default function ManageTags() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:5050/tags');
+      const response = await api('http://localhost:5050/tags');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -66,7 +67,7 @@ export default function ManageTags() {
 
   const handleConfirmClick = async (tagId) => {
     try {
-      const response = await fetch(`http://localhost:5050/tags/${tagId}`, {
+      const response = await api(`http://localhost:5050/tags/${tagId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +145,7 @@ export default function ManageTags() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this tag?")) {
       try {
-        const response = await fetch(`http://localhost:5050/tags/${id}`, {
+        const response = await api(`http://localhost:5050/tags/${id}`, {
           method: 'DELETE',
         });
 
@@ -162,7 +163,7 @@ export default function ManageTags() {
 
   const handleAddTag = async () => {
     try {
-      const response = await fetch('http://localhost:5050/tags', {
+      const response = await api('http://localhost:5050/tags', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

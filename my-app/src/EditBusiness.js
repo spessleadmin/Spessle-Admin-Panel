@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import Select from "react-select";
 import Layout from "./Layout";
+import api from "./utils/api";
 import "./EditBusiness.css";
 import "./Dropify.css";
 import feather from "feather-icons";
@@ -45,7 +46,7 @@ export default function EditBusiness() {
   useEffect(() => {
     const fetchBusiness = async () => {
       try {
-        const response = await fetch(`http://localhost:5050/businesses/${id}`);
+        const response = await api(`http://localhost:5050/businesses/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -89,7 +90,7 @@ export default function EditBusiness() {
 
     const fetchTags = async () => {
       try {
-        const response = await fetch(`http://localhost:5050/tags`);
+        const response = await api(`http://localhost:5050/tags`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -107,7 +108,7 @@ export default function EditBusiness() {
 
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`http://localhost:5050/categories`);
+        const response = await api(`http://localhost:5050/categories`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -188,7 +189,7 @@ export default function EditBusiness() {
       formData.append("image", files[0]);
 
       try {
-        const response = await fetch(`http://localhost:5050/businesses/${id}/image`, {
+        const response = await api(`http://localhost:5050/businesses/${id}/image`, {
           method: "POST",
           body: formData,
         });
@@ -218,7 +219,7 @@ export default function EditBusiness() {
       };
 
       try {
-        const response = await fetch(`http://localhost:5050/businesses/${id}`, {
+        const response = await api(`http://localhost:5050/businesses/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

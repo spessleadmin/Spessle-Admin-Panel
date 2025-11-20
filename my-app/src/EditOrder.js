@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "./Layout";
+import api from "./utils/api";
 import "./EditOrder.css";
 import feather from "feather-icons";
 
@@ -14,7 +15,7 @@ const EditOrder = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5050/orders/${orderID}`);
+        const response = await api(`http://localhost:5050/orders/${orderID}`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }

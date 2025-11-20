@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Layout from "./Layout";
+import api from "./utils/api";
 import "./AdminUsers.css";
 import feather from "feather-icons";
 
@@ -25,7 +26,7 @@ export default function AdminUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5050/users');
+        const response = await api('http://localhost:5050/users');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

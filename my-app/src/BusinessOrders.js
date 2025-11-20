@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "./Layout";
+import api from "./utils/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./BusinessOrders.css"; 
@@ -38,7 +39,7 @@ const BusinessOrders = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:5050/businesses/${businessID}/orders`);
+      const response = await api(`http://localhost:5050/businesses/${businessID}/orders`);
       if (!response.ok) {
         if (response.status === 404) {
           const errorData = await response.json();

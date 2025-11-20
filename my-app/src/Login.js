@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import feather from "feather-icons";
+import Cookies from "js-cookie";
 import "./Login.css";
 
 const Login = () => {
@@ -32,6 +33,7 @@ const Login = () => {
         return;
       }
 
+      Cookies.set("token", data.idToken);
       navigate("/dashboard");
     } catch (err) {
       setError("Failed to login. Please try again.");
