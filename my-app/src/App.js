@@ -20,12 +20,14 @@ import ManageTags from "./ManageTags";
 import RevenueManagement from "./RevenueManagement";
 import ManageCategories from "./ManageCategories";
 import BusinessOrders from "./BusinessOrders";
+import Logout from "./Logout";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/test-page" element={<TestPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
