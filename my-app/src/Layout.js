@@ -2,12 +2,26 @@
 import React, { useState, useEffect } from "react";
 import feather from "feather-icons";
 import Sidebar from "./Sidebar";
+import api from "./utils/api";
 
 export default function Layout({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     feather.replace();
+
+    const fetchUserInfo = async () => {
+      try {
+        const response = await api("http://localhost:5050/user-info");
+        const data = await response.json();
+        setUser(data.user);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
+
+    fetchUserInfo();
   }, []);
 
   const toggleSidebar = () => {
@@ -41,15 +55,14 @@ export default function Layout({ children }) {
           </div>
           <div className="header-profile">
             <img
-              src="https://randomuser.me/api/portraits/women/44.jpg"
+              src={user ? user.profilepictureurl || "https://randomuser.me/api/portraits/women/44.jpg" : "https://randomuser.me/api/portraits/women/44.jpg"}
               alt="Profile"
               className="avatar"
               draggable="false"
             />
             <span>
-              Geneva
+              {user ? user.username : "Loading..."}
               <br />
-              <b>Spessle</b>
             </span>
             <i data-feather="chevron-down" className="dropdown-arrow"></i>
           </div>
