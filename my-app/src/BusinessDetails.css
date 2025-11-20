@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --ct-card-spacer-y: 1.5rem;
+  --ct-card-spacer-x: 1.5rem;
+  --ct-card-border-color: #f7f7f7;
+  --ct-card-bg: #fff;
+  --ct-card-title-spacer-y: 1.005rem;
+  --ct-card-box-shadow: 0 0.75rem 6rem rgba(56,65,74,.03);
+  --ct-card-border-radius: 0.25rem;
+  --ct-body-font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  --ct-body-font-size: 1rem;
+  --ct-body-font-weight: 400;
+  --ct-body-line-height: 1.5;
+  --ct-body-color: #23272f;
+  --ct-body-text-align: left;
+  --ct-body-bg: #f6f7fa;
+}
+
+.business-details-page {
+  padding: 24px 30px 38px 30px;
+  flex: 1;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.business-details-page h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 30px 0 24px 0;
+  letter-spacing: 0.01em;
+}
+
+.admin-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: var(--ct-card-bg);
+  background-clip: border-box;
+  border: 0 solid var(--ct-card-border-color);
+  border-radius: var(--ct-card-border-radius);
+  box-shadow: var(--ct-card-box-shadow);
+  color: var(--ct-card-color, #23272f);
+  padding: var(--ct-card-spacer-y) var(--ct-card-spacer-x);
+  margin-bottom: 26px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.header-buttons .btn {
+  margin-right: 10px;
+}
+
+.btn-red {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+}
+
+.btn-red .feather {
+  margin-right: 5px;
+}
+
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.details-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.details-table tr:last-child td {
+  border-bottom: none;
+}
+
+.details-table .label {
+  font-weight: 600;
+  width: 20%;
+}
