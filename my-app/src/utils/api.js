@@ -16,6 +16,10 @@ const api = async (url, options = {}) => {
     headers,
   });
 
+  if (response.status === 401) {
+    window.location.href = "/login";
+  }
+
   return response;
 };
 
