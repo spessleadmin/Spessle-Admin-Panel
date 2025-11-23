@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import feather from "feather-icons";
 
 const OptionManager = ({ productOptions, onAdd, onDelete }) => {
-  const [newOption, setNewOption] = useState({ name: "", type: "", value: "" });
+  const [newOption, setNewOption] = useState({ type: "", value: "" });
   const [newValue, setNewValue] = useState({}); // State for new values for existing options
 
   useEffect(() => {
@@ -15,9 +15,9 @@ const OptionManager = ({ productOptions, onAdd, onDelete }) => {
   };
 
   const handleAddNewOption = () => {
-    if (newOption.name && newOption.type && newOption.value) {
-      onAdd(newOption.name, newOption.type, newOption.value);
-      setNewOption({ name: "", type: "", value: "" });
+    if (newOption.type && newOption.value) {
+      onAdd(newOption.type, newOption.type, newOption.value);
+      setNewOption({ type: "", value: "" });
     } else {
       alert("Please fill in all fields for the new option.");
     }
@@ -56,40 +56,30 @@ const OptionManager = ({ productOptions, onAdd, onDelete }) => {
           <div className="col-md-4">
             <input
               type="text"
-              name="name"
+              name="type"
               className="form-control"
-              placeholder="Option Name (e.g., Color)"
-              value={newOption.name}
+              placeholder="Option Type (e.g., Size)"
+              value={newOption.type}
               onChange={handleNewOptionChange}
             />
           </div>
           <div className="col-md-4">
             <input
               type="text"
-              name="type"
-              className="form-control"
-              placeholder="Option Type (e.g., Swatch)"
-              value={newOption.type}
-              onChange={handleNewOptionChange}
-            />
-          </div>
-          <div className="col-md-3">
-            <input
-              type="text"
               name="value"
               className="form-control"
-              placeholder="Option Value (e.g., Red)"
+              placeholder="Option Value (e.g., Small)"
               value={newOption.value}
               onChange={handleNewOptionChange}
             />
           </div>
-          <div className="col-md-1">
+          <div className="col-md-2">
             <button
               type="button"
               className="btn btn-primary"
               onClick={handleAddNewOption}
             >
-              <i data-feather="plus"></i>
+              <i data-feather="plus"></i> Add
             </button>
           </div>
         </div>
