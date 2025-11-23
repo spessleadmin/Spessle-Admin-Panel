@@ -23,6 +23,7 @@ export default function EditProduct() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showOptionAddedToast, setShowOptionAddedToast] = useState(false);
+  const [productImages, setProductImages] = useState([]);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -93,6 +94,7 @@ export default function EditProduct() {
           option_value: option.optionValue,
         })) || []
       );
+      setProductImages(productData.productimages_on_product || []);
     } catch (error) {
       console.error("Failed to fetch product:", error);
     }
@@ -121,7 +123,7 @@ export default function EditProduct() {
 
   useEffect(() => {
     feather.replace();
-  }, [productInfo, productOptions]);
+  }, [productInfo, productOptions, productImages]);
 
   useEffect(() => {
     if (showSuccessToast) {
@@ -257,6 +259,24 @@ export default function EditProduct() {
     } catch (error) {
       console.error("Failed to delete product option:", error);
       alert("Failed to delete product option.");
+    }
+  };
+
+  const handleDeleteImage = async (imageId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5050/product-images/${imageId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete image");
+      }
+      setProductImages(productImages.filter((image) => image.id !== imageId));
+    } catch (error) {
+      console.error("Failed to delete image:", error);
+      alert("Failed to delete image.");
     }
   };
 
@@ -399,6 +419,31 @@ export default function EditProduct() {
               onAdd={handleAddOption}
               onDelete={handleDeleteOption}
             />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12">
+            <div className="admin-card card">
+              <div className="card-body">
+                <h4 className="header-title">Product Images</h4>
+                <div className="row">
+                  {productImages.map(image => (
+                    <div key={image.id} className="col-md-3">
+                      <div className="card position-relative">
+                        <img src={image.imageurl} className="card-img-top" alt="Product" style={{ height: '150px', objectFit: 'cover' }} />
+                        <button
+                          onClick={() => handleDeleteImage(image.id)}
+                          className="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
+                          style={{ zIndex: 10 }}
+                        >
+                          <i className="d-block" data-feather="trash-2"></i>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
