@@ -3,37 +3,10 @@ import { useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import Select from "react-select";
 import Layout from "./Layout";
+import OptionManager from "./components/OptionManager";
 import "./EditProduct.css";
 import "./Dropify.css";
 import feather from "feather-icons";
-
-const transformApiProduct = (apiProduct) => {
-  const options = {};
-  if (apiProduct.productoptionss_on_product) {
-    apiProduct.productoptionss_on_product.forEach(option => {
-      if (!options[option.optionType]) {
-        options[option.optionType] = { values: [], selectedValue: '' };
-      }
-      options[option.optionType].values.push(option.optionValue);
-    });
-    for (const optionType in options) {
-      if (options[optionType].values.length > 0) {
-        options[optionType].selectedValue = options[optionType].values[0];
-      }
-    }
-  }
-  return {
-    productName: apiProduct.productname,
-    cost: apiProduct.price,
-    description: apiProduct.description,
-    options: options,
-    quantity: apiProduct.quantity,
-    tags: apiProduct.producttags_on_product.map(tag => ({
-      value: tag.tag.id,
-      label: tag.tag.tagname,
-    })),
-  };
-};
 
 export default function EditProduct() {
   const { id } = useParams();
@@ -46,11 +19,6 @@ export default function EditProduct() {
   });
   const [files, setFiles] = useState([]);
   const [productOptions, setProductOptions] = useState([]);
-  const [newOption, setNewOption] = useState({
-    optionName: "",
-    optionType: "",
-    optionValue: "",
-  });
   const [tagOptions, setTagOptions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
 
@@ -97,16 +65,33 @@ export default function EditProduct() {
         const response = await fetch(`http://localhost:5050/products/${id}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        const transformed = transformApiProduct(data.product);
-        setInitialProductState(transformed);
+        const productData = data.product;
+        const initial = {
+          productName: productData.productname,
+          cost: productData.price,
+          description: productData.description,
+          quantity: productData.quantity,
+          tags: productData.producttags_on_product.map(tag => ({
+            value: tag.tag.id,
+            label: tag.tag.tagname,
+          })),
+        };
+        setInitialProductState(initial);
         setProductInfo({
-          productName: transformed.productName,
-          cost: transformed.cost,
-          description: transformed.description,
-          quantity: transformed.quantity,
+          productName: initial.productName,
+          cost: initial.cost,
+          description: initial.description,
+          quantity: initial.quantity,
         });
-        setSelectedTags(transformed.tags);
-        setProductOptions(data.product.productoptionss_on_product || []);
+        setSelectedTags(initial.tags);
+        setProductOptions(
+          productData.productoptionss_on_product.map(option => ({
+            productoptionsid: option.id,
+            option_name: option.optionName,
+            option_type: option.optionType,
+            option_value: option.optionValue,
+          })) || []
+        );
       } catch (error) {
         console.error("Failed to fetch product:", error);
       }
@@ -134,7 +119,7 @@ export default function EditProduct() {
 
   useEffect(() => {
     feather.replace();
-  }, [productInfo]);
+  }, [productInfo, productOptions]);
 
   const handleProductInfoChange = (e) => {
     const { name, value } = e.target;
@@ -206,29 +191,36 @@ export default function EditProduct() {
     setFiles([]);
   };
 
-  const handleNewOptionChange = (e) => {
-    const { name, value } = e.target;
-    setNewOption((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleAddOption = async (optionName, optionType, optionValue) => {
+    const payload = {
+      optionName: optionName,
+      optionType: optionType,
+      optionValue: optionValue,
+    };
 
-  const handleAddOption = async () => {
     try {
       const response = await fetch(`http://localhost:5050/products/${id}/options`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newOption),
+        body: JSON.stringify(payload),
       });
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const result = await response.json();
       const newOptionData = result.productOption;
+
       const newOptionForState = {
-        id: newOptionData.productoptionsid,
-        optionName: newOptionData.option_name,
-        optionType: newOptionData.option_type,
-        optionValue: newOptionData.option_value
+        productoptionsid: newOptionData.id,
+        option_name: newOptionData.optionName,
+        option_type: newOptionData.optionType,
+        option_value: newOptionData.optionValue,
       };
-      setProductOptions([...productOptions, newOptionForState]);
-      setNewOption({ optionName: "", optionType: "", optionValue: "" });
+
+      setProductOptions(prevOptions => [...prevOptions, newOptionForState]);
+
       alert("Product option added successfully!");
     } catch (error) {
       console.error("Failed to add product option:", error);
@@ -236,13 +228,26 @@ export default function EditProduct() {
     }
   };
 
-  const handleDeleteOption = async (optionId) => {
-    alert("Delete functionality not yet implemented.");
-  };
 
-  const handleEditProduct = () => {
-    console.log("Editing Product:", { ...productInfo });
-    // Placeholder for API call
+  const handleDeleteOption = async (optionId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5050/product-options/${optionId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      setProductOptions(
+        productOptions.filter((option) => option.productoptionsid !== optionId)
+      );
+      alert("Product option deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete product option:", error);
+      alert("Failed to delete product option.");
+    }
   };
 
   return (
@@ -359,82 +364,11 @@ export default function EditProduct() {
         </div>
         <div className="row">
           <div className="col-12">
-            <div className="admin-card card">
-              <div className="card-body">
-                <h4 className="header-title">Product Options</h4>
-                <div className="row">
-                  <div className="col-md-4">
-                    <div className="mb-3">
-                      <label htmlFor="newOptionName" className="form-label">Option Name</label>
-                      <input
-                        type="text"
-                        id="newOptionName"
-                        name="optionName"
-                        className="form-control"
-                        value={newOption.optionName}
-                        onChange={handleNewOptionChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="mb-3">
-                      <label htmlFor="newOptionType" className="form-label">Option Type</label>
-                      <input
-                        type="text"
-                        id="newOptionType"
-                        name="optionType"
-                        className="form-control"
-                        value={newOption.optionType}
-                        onChange={handleNewOptionChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="mb-3">
-                      <label htmlFor="newOptionValue" className="form-label">Option Value</label>
-                      <input
-                        type="text"
-                        id="newOptionValue"
-                        name="optionValue"
-                        className="form-control"
-                        value={newOption.optionValue}
-                        onChange={handleNewOptionChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <button type="button" className="btn btn-blue mb-3" onClick={handleAddOption}>Add Option</button>
-                <hr />
-                <h5 className="header-title">Existing Options</h5>
-                {Object.entries(
-                  productOptions.reduce((acc, option) => {
-                    const name = option.optionName || option.option_name;
-                    const value = option.optionValue || option.option_value;
-                    if (!acc[name]) {
-                      acc[name] = [];
-                    }
-                    acc[name].push(value);
-                    return acc;
-                  }, {})
-                ).map(([name, values]) => (
-                  <div key={name} className="row mb-2 align-items-center">
-                    <div className="col-md-2">
-                      <strong>{name}:</strong>
-                    </div>
-                    <div className="col-md-9">
-                      {values.map((value, index) => (
-                        <span key={index} className="badge bg-secondary me-1">{value}</span>
-                      ))}
-                    </div>
-                    <div className="col-md-1">
-                      <button type="button" className="btn btn-primary btn-sm">
-                        <i data-feather="plus"></i>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <OptionManager
+              productOptions={productOptions}
+              onAdd={handleAddOption}
+              onDelete={handleDeleteOption}
+            />
           </div>
         </div>
       </main>
