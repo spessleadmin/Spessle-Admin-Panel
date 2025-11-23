@@ -61,44 +61,44 @@ export default function EditProduct() {
     }
   };
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await fetch(`http://localhost:5050/products/${id}`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        const productData = data.product;
-        const initial = {
-          productName: productData.productname,
-          cost: productData.price,
-          description: productData.description,
-          quantity: productData.quantity,
-          tags: productData.producttags_on_product.map(tag => ({
-            value: tag.tag.id,
-            label: tag.tag.tagname,
-          })),
-        };
-        setInitialProductState(initial);
-        setProductInfo({
-          productName: initial.productName,
-          cost: initial.cost,
-          description: initial.description,
-          quantity: initial.quantity,
-        });
-        setSelectedTags(initial.tags);
-        setProductOptions(
-          productData.productoptionss_on_product.map(option => ({
-            productoptionsid: option.id,
-            option_name: option.optionName,
-            option_type: option.optionType,
-            option_value: option.optionValue,
-          })) || []
-        );
-      } catch (error) {
-        console.error("Failed to fetch product:", error);
-      }
-    };
+  const fetchProduct = useCallback(async () => {
+    try {
+      const response = await fetch(`http://localhost:5050/products/${id}`);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      const productData = data.product;
+      const initial = {
+        productName: productData.productname,
+        cost: productData.price,
+        description: productData.description,
+        quantity: productData.quantity,
+        tags: productData.producttags_on_product.map(tag => ({
+          value: tag.tag.id,
+          label: tag.tag.tagname,
+        })),
+      };
+      setInitialProductState(initial);
+      setProductInfo({
+        productName: initial.productName,
+        cost: initial.cost,
+        description: initial.description,
+        quantity: initial.quantity,
+      });
+      setSelectedTags(initial.tags);
+      setProductOptions(
+        productData.productoptionss_on_product.map(option => ({
+          productoptionsid: option.id,
+          option_name: option.optionName,
+          option_type: option.optionType,
+          option_value: option.optionValue,
+        })) || []
+      );
+    } catch (error) {
+      console.error("Failed to fetch product:", error);
+    }
+  }, [id]);
 
+  useEffect(() => {
     const fetchTags = async () => {
       try {
         const response = await fetch(`http://localhost:5050/tags`);
@@ -117,7 +117,7 @@ export default function EditProduct() {
 
     if (id) fetchProduct();
     fetchTags();
-  }, [id]);
+  }, [id, fetchProduct]);
 
   useEffect(() => {
     feather.replace();
@@ -229,17 +229,8 @@ export default function EditProduct() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
-      const newOptionData = result.productOption;
-
-      const newOptionForState = {
-        productoptionsid: newOptionData.id,
-        option_name: newOptionData.optionName,
-        option_type: newOptionData.optionType,
-        option_value: newOptionData.optionValue,
-      };
-
-      setProductOptions(prevOptions => [...prevOptions, newOptionForState]);
+      await response.json();
+      fetchProduct(); // Re-fetch product data
       setShowOptionAddedToast(true);
     } catch (error) {
       console.error("Failed to add product option:", error);
