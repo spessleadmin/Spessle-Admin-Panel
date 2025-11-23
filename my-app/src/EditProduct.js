@@ -232,7 +232,7 @@ export default function EditProduct() {
   const handleDeleteOption = async (optionId) => {
     try {
       const response = await fetch(
-        `http://localhost:5050/product-options/${optionId}`,
+        `http://localhost:5050/products/${id}/options/${optionId}`,
         {
           method: "DELETE",
         }
