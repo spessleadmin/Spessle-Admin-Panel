@@ -53,9 +53,9 @@ export default function EditProduct() {
         body: formData,
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const result = await response.json();
-      console.log("Image uploaded successfully:", result);
-      alert("Image uploaded successfully!");
+      await response.json();
+      fetchProduct(); // Re-fetch product data
+      setFiles([]); // Clear the selected file
     } catch (error) {
       console.error("Failed to upload image:", error);
       alert("Failed to upload image.");
@@ -153,7 +153,6 @@ export default function EditProduct() {
   };
 
   const handleProductInfoSave = async () => {
-    if (files.length > 0) await handleImageUpload();
     const initialTags = initialProductState.tags.map(t => t.value);
     const currentTags = selectedTags.map(t => t.value);
     const tagsToAdd = selectedTags.filter(t => !initialTags.includes(t.value));
@@ -316,29 +315,6 @@ export default function EditProduct() {
               <div className="card-body">
                 <div className="admin-filter-title header-title">Product Information</div>
                 <form className="admin-filter-form">
-                  <div {...getRootProps({ className: 'dropify-wrapper' })}>
-                    <input {...getInputProps()} />
-                    {files.length > 0 ? (
-                      <div className="dropify-preview">
-                        <span className="dropify-render">
-                          <img src={files[0].preview} alt={files[0].name} />
-                        </span>
-                        <div className="dropify-infos">
-                          <div className="dropify-infos-inner">
-                            <p className="dropify-filename">
-                              <span className="file-icon"></span> {files[0].name}
-                            </p>
-                            <p className="dropify-infos-message">Drag and drop or click to replace</p>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="dropify-message">
-                        <span className="file-icon"></span>
-                        <p>Drag and drop a file here or click</p>
-                      </div>
-                    )}
-                  </div>
                   <div className="admin-filter-row" style={{ marginTop: "20px" }}>
                     <div className="admin-filter-col">
                       <label>Product Name</label>
@@ -426,6 +402,36 @@ export default function EditProduct() {
             <div className="admin-card card">
               <div className="card-body">
                 <h4 className="header-title">Product Images</h4>
+                <div className="row mb-3">
+                  <div className="col-md-9">
+                    <div {...getRootProps({ className: 'dropify-wrapper' })}>
+                      <input {...getInputProps()} />
+                      {files.length > 0 ? (
+                        <div className="dropify-preview">
+                          <span className="dropify-render">
+                            <img src={files[0].preview} alt={files[0].name} />
+                          </span>
+                          <div className="dropify-infos">
+                            <div className="dropify-infos-inner">
+                              <p className="dropify-filename">
+                                <span className="file-icon"></span> {files[0].name}
+                              </p>
+                              <p className="dropify-infos-message">Drag and drop or click to replace</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="dropify-message">
+                          <span className="file-icon"></span>
+                          <p>Drag and drop a file here or click</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <button type="button" className="btn btn-primary" onClick={handleImageUpload}>Upload</button>
+                  </div>
+                </div>
                 <div className="row">
                   {productImages.map(image => (
                     <div key={image.id} className="col-md-3">
