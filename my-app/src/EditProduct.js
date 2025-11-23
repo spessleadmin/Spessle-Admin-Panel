@@ -21,6 +21,8 @@ export default function EditProduct() {
   const [productOptions, setProductOptions] = useState([]);
   const [tagOptions, setTagOptions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showOptionAddedToast, setShowOptionAddedToast] = useState(false);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -121,6 +123,24 @@ export default function EditProduct() {
     feather.replace();
   }, [productInfo, productOptions]);
 
+  useEffect(() => {
+    if (showSuccessToast) {
+      const timer = setTimeout(() => {
+        setShowSuccessToast(false);
+      }, 3000); // Hide after 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessToast]);
+
+  useEffect(() => {
+    if (showOptionAddedToast) {
+      const timer = setTimeout(() => {
+        setShowOptionAddedToast(false);
+      }, 3000); // Hide after 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [showOptionAddedToast]);
+
   const handleProductInfoChange = (e) => {
     const { name, value } = e.target;
     setProductInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
@@ -173,7 +193,7 @@ export default function EditProduct() {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const result = await response.json();
       console.log("Product updated successfully:", result);
-      alert("Product updated successfully!");
+      setShowSuccessToast(true);
     } catch (error) {
       console.error("Failed to update product:", error);
       alert("Failed to update product.");
@@ -220,8 +240,7 @@ export default function EditProduct() {
       };
 
       setProductOptions(prevOptions => [...prevOptions, newOptionForState]);
-
-      alert("Product option added successfully!");
+      setShowOptionAddedToast(true);
     } catch (error) {
       console.error("Failed to add product option:", error);
       alert("Failed to add product option.");
@@ -253,6 +272,26 @@ export default function EditProduct() {
   return (
     <Layout>
       <main className="manage-product-page dashboard-main" style={{ width: "100%" }}>
+        <div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 1100 }}>
+          <div id="liveToast" className={`toast ${showSuccessToast ? 'show' : 'hide'}`} role="alert" aria-live="assertive" aria-atomic="true">
+            <div className="toast-header">
+              <strong className="me-auto">Success</strong>
+              <button type="button" className="btn-close" onClick={() => setShowSuccessToast(false)} aria-label="Close"></button>
+            </div>
+            <div className="toast-body">
+              Product updated successfully!
+            </div>
+          </div>
+          <div id="optionAddedToast" className={`toast ${showOptionAddedToast ? 'show' : 'hide'}`} role="alert" aria-live="assertive" aria-atomic="true">
+            <div className="toast-header">
+              <strong className="me-auto">Success</strong>
+              <button type="button" className="btn-close" onClick={() => setShowOptionAddedToast(false)} aria-label="Close"></button>
+            </div>
+            <div className="toast-body">
+              Product option added successfully!
+            </div>
+          </div>
+        </div>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">

@@ -54,24 +54,32 @@ const OptionManager = ({ productOptions, onAdd, onDelete }) => {
         <h4 className="header-title">Product Options</h4>
         <div className="row">
           <div className="col-md-4">
-            <input
-              type="text"
-              name="type"
-              className="form-control"
-              placeholder="Option Type (e.g., Size)"
-              value={newOption.type}
-              onChange={handleNewOptionChange}
-            />
+            <div className="form-floating">
+              <input
+                type="text"
+                name="type"
+                id="floatingOptionType"
+                className="form-control"
+                placeholder="Option Type"
+                value={newOption.type}
+                onChange={handleNewOptionChange}
+              />
+              <label htmlFor="floatingOptionType">Option Type</label>
+            </div>
           </div>
           <div className="col-md-4">
-            <input
-              type="text"
-              name="value"
-              className="form-control"
-              placeholder="Option Value (e.g., Small)"
-              value={newOption.value}
-              onChange={handleNewOptionChange}
-            />
+            <div className="form-floating">
+              <input
+                type="text"
+                name="value"
+                id="floatingOptionValue"
+                className="form-control"
+                placeholder="Option Value"
+                value={newOption.value}
+                onChange={handleNewOptionChange}
+              />
+              <label htmlFor="floatingOptionValue">Option Value</label>
+            </div>
           </div>
           <div className="col-md-2">
             <button
@@ -108,13 +116,17 @@ const OptionManager = ({ productOptions, onAdd, onDelete }) => {
             </div>
             <div className="row mt-2">
               <div className="col-md-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Add new value..."
-                  value={newValue[name] || ""}
-                  onChange={(e) => handleNewValueChange(name, e.target.value)}
-                />
+                <div className="form-floating">
+                  <input
+                    type="text"
+                    id={`floatingNewValue-${name}`}
+                    className="form-control"
+                    placeholder="Add new value..."
+                    value={newValue[name] || ""}
+                    onChange={(e) => handleNewValueChange(name, e.target.value)}
+                  />
+                  <label htmlFor={`floatingNewValue-${name}`}>New Value</label>
+                </div>
               </div>
               <div className="col-md-2">
                 <button
