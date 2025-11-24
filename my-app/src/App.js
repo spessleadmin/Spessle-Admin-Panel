@@ -20,6 +20,7 @@ import ManageTags from "./ManageTags";
 import RevenueManagement from "./RevenueManagement";
 import ManageCategories from "./ManageCategories";
 import BusinessOrders from "./BusinessOrders";
+import ManageReviews from "./ManageReviews";
 import Logout from "./Logout";
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
         <Route path="/manage-business" element={<ManageBusiness />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
+        <Route path="/manage-reviews" element={<ManageReviews />} />
         <Route path="/manage-orders" element={<ManageOrders />} />
         <Route path="/manage-categories" element={<ManageCategories />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
