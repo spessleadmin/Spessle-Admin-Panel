@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Layout from "./Layout";
+import api from "./utils/api";
 import "./ManageBusiness.css"; // Using the same CSS file
 import feather from "feather-icons";
 
@@ -49,7 +50,7 @@ export default function ManageBusiness() {
       setError(null);
       try {
         // IMPORTANT: Replace with your actual business API endpoint
-        const response = await fetch(
+        const response = await api(
           "http://localhost:5050/businesses"
         );
         if (!response.ok) {

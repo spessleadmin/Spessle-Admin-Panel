@@ -1,29 +1,82 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import feather from "feather-icons";
+import useFeatureFlags from "./hooks/useFeatureFlags";
 import "./Sidebar.css";
 
 const initialSidebarLinks = [
-  { label: "Dashboard", icon: "layout", href: "/dashboard" },
-  { label: "User Management", icon: "users", href: "/admin-users" },
-  { label: "Manage Business", icon: "briefcase", href: "/manage-business" },
-  { label: "Manage Categories", icon: "grid", href: "/manage-categories" },
-  { label: "Manage Tags", icon: "tag", href: "/manage-tags" },
-  { label: "Manage Product", icon: "package", href: "/manage-product" },
-  { label: "Manage Orders", icon: "shopping-cart", href: "/manage-orders" },
-  { label: "Manage Reviews & Ratings", icon: "star", href: "/manage-reviews" },
+  {
+    label: "Dashboard",
+    icon: "layout",
+    href: "/dashboard",
+    featureFlag: "admin-dashboard",
+  },
+  {
+    label: "User Management",
+    icon: "users",
+    href: "/admin-users",
+    featureFlag: "admin-user-management",
+  },
+  {
+    label: "Manage Business",
+    icon: "briefcase",
+    href: "/manage-business",
+    featureFlag: "manage-business",
+  },
+  {
+    label: "Manage Categories",
+    icon: "grid",
+    href: "/manage-categories",
+    featureFlag: "manage-categories",
+  },
+  {
+    label: "Manage Tags",
+    icon: "tag",
+    href: "/manage-tags",
+    featureFlag: "manage-tags",
+  },
+  {
+    label: "Manage Product",
+    icon: "package",
+    href: "/manage-product",
+    featureFlag: "manage-product",
+  },
+  {
+    label: "Manage Orders",
+    icon: "shopping-cart",
+    href: "/manage-orders",
+    featureFlag: "manage-orders",
+  },
+  {
+    label: "Manage Reviews & Ratings",
+    icon: "star",
+    href: "/manage-reviews",
+    featureFlag: "manage-reviews",
+  },
   {
     label: "Transaction Management",
     icon: "repeat",
     href: "/transaction-management",
+    featureFlag: "transaction-management",
   },
   {
     label: "Revenue Management/Report",
     icon: "bar-chart-2",
     href: "/revenue-management",
+    featureFlag: "revenue-reports",
   },
-  { label: "Notification", icon: "bell", href: "/notification" },
-  { label: "Manage Coupons", icon: "percent", href: "/manage-coupons" },
+  {
+    label: "Notification",
+    icon: "bell",
+    href: "/notification",
+    featureFlag: "notification",
+  },
+  {
+    label: "Manage Coupons",
+    icon: "percent",
+    href: "/manage-coupons",
+    featureFlag: "manage-coupons",
+  },
   { label: "Content Management", icon: "file", href: "/content-management" },
 ];
 
@@ -46,11 +99,19 @@ function ChevronIcon({ open }) {
 
 export default function Sidebar({ isCollapsed }) {
   const location = useLocation();
-  const [sidebarLinks, setSidebarLinks] = useState(initialSidebarLinks);
+  const featureFlags = useFeatureFlags();
+  const [sidebarLinks, setSidebarLinks] = useState([]);
+
+  useEffect(() => {
+    const filteredLinks = initialSidebarLinks.filter(
+      (link) => !link.featureFlag || featureFlags[link.featureFlag]
+    );
+    setSidebarLinks(filteredLinks);
+  }, [featureFlags]);
 
   useEffect(() => {
     feather.replace();
-  }, [location.pathname, isCollapsed]);
+  }, [location.pathname, isCollapsed, sidebarLinks]);
 
   const handleLinkClick = (index) => {
     const newSidebarLinks = [...sidebarLinks];

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"; // ✅ Added useState and useEffect
 import Layout from "./Layout";
+import api from "./utils/api";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -9,7 +10,13 @@ export default function Dashboard() {
       icon: "users",
       iconColor: "#9178e3",
       value: "—", // placeholder
-      label: "Total Registered Customers",
+      label: "Total Customers",
+    },
+    {
+      icon: "users",
+      iconColor: "#9178e3",
+      value: "—", // placeholder
+      label: "Total Registered Users",
     },
     {
       icon: "settings",
@@ -18,16 +25,16 @@ export default function Dashboard() {
       label: "Total Registered Businesses",
     },
     {
-      icon: "calendar",
-      iconColor: "#6ec2e4",
+      icon: "settings",
+      iconColor: "#73c4b9",
       value: "—",
-      label: "Total Registered Businesses",
+      label: "Newly Registered Businesses (24h)",
     },
   ]);
 
   // ✅ Fetch real data from backend on component mount
   useEffect(() => {
-    fetch("http://localhost:5050/stats")
+    api("http://localhost:5050/stats")
       .then((res) => {
         if (!res.ok) {
           throw new Error("Network response was not ok");
@@ -41,13 +48,19 @@ export default function Dashboard() {
             icon: "users",
             iconColor: "#9178e3",
             value: data.total_customers.toLocaleString(),
-            label: "Total Registered Customers",
+            label: "Total Customers",
+          },
+          {
+            icon: "users",
+            iconColor: "#9178e3",
+            value: data.total_users.toLocaleString(),
+            label: "Total Registered Users",
           },
           {
             icon: "settings",
             iconColor: "#73c4b9",
             value: data.total_businesses.toLocaleString(),
-            label: "Totals Registered Business",
+            label: "Total Registered Businesses",
           },
           {
             icon: "calendar",

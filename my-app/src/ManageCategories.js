@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./Layout";
+import api from "./utils/api";
 import "./ManageCategories.css";
 import feather from "feather-icons";
 
@@ -31,7 +32,7 @@ export default function ManageCategories() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:5050/categories');
+      const response = await api('http://localhost:5050/categories');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -72,7 +73,7 @@ export default function ManageCategories() {
 
   const handleConfirmClick = async (categoryId) => {
     try {
-      const response = await fetch(`http://localhost:5050/categories/${categoryId}`, {
+      const response = await api(`http://localhost:5050/categories/${categoryId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -150,7 +151,7 @@ export default function ManageCategories() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
-        const response = await fetch(`http://localhost:5050/categories/${id}`, {
+        const response = await api(`http://localhost:5050/categories/${id}`, {
           method: 'DELETE',
         });
 
@@ -168,7 +169,7 @@ export default function ManageCategories() {
 
   const handleAddCategory = async () => {
     try {
-      const response = await fetch('http://localhost:5050/categories', {
+      const response = await api('http://localhost:5050/categories', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

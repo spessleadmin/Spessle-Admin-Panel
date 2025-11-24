@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from './Layout';
+import api from './utils/api';
 import './BusinessDetails.css';
 import feather from 'feather-icons';
 
@@ -13,7 +14,7 @@ export default function BusinessDetails() {
   useEffect(() => {
     const fetchBusinessDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5050/businesses/${id}`);
+        const response = await api(`http://localhost:5050/businesses/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -64,7 +65,7 @@ export default function BusinessDetails() {
               <div className="card-header">
                 <div className="header-buttons">
                   <Link to={`/business-products/${id}`} className="btn btn-blue">Products</Link>
-                  <button className="btn btn-blue">Users</button>
+                  <Link to={`/business-reviews/${id}`} className="btn btn-blue">Reviews</Link>
                   <Link to={`/business-orders/${id}`} className="btn btn-blue">Orders</Link>
                   <button className="btn btn-blue">Financies</button>
                 </div>
