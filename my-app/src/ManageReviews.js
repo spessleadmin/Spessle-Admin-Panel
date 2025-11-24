@@ -10,6 +10,7 @@ const placeholderReviews = [
     id: "rev1",
     reviewerUsername: "JohnDoe",
     productName: "Awesome T-Shirt",
+    productId: "prod101",
     comment: "Great quality, fits perfectly!",
     rating: 5.0,
     createdDate: "2023-10-27T10:00:00Z",
@@ -18,6 +19,7 @@ const placeholderReviews = [
     id: "rev2",
     reviewerUsername: "JaneSmith",
     productName: "Cool Gadget",
+    productId: "prod102",
     comment: "Very useful, but the battery life could be better.",
     rating: 4.0,
     createdDate: "2023-10-26T14:30:00Z",
@@ -26,6 +28,7 @@ const placeholderReviews = [
     id: "rev3",
     reviewerUsername: "MikeB",
     productName: "Awesome T-Shirt",
+    productId: "prod101",
     comment: "I love the design.",
     rating: 4.5,
     createdDate: "2023-10-25T09:00:00Z",
@@ -34,6 +37,7 @@ const placeholderReviews = [
     id: "rev4",
     reviewerUsername: "SaraK",
     productName: "Handmade Mug",
+    productId: "prod103",
     comment: "Beautiful and well-made. A bit pricey though.",
     rating: 4.0,
     createdDate: "2023-10-24T18:00:00Z",
@@ -42,6 +46,7 @@ const placeholderReviews = [
     id: "rev5",
     reviewerUsername: "ChrisP",
     productName: "Cool Gadget",
+    productId: "prod102",
     comment: "Stopped working after a week. Very disappointed.",
     rating: 1.0,
     createdDate: "2023-10-23T11:45:00Z",
@@ -52,6 +57,7 @@ export default function ManageReviews() {
   const [filters, setFilters] = useState({
     reviewerName: "",
     productName: "",
+    productId: "", // New filter field
     reviewDate: "",
   });
   const [search, setSearch] = useState("");
@@ -87,10 +93,14 @@ export default function ManageReviews() {
     setSortConfig({ key, direction });
 
     const sortedReviews = [...reviews].sort((a, b) => {
-      if (a[key] < b[key]) {
+      // Handle potential undefined values for sorting
+      const valA = a[key] !== undefined ? a[key] : '';
+      const valB = b[key] !== undefined ? b[key] : '';
+
+      if (valA < valB) {
         return direction === 'ascending' ? -1 : 1;
       }
-      if (a[key] > b[key]) {
+      if (valA > valB) {
         return direction === 'ascending' ? 1 : -1;
       }
       return 0;
@@ -103,6 +113,7 @@ export default function ManageReviews() {
     const initialFilters = {
       reviewerName: params.get('reviewerName') || '',
       productName: params.get('productName') || '',
+      productId: params.get('productId') || '', // New filter
       reviewDate: params.get('reviewDate') || '',
     };
     setFilters(initialFilters);
@@ -115,6 +126,8 @@ export default function ManageReviews() {
       filtered = filtered.filter(r => r.reviewerUsername.toLowerCase().includes(filters.reviewerName.toLowerCase()));
     if (filters.productName)
       filtered = filtered.filter(r => r.productName.toLowerCase().includes(filters.productName.toLowerCase()));
+    if (filters.productId) // New filter logic
+      filtered = filtered.filter(r => r.productId.toLowerCase().includes(filters.productId.toLowerCase()));
     if (filters.reviewDate)
       filtered = filtered.filter(r => r.createdDate.startsWith(filters.reviewDate));
 
@@ -131,7 +144,7 @@ export default function ManageReviews() {
   };
 
   const handleFilterReset = () => {
-    setFilters({ reviewerName: "", productName: "", reviewDate: "" });
+    setFilters({ reviewerName: "", productName: "", productId: "", reviewDate: "" }); // Reset new filter
     setReviews(masterReviewList);
     setSearch("");
     setCurrentPage(1);
@@ -148,6 +161,7 @@ export default function ManageReviews() {
     const filtered = masterReviewList.filter(r =>
       r.reviewerUsername.toLowerCase().includes(value.toLowerCase()) ||
       r.productName.toLowerCase().includes(value.toLowerCase()) ||
+      r.productId.toLowerCase().includes(value.toLowerCase()) || // Include in table search
       r.comment.toLowerCase().includes(value.toLowerCase()) ||
       r.rating.toString().includes(value)
     );
@@ -210,6 +224,16 @@ export default function ManageReviews() {
                         placeholder="Product Name"
                         value={filters.productName}
                         onChange={e => setFilters(f => ({ ...f, productName: e.target.value }))}
+                      />
+                    </div>
+                    <div className="admin-filter-col">
+                      <label>Product ID</label> {/* New filter input */}
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Product ID"
+                        value={filters.productId}
+                        onChange={e => setFilters(f => ({ ...f, productId: e.target.value }))}
                       />
                     </div>
                     <div className="admin-filter-col">
@@ -295,6 +319,9 @@ export default function ManageReviews() {
                             <th className="sortable-header" onClick={() => sortReviews('productName')}>
                               Product Name {sortConfig.key === 'productName' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                             </th>
+                            <th className="sortable-header" onClick={() => sortReviews('productId')}>
+                              Product ID {sortConfig.key === 'productId' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            </th>
                             <th>Comment</th>
                             <th className="sortable-header" onClick={() => sortReviews('rating')}>
                               Rating {sortConfig.key === 'rating' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
@@ -308,16 +335,17 @@ export default function ManageReviews() {
                         
                         <tbody>
                           {isLoading ? (
-                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>Loading reviews...</td></tr>
+                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>Loading reviews...</td></tr>
                           ) : error ? (
-                            <tr><td colSpan="6" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                            <tr><td colSpan="7" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
                           ) : currentEntries.length === 0 ? (
-                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>No reviews found.</td></tr>
+                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>No reviews found.</td></tr>
                           ) : (
                             currentEntries.map((review, idx) => (
                               <tr key={review.id} className={idx % 2 === 0 ? "odd" : "even"}>
                                 <td>{review.reviewerUsername}</td>
                                 <td>{review.productName}</td>
+                                <td>{review.productId}</td>
                                 <td>{review.comment}</td>
                                 <td>⭐ {review.rating.toFixed(1)}</td>
                                 <td>{new Date(review.createdDate).toLocaleString()}</td>
