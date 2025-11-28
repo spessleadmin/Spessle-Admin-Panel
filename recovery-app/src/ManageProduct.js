@@ -50,8 +50,7 @@ export default function ManageProduct() {
           throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
         }
         const userInfo = await userInfoResponse.json();
-        const businessId = userInfo.businesses_on_user?.id;
-
+        const businessId = userInfo.user.businesses_on_user[0]?.id;
         if (!businessId) {
           throw new Error("Business ID not found in user info.");
         }
