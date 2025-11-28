@@ -13,9 +13,24 @@ export default function Layout({ children }) {
 
     const fetchUserInfo = async () => {
       try {
+        const cachedUserInfo = localStorage.getItem("user-info");
+        if (cachedUserInfo) {
+          const userInfo = JSON.parse(cachedUserInfo);
+          if (userInfo.users && userInfo.users.length > 0) {
+            setUser(userInfo.users[0]);
+            return;
+          }
+        }
+
         const response = await api("http://localhost:5050/user-info");
         const data = await response.json();
-        setUser(data.user);
+        if (data.user && data.user.length > 0) {
+          setUser(data.user);
+          localStorage.setItem("user-info", JSON.stringify(data));
+        } else if (data.user) { // Fallback for old structure
+          setUser(data.user);
+          localStorage.setItem("user-info", JSON.stringify({ user: [data.user] }));
+        }
       } catch (error) {
         console.error("Error fetching user info:", error);
       }
