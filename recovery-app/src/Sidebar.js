@@ -26,7 +26,7 @@ const initialSidebarLinks = [
   {
     label: "Manage Business",
     icon: "briefcase",
-    href: "/manage-business",
+    href: "/business-details/:id",
     featureFlag: "manage-business"
   },
   {
@@ -150,10 +150,33 @@ export default function Sidebar({ isCollapsed }) {
   const [sidebarLinks, setSidebarLinks] = useState([]);
 
   useEffect(() => {
-    const filteredLinks = initialSidebarLinks.filter(
-      (link) => !link.featureFlag || featureFlags[link.featureFlag]
-    );
-    setSidebarLinks(filteredLinks);
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch("http://localhost:5050/user-info");
+        const data = await response.json();
+        const businessId = data.businesses_on_user?.id;
+
+        const updatedLinks = initialSidebarLinks.map((link) => {
+          if (link.label === "Manage Business") {
+            return { ...link, href: `/business-details/${businessId}` };
+          }
+          return link;
+        });
+
+        const filteredLinks = updatedLinks.filter(
+          (link) => !link.featureFlag || featureFlags[link.featureFlag]
+        );
+        setSidebarLinks(filteredLinks);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+        const filteredLinks = initialSidebarLinks.filter(
+          (link) => !link.featureFlag || featureFlags[link.featureFlag]
+        );
+        setSidebarLinks(filteredLinks);
+      }
+    };
+
+    fetchUserInfo();
   }, [featureFlags]);
 
   useEffect(() => {
