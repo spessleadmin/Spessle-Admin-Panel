@@ -38,7 +38,17 @@ const ManageOrders = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api('http://localhost:5050/orders');
+      // First, fetch user info to get the business ID
+      const userInfoResponse = await api("http://localhost:5050/user-info");
+      if (!userInfoResponse.ok) {
+        throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
+      }
+      const userInfo = await userInfoResponse.json();
+      const businessId = userInfo.user.businesses_on_user[0]?.id;
+      if (!businessId) {
+        throw new Error("Business ID not found in user info.");
+      }
+      const response = await api(`http://localhost:5050/businesses/${businessId}/orders`);
       if (!response.ok) {
         if (response.status === 404) {
           const errorData = await response.json();

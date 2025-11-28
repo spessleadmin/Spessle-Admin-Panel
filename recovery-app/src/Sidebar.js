@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import feather from "feather-icons";
+import api from "./utils/api";
 import useFeatureFlags from "./hooks/useFeatureFlags";
 import "./Sidebar.css";
 
@@ -26,20 +27,20 @@ const initialSidebarLinks = [
   {
     label: "Manage Business",
     icon: "briefcase",
-    href: "/manage-business",
+    href: "/business-details/:id",
     featureFlag: "manage-business"
   },
   {
     label: "Admin Manage Categories",
     icon: "grid",
     href: "/admin-manage-categories",
-    featureFlag: "manage-categories",
+    featureFlag: "admin-manage-categories",
   },
   {
     label: "Admin Manage Tags",
     icon: "tag",
     href: "/admin-manage-tags",
-    featureFlag: "manage-tags",
+    featureFlag: "admin-manage-tags",
   },
   {
     label: "Admin Manage Product",
@@ -150,10 +151,32 @@ export default function Sidebar({ isCollapsed }) {
   const [sidebarLinks, setSidebarLinks] = useState([]);
 
   useEffect(() => {
-    const filteredLinks = initialSidebarLinks.filter(
-      (link) => !link.featureFlag || featureFlags[link.featureFlag]
-    );
-    setSidebarLinks(filteredLinks);
+    const fetchUserInfo = async () => {
+      try {
+        const response = await api("http://localhost:5050/user-info");
+        const data = await response.json();
+        const businessId = data.user.businesses_on_user[0]?.id;
+        const updatedLinks = initialSidebarLinks.map((link) => {
+          if (link.label === "Manage Business") {
+            return { ...link, href: `/business-details/${businessId}` };
+          }
+          return link;
+        });
+
+        const filteredLinks = updatedLinks.filter(
+          (link) => !link.featureFlag || featureFlags[link.featureFlag]
+        );
+        setSidebarLinks(filteredLinks);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+        const filteredLinks = initialSidebarLinks.filter(
+          (link) => !link.featureFlag || featureFlags[link.featureFlag]
+        );
+        setSidebarLinks(filteredLinks);
+      }
+    };
+
+    fetchUserInfo();
   }, [featureFlags]);
 
   useEffect(() => {

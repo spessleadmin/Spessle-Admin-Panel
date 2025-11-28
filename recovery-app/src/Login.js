@@ -34,6 +34,29 @@ const Login = () => {
       }
 
       Cookies.set("token", data.idToken);
+
+      try {
+        const userInfoResponse = await fetch(
+          "http://127.0.0.1:5050/user-info",
+          {
+            headers: {
+              Authorization: `Bearer ${data.idToken}`,
+            },
+          }
+        );
+        const userInfoData = await userInfoResponse.json();
+        if (userInfoResponse.ok) {
+          localStorage.setItem("user-info", JSON.stringify(userInfoData));
+        } else {
+          throw new Error(
+            userInfoData.error || "Failed to fetch user information."
+          );
+        }
+      } catch (err) {
+        setError("Failed to fetch user details after login.");
+        return;
+      }
+
       navigate("/dashboard");
     } catch (err) {
       setError("Failed to login. Please try again.");
