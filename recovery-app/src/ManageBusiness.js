@@ -11,14 +11,14 @@ const categories = ["Food", "Gifts", "Beauty", "Clothing"];
 // Helper function to transform complex API data into flat structure for the table
 const transformApiBusiness = (apiBusiness) => ({
   id: apiBusiness.id,
-  ownerName: apiBusiness.user.username, // Assuming owner relationship
+  ownerName: apiBusiness.user?.username || "N/A", // Safely access username
   businessName: apiBusiness.businessname,
-  rating: apiBusiness.businessReviews_on_business.length > 0
+  rating: (apiBusiness.businessReviews_on_business?.length || 0) > 0
     ? apiBusiness.businessReviews_on_business.reduce((acc, review) => acc + review.rating, 0) / apiBusiness.businessReviews_on_business.length
-    : 0.0, // Calculate average rating
+    : 0.0, // Safely calculate average rating
   phoneNo: apiBusiness.phonenum,
   address: apiBusiness.address,
-  category: apiBusiness.category.categoryname,
+  category: apiBusiness.category?.categoryname || "N/A", // Safely access category name
 });
 
 export default function ManageBusiness() {
@@ -49,9 +49,21 @@ export default function ManageBusiness() {
       setIsLoading(true);
       setError(null);
       try {
-        // IMPORTANT: Replace with your actual business API endpoint
+        // First, fetch user info to get the business ID
+        const userInfoResponse = await api("http://localhost:5050/user-info");
+        if (!userInfoResponse.ok) {
+          throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
+        }
+        const userInfo = await userInfoResponse.json();
+        const businessId = userInfo.businesses_on_user?.id;
+
+        if (!businessId) {
+          throw new Error("Business ID not found in user info.");
+        }
+
+        // Now, fetch businesses using the dynamic ID
         const response = await api(
-          "http://localhost:5050/businesses"
+          `http://localhost:5050/businesses/${businessId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -59,7 +71,8 @@ export default function ManageBusiness() {
         const data = await response.json();
 
         // Transform the data to match the table structure
-        const transformedBusinesses = data.businesses.map(transformApiBusiness);
+        const businessData = Array.isArray(data.businesses) ? data.businesses : [data.businesses];
+        const transformedBusinesses = businessData.map(transformApiBusiness);
 
         setMasterBusinessList(transformedBusinesses); // Set the master list
         setBusinesses(transformedBusinesses); // Set the initial displayed list
