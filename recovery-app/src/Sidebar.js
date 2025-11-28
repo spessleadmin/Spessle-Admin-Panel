@@ -33,13 +33,13 @@ const initialSidebarLinks = [
     label: "Admin Manage Categories",
     icon: "grid",
     href: "/admin-manage-categories",
-    featureFlag: "manage-categories",
+    featureFlag: "admin-manage-categories",
   },
   {
     label: "Admin Manage Tags",
     icon: "tag",
     href: "/admin-manage-tags",
-    featureFlag: "manage-tags",
+    featureFlag: "admin-manage-tags",
   },
   {
     label: "Admin Manage Product",
