@@ -1,45 +1,64 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import feather from "feather-icons";
+import api from "./utils/api";
 import useFeatureFlags from "./hooks/useFeatureFlags";
 import "./Sidebar.css";
 
 const initialSidebarLinks = [
   {
-    label: "Dashboard",
+    label: "Admin Dashboard",
     icon: "layout",
-    href: "/dashboard",
+    href: "/admin-dashboard",
     featureFlag: "admin-dashboard",
   },
   {
-    label: "User Management",
+    label: "Admin User Management",
     icon: "users",
     href: "/admin-users",
     featureFlag: "admin-user-management",
   },
   {
+    label: "Admin Manage Business",
+    icon: "briefcase",
+    href: "/admin-manage-business",
+    featureFlag: "admin-manage-business",
+  },
+  {
     label: "Manage Business",
     icon: "briefcase",
-    href: "/manage-business",
-    featureFlag: "manage-business",
+    href: "/business-details/:id",
+    featureFlag: "manage-business"
   },
   {
-    label: "Manage Categories",
+    label: "Admin Manage Categories",
     icon: "grid",
-    href: "/manage-categories",
-    featureFlag: "manage-categories",
+    href: "/admin-manage-categories",
+    featureFlag: "admin-manage-categories",
   },
   {
-    label: "Manage Tags",
+    label: "Admin Manage Tags",
     icon: "tag",
-    href: "/manage-tags",
-    featureFlag: "manage-tags",
+    href: "/admin-manage-tags",
+    featureFlag: "admin-manage-tags",
   },
   {
+    label: "Admin Manage Product",
+    icon: "package",
+    href: "/admin-manage-product",
+    featureFlag: "admin-manage-product",
+  },
+    {
     label: "Manage Product",
     icon: "package",
     href: "/manage-product",
     featureFlag: "manage-product",
+  },
+  {
+    label: "Admin Manage Orders",
+    icon: "shopping-cart",
+    href: "/admin-manage-orders",
+    featureFlag: "admin-manage-orders",
   },
   {
     label: "Manage Orders",
@@ -48,10 +67,16 @@ const initialSidebarLinks = [
     featureFlag: "manage-orders",
   },
   {
-    label: "Manage Reviews & Ratings",
+    label: "Manage Reviews",
     icon: "star",
     href: "/manage-reviews",
     featureFlag: "manage-reviews",
+  },
+  {
+    label: "Admin Manage Reviews",
+    icon: "star",
+    href: "/admin-manage-reviews",
+    featureFlag: "admin-manage-reviews",
   },
   {
     label: "Transaction Management",
@@ -60,10 +85,22 @@ const initialSidebarLinks = [
     featureFlag: "transaction-management",
   },
   {
-    label: "Revenue Management/Report",
+    label: "Admin Transaction Management",
+    icon: "repeat",
+    href: "/admin-transaction-management",
+    featureFlag: "admin-transaction-management",
+  },
+  {
+    label: "Revenue Reports",
     icon: "bar-chart-2",
     href: "/revenue-management",
     featureFlag: "revenue-reports",
+  },
+  {
+    label: "Admin Revenue Reports",
+    icon: "bar-chart-2",
+    href: "/admin-revenue-management",
+    featureFlag: "admin-revenue-reports",
   },
   {
     label: "Notification",
@@ -72,12 +109,23 @@ const initialSidebarLinks = [
     featureFlag: "notification",
   },
   {
+    label: "Admin Notification",
+    icon: "bell",
+    href: "/admin-notification",
+    featureFlag: "admin-notification",
+  },
+  {
     label: "Manage Coupons",
     icon: "percent",
     href: "/manage-coupons",
     featureFlag: "manage-coupons",
   },
-  { label: "Content Management", icon: "file", href: "/content-management" },
+  {
+    label: "Admin Manage Coupons",
+    icon: "percent",
+    href: "/admin-manage-coupons",
+    featureFlag: "admin-manage-coupons",
+  }
 ];
 
 function ChevronIcon({ open }) {
@@ -103,10 +151,32 @@ export default function Sidebar({ isCollapsed }) {
   const [sidebarLinks, setSidebarLinks] = useState([]);
 
   useEffect(() => {
-    const filteredLinks = initialSidebarLinks.filter(
-      (link) => !link.featureFlag || featureFlags[link.featureFlag]
-    );
-    setSidebarLinks(filteredLinks);
+    const fetchUserInfo = async () => {
+      try {
+        const response = await api("http://localhost:5050/user-info");
+        const data = await response.json();
+        const businessId = data.user.businesses_on_user[0]?.id;
+        const updatedLinks = initialSidebarLinks.map((link) => {
+          if (link.label === "Manage Business") {
+            return { ...link, href: `/business-details/${businessId}` };
+          }
+          return link;
+        });
+
+        const filteredLinks = updatedLinks.filter(
+          (link) => !link.featureFlag || featureFlags[link.featureFlag]
+        );
+        setSidebarLinks(filteredLinks);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+        const filteredLinks = initialSidebarLinks.filter(
+          (link) => !link.featureFlag || featureFlags[link.featureFlag]
+        );
+        setSidebarLinks(filteredLinks);
+      }
+    };
+
+    fetchUserInfo();
   }, [featureFlags]);
 
   useEffect(() => {
