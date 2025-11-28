@@ -44,18 +44,32 @@ export default function ManageProduct() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await api('http://localhost:5050/products/state/California');
+        // First, fetch user info to get the business ID
+        const userInfoResponse = await api("http://localhost:5050/user-info");
+        if (!userInfoResponse.ok) {
+          throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
+        }
+        const userInfo = await userInfoResponse.json();
+        const businessId = userInfo.businesses_on_user?.id;
+
+        if (!businessId) {
+          throw new Error("Business ID not found in user info.");
+        }
+
+        // Now, fetch products using the dynamic business ID
+        const response = await api(
+          `http://localhost:5050/businesses/${businessId}/products`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        
+
         // Transform the data to match the table structure
         const transformedProducts = data.products.map(transformApiProduct);
-        
+
         setMasterProductList(transformedProducts); // Set the master list
         setProducts(transformedProducts); // Set the initial displayed list
-        
       } catch (e) {
         console.error("Failed to fetch products:", e);
         setError(e.message);
