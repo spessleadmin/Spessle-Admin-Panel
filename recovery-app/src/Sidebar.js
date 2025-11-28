@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import feather from "feather-icons";
+import api from "./utils/api";
 import useFeatureFlags from "./hooks/useFeatureFlags";
 import "./Sidebar.css";
 
@@ -152,10 +153,9 @@ export default function Sidebar({ isCollapsed }) {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch("http://localhost:5050/user-info");
+        const response = await api("http://localhost:5050/user-info");
         const data = await response.json();
-        const businessId = data.businesses_on_user?.id;
-
+        const businessId = data.user.businesses_on_user[0]?.id;
         const updatedLinks = initialSidebarLinks.map((link) => {
           if (link.label === "Manage Business") {
             return { ...link, href: `/business-details/${businessId}` };
