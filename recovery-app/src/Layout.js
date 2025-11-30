@@ -15,27 +15,38 @@ export default function Layout({ children }) {
     feather.replace();
 
     const fetchUserInfo = async () => {
+      console.log("Fetching user info..."); // Log start
       try {
         const cachedUserInfo = localStorage.getItem("user-info");
+        console.log("Cached user info:", cachedUserInfo); // Log cache
         if (cachedUserInfo) {
           const userInfo = JSON.parse(cachedUserInfo);
           if (userInfo.users && userInfo.users.length > 0) {
             setUser(userInfo.users[0]);
+            console.log("User set from cache:", userInfo.users[0]); // Log user from cache
             return;
           }
         }
 
+        console.log("Fetching from API..."); // Log API fetch
         const response = await api("http://localhost:5050/user-info");
+        console.log("API response:", response); // Log response
         const data = await response.json();
+        console.log("API data:", data); // Log data
+
         if (data.user && data.user.length > 0) {
           setUser(data.user);
           localStorage.setItem("user-info", JSON.stringify(data));
+          console.log("User set from API:", data.user); // Log user from API
         } else if (data.user) { // Fallback for old structure
           setUser(data.user);
           localStorage.setItem("user-info", JSON.stringify({ user: [data.user] }));
+          console.log("User set from API (fallback):"); // Log user from API fallback
+        } else {
+          console.log("No user data found in API response.");
         }
       } catch (error) {
-        console.error("Error fetching user info:", error);
+        console.error("Error fetching user info:", error); // Ensure this is logged
       }
     };
 
