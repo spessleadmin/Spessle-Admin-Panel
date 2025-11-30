@@ -1,12 +1,15 @@
 
 import React, { useState, useEffect } from "react";
 import feather from "feather-icons";
+import { Link } from "react-router-dom"; // Add this line
 import Sidebar from "./Sidebar";
 import api from "./utils/api";
+import "./Layout.css"; // Add this line
 
 export default function Layout({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [user, setUser] = useState(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     feather.replace();
@@ -43,6 +46,10 @@ export default function Layout({ children }) {
     setIsCollapsed(!isCollapsed);
   };
 
+  const toggleProfileDropdown = () => {
+    setIsProfileOpen(!isProfileOpen);
+  };
+
   return (
     <div className={`dashboard-root ${isCollapsed ? "sidebar-collapsed" : ""}`}>
       {/* Header */}
@@ -68,7 +75,7 @@ export default function Layout({ children }) {
             <i data-feather="bell"></i>
             <span className="badge">9</span>
           </div>
-          <div className="header-profile">
+          <div className="header-profile" onClick={toggleProfileDropdown}> // Add onClick
             <img
               src={user ? user.profilepictureurl || "https://randomuser.me/api/portraits/women/44.jpg" : "https://randomuser.me/api/portraits/women/44.jpg"}
               alt="Profile"
@@ -80,6 +87,16 @@ export default function Layout({ children }) {
               <br />
             </span>
             <i data-feather="chevron-down" className="dropdown-arrow"></i>
+            {isProfileOpen && ( // Add dropdown
+              <div className="profile-dropdown-menu">
+                <Link to="/edit-user" className="dropdown-item">
+                  Edit User
+                </Link>
+                <Link to="/logout" className="dropdown-item">
+                  Logout
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
