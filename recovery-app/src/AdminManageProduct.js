@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Layout from "./Layout";
+import api from "./utils/api";
 import "./ManageProduct.css"; // Using the same CSS file
 import feather from "feather-icons";
 
@@ -43,7 +44,7 @@ export default function ManageProduct() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch('http://localhost:5050/products/state/California');
+        const response = await api('http://localhost:5050/products/state/California');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

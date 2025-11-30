@@ -1,85 +1,71 @@
-
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
 import Layout from "./Layout";
-import "./BusinessProducts.css"; // Using the new CSS file
+import "./ManageCoupons.css"; // Using the same CSS file
 import feather from "feather-icons";
 
-// New constants for products
-const categories = ["Food", "Gifts", "Beauty", "Clothing"];
+// New constants for coupons
+const couponTypes = ["One Time"];
 
-// Helper function to transform complex API data into flat structure for the table
-const transformApiProduct = (apiProduct) => ({
-  id: apiProduct.id,
-  // Use the first image URL if it exists, otherwise null
-  imageUrl: apiProduct.productimages_on_product[0]?.imageurl || null, 
-  businessName: apiProduct.business.businessname,
-  category: apiProduct.business.category.categoryname,
-  productName: apiProduct.productname,
-  cost: apiProduct.price,
-  dateTime: apiProduct.createddate, // Using createddate from API
-  rating: 0.0 // Defaulting rating as it's not in the API response
-});
+const initialCoupons = [
+  {
+    id: 'C12345',
+    couponName: 'Summer Sale',
+    couponCode: 'SUMMER25',
+    couponType: 'One Time',
+    couponAmount: 25,
+    businessName: 'The Corner Cafe',
+    expiryDate: '2024-12-31',
+  },
+  {
+    id: 'C67890',
+    couponName: 'New User Discount',
+    couponCode: 'NEWBIE10',
+    couponType: 'One Time',
+    couponAmount: 10,
+    businessName: 'Quick Eats',
+    expiryDate: '2024-11-30',
+  },
+  {
+    id: 'C24680',
+    couponName: 'Holiday Special',
+    couponCode: 'HOLIDAY50',
+    couponType: 'One Time',
+    couponAmount: 50,
+    businessName: 'Gourmet Grill',
+    expiryDate: '2025-01-15',
+  },
+];
 
-export default function BusinessProducts() {
-  const { id } = useParams(); // Get id from URL
-
-  // Updated filter state
+export default function ManageCoupons() {
   const [filters, setFilters] = useState({
-    productName: "", businessName: "", category: "", dateTime: ""
+    businessName: "",
+    couponName: "",
+    couponType: "",
+    expiryDate: "",
   });
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState("10");
   
-  // State for API data
-  const [masterProductList, setMasterProductList] = useState([]); // Holds all products from API
-  const [products, setProducts] = useState([]); // Holds filtered/sorted products for display
-  const [isLoading, setIsLoading] = useState(true);
+  const [masterCouponList, setMasterCouponList] = useState(initialCoupons);
+  const [coupons, setCoupons] = useState(initialCoupons);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
-  // Fetch data from API on component mount
   useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`http://localhost:5050/businesses/${id}/products`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        
-        // Transform the data to match the table structure
-        const transformedProducts = data.products.map(transformApiProduct);
-        
-        setMasterProductList(transformedProducts); // Set the master list
-        setProducts(transformedProducts); // Set the initial displayed list
-        
-      } catch (e) {
-        console.error("Failed to fetch products:", e);
-        setError(e.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    feather.replace();
+  }, [coupons, isLoading, error]);
 
-    if (id) {
-      fetchProducts();
-    }
-  }, [id]); // Re-run when id changes
-
-  // Sort function (operates on the currently displayed 'products' state)
-  const sortProducts = (key) => {
+  const sortCoupons = (key) => {
     let direction = 'ascending';
     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
 
-    const sortedProducts = [...products].sort((a, b) => {
+    const sortedCoupons = [...coupons].sort((a, b) => {
       if (a[key] < b[key]) {
         return direction === 'ascending' ? -1 : 1;
       }
@@ -88,33 +74,31 @@ export default function BusinessProducts() {
       }
       return 0;
     });
-    setProducts(sortedProducts);
+    setCoupons(sortedCoupons);
   };
 
-  // Get initial filters from URL (no change needed)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const initialFilters = {
-      productName: params.get('productName') || '',
       businessName: params.get('businessName') || '',
-      category: params.get('category') || '',
-      dateTime: params.get('dateTime') || '',
+      couponName: params.get('couponName') || '',
+      couponType: params.get('couponType') || '',
+      expiryDate: params.get('expiryDate') || '',
     };
     setFilters(initialFilters);
   }, []);
 
-  // Filter card: updated to filter 'masterProductList'
   const handleFilterSearch = (e) => {
     e.preventDefault();
-    let filtered = masterProductList; // Start from the master list
-    if (filters.productName)
-      filtered = filtered.filter(p => p.productName.toLowerCase().includes(filters.productName.toLowerCase()));
+    let filtered = masterCouponList;
     if (filters.businessName)
-      filtered = filtered.filter(p => p.businessName.toLowerCase().includes(filters.businessName.toLowerCase()));
-    if (filters.category)
-      filtered = filtered.filter(p => p.category === filters.category);
-    if (filters.dateTime)
-      filtered = filtered.filter(p => p.dateTime.startsWith(filters.dateTime));
+      filtered = filtered.filter(c => c.businessName.toLowerCase().includes(filters.businessName.toLowerCase()));
+    if (filters.couponName)
+      filtered = filtered.filter(c => c.couponName.toLowerCase().includes(filters.couponName.toLowerCase()));
+    if (filters.couponType)
+      filtered = filtered.filter(c => c.couponType === filters.couponType);
+    if (filters.expiryDate)
+      filtered = filtered.filter(c => c.expiryDate.startsWith(filters.expiryDate));
 
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
@@ -124,72 +108,61 @@ export default function BusinessProducts() {
     });
     window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
 
-    setProducts(filtered); // Set the displayed products
+    setCoupons(filtered);
     setCurrentPage(1);
   };
 
-  // Updated to reset to 'masterProductList'
   const handleFilterReset = () => {
-    setFilters({ productName: "", businessName: "", category: "", dateTime: "" });
-    setProducts(masterProductList); // Reset to full list
+    setFilters({ businessName: "", couponName: "", couponType: "", expiryDate: "" });
+    setCoupons(masterCouponList);
     setSearch("");
     setCurrentPage(1);
     window.history.pushState({}, '', window.location.pathname);
   };
 
-  // Table search: updated to filter 'masterProductList'
   const handleTableSearch = value => {
     setSearch(value);
     if (!value.trim()) {
-      setProducts(masterProductList); // Reset to full list
+      setCoupons(masterCouponList);
       setCurrentPage(1);
       return;
     }
-    const filtered = masterProductList.filter(p => // Filter from master list
-      p.productName.toLowerCase().includes(value.toLowerCase()) ||
-      p.businessName.toLowerCase().includes(value.toLowerCase()) ||
-      p.category.toLowerCase().includes(value.toLowerCase()) ||
-      p.cost.toString().includes(value) ||
-      p.rating.toString().includes(value)
+    const filtered = masterCouponList.filter(c =>
+      c.couponName.toLowerCase().includes(value.toLowerCase()) ||
+      c.couponCode.toLowerCase().includes(value.toLowerCase()) ||
+      c.businessName.toLowerCase().includes(value.toLowerCase()) ||
+      c.couponAmount.toString().includes(value)
     );
-    setProducts(filtered);
+    setCoupons(filtered);
     setCurrentPage(1);
   };
 
-  // Updated to delete from both master and displayed lists
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      const updatedProducts = products.filter(p => p.id !== id);
-      const updatedMasterList = masterProductList.filter(p => p.id !== id);
+    if (window.confirm("Are you sure you want to delete this coupon?")) {
+      const updatedCoupons = coupons.filter(c => c.id !== id);
+      const updatedMasterList = masterCouponList.filter(c => c.id !== id);
 
-      setProducts(updatedProducts);
-      setMasterProductList(updatedMasterList);
+      setCoupons(updatedCoupons);
+      setMasterCouponList(updatedMasterList);
     }
   };
 
-  // Pagination logic (no change needed, uses 'products' state)
   const indexOfLastEntry = currentPage * parseInt(entriesPerPage);
   const indexOfFirstEntry = indexOfLastEntry - parseInt(entriesPerPage);
-  const currentEntries = products.slice(indexOfFirstEntry, indexOfLastEntry);
-  const totalPages = Math.ceil(products.length / parseInt(entriesPerPage));
+  const currentEntries = coupons.slice(indexOfFirstEntry, indexOfLastEntry);
+  const totalPages = Math.ceil(coupons.length / parseInt(entriesPerPage));
   
-  useEffect(() => {
-    feather.replace();
-  }, [currentEntries, isLoading, error]); // Re-run when entries, loading, or error change
-
   return (
     <Layout>
-      <main className="business-products-page dashboard-main" style={{ width: '100%' }}>
-        {/* Page Title */}
+      <main className="manage-product-page dashboard-main" style={{ width: '100%' }}>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
-              <h4 className="page-title">Business Products</h4>
+              <h4 className="page-title">Manage Coupons</h4>
             </div>
           </div>
         </div>
 
-        {/* Filter Card (no change needed in JSX) */}
         <div className="row">
           <div className="col-12">
             <div className="admin-card card">
@@ -197,16 +170,6 @@ export default function BusinessProducts() {
                 <div className="admin-filter-title header-title">Filter</div>
                 <form className="admin-filter-form" onSubmit={handleFilterSearch}>
                   <div className="admin-filter-row">
-                    <div className="admin-filter-col">
-                      <label>Product Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Product Name"
-                        value={filters.productName}
-                        onChange={e => setFilters(f => ({ ...f, productName: e.target.value }))}
-                      />
-                    </div>
                     <div className="admin-filter-col">
                       <label>Business Name</label>
                       <input
@@ -218,22 +181,32 @@ export default function BusinessProducts() {
                       />
                     </div>
                     <div className="admin-filter-col">
-                      <label>Category</label>
+                      <label>Coupon Name</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Coupon Name"
+                        value={filters.couponName}
+                        onChange={e => setFilters(f => ({ ...f, couponName: e.target.value }))}
+                      />
+                    </div>
+                    <div className="admin-filter-col">
+                      <label>Coupon Type</label>
                       <select
-                        value={filters.category}
-                        onChange={e => setFilters(f => ({ ...f, category: e.target.value }))}
+                        value={filters.couponType}
+                        onChange={e => setFilters(f => ({ ...f, couponType: e.target.value }))}
                       >
-                        <option value="">Select category</option>
-                        {categories.map(cat => <option key={cat}>{cat}</option>)}
+                        <option value="">Select type</option>
+                        {couponTypes.map(type => <option key={type}>{type}</option>)}
                       </select>
                     </div>
                     <div className="admin-filter-col">
-                      <label>Date & Time</label>
+                      <label>Expiry Date</label>
                       <input
-                        type="datetime-local"
+                        type="date"
                         className="form-control"
-                        value={filters.dateTime}
-                        onChange={e => setFilters(f => ({ ...f, dateTime: e.target.value }))}
+                        value={filters.expiryDate}
+                        onChange={e => setFilters(f => ({ ...f, expiryDate: e.target.value }))}
                       />
                     </div>
                   </div>
@@ -253,7 +226,6 @@ export default function BusinessProducts() {
           </div>
         </div>
 
-        {/* Product Table (Top controls no change) */}
         <div className="row">
           <div className="col-12">
             <div className="card">
@@ -298,7 +270,7 @@ export default function BusinessProducts() {
                         className="btn btn-blue btn-sm ms-2 add-user-table-btn"
                         onClick={e => e.preventDefault()}
                       >
-                        <i data-feather="plus"></i>Add Product
+                        <i data-feather="plus"></i>Add Coupon
                       </button>
                     </div>
                   </div>
@@ -309,93 +281,64 @@ export default function BusinessProducts() {
                         className="table dt-responsive nowrap w-100 dataTable no-footer dtr-inline"
                         aria-describedby="basic-datatable_info"
                       >
-                        {/* Headers (no change) */}
                         <thead>
                           <tr>
-                            <th className="sortable-header" onClick={() => sortProducts('id')}>
-                              ID {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            <th className="sortable-header" onClick={() => sortCoupons('couponName')}>
+                              Coupon Name {sortConfig.key === 'couponName' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                             </th>
-                            <th>Image</th>
-                            <th className="sortable-header" onClick={() => sortProducts('businessName')}>
+                            <th className="sortable-header" onClick={() => sortCoupons('couponCode')}>
+                              Coupon Code {sortConfig.key === 'couponCode' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            </th>
+                            <th className="sortable-header" onClick={() => sortCoupons('couponType')}>
+                              Coupon Type {sortConfig.key === 'couponType' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            </th>
+                            <th className="sortable-header" onClick={() => sortCoupons('couponAmount')}>
+                              Coupon Amount {sortConfig.key === 'couponAmount' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            </th>
+                            <th className="sortable-header" onClick={() => sortCoupons('businessName')}>
                               Business Name {sortConfig.key === 'businessName' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                             </th>
-                            <th className="sortable-header" onClick={() => sortProducts('category')}>
-                              Category {sortConfig.key === 'category' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                            </th>
-                            <th className="sortable-header" onClick={() => sortProducts('productName')}>
-                              Product Name {sortConfig.key === 'productName' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                            </th>
-                            <th className="sortable-header" onClick={() => sortProducts('cost')}>
-                              Cost {sortConfig.key === 'cost' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                            </th>
-                            <th className="sortable-header" onClick={() => sortProducts('dateTime')}>
-                              Date & Time {sortConfig.key === 'dateTime' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                            </th>
-                            <th className="sortable-header" onClick={() => sortProducts('rating')}>
-                              Rating {sortConfig.key === 'rating' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            <th className="sortable-header" onClick={() => sortCoupons('expiryDate')}>
+                              Expiry Date {sortConfig.key === 'expiryDate' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                             </th>
                             <th>Action</th>
                           </tr>
                         </thead>
                         
-                        {/* === UPDATED TABLE BODY === */}
                         <tbody>
                           {isLoading ? (
-                            <tr><td colSpan="9" style={{ textAlign: 'center' }}>Loading products...</td></tr>
+                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>Loading coupons...</td></tr>
                           ) : error ? (
-                            <tr><td colSpan="9" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                            <tr><td colSpan="7" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
                           ) : currentEntries.length === 0 ? (
-                            <tr><td colSpan="9" style={{ textAlign: 'center' }}>No products found.</td></tr>
+                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>No coupons found.</td></tr>
                           ) : (
-                            currentEntries.map((product, idx) => (
-                              <tr key={product.id} className={idx % 2 === 0 ? "odd" : "even"}>
-                                <td>{product.id.substring(0, 8)}...</td> {/* Shorten ID for display */}
+                            currentEntries.map((coupon, idx) => (
+                              <tr key={coupon.id} className={idx % 2 === 0 ? "odd" : "even"}>
                                 <td>
-                                  {/* VERY SMALL ICON/IMAGE */}
-                                  {product.imageUrl ? (
-                                    <img 
-                                      src={product.imageUrl} 
-                                      alt={product.productName} 
-                                      style={{ width: '32px', height: '32px', objectFit: 'cover', borderRadius: '4px' }} 
-                                    />
-                                  ) : (
-                                    // Fallback placeholder
-                                    <span style={{ 
-                                      display: 'inline-flex', 
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      width: '32px', 
-                                      height: '32px', 
-                                      backgroundColor: '#eee', 
-                                      borderRadius: '4px'
-                                    }}>
-                                      <i data-feather="image" style={{ width: '16px', height: '16px', color: '#aaa' }}></i>
-                                    </span>
-                                  )}
+                                  <a href="#" onClick={e => e.preventDefault()}>{coupon.couponName}</a>
                                 </td>
-                                <td>{product.businessName}</td>
-                                <td>{product.category}</td>
+                                <td>{coupon.couponCode}</td>
+                                <td>{coupon.couponType}</td>
+                                <td>${coupon.couponAmount.toFixed(2)}</td>
+                                <td>{coupon.businessName}</td>
+                                <td>{new Date(coupon.expiryDate).toLocaleDateString()}</td>
                                 <td>
-                                  <a href="#" onClick={e => e.preventDefault()}>{product.productName}</a>
-                                </td>
-                                <td>${product.cost.toFixed(2)}</td>
-                                <td>{new Date(product.dateTime).toLocaleString()}</td>
-                                <td>⭐ {product.rating.toFixed(1)}</td>
-                                <td>
-                                  <Link
-                                    to={`/edit-product/${product.id}`}
+                                  <a
+                                    href="#"
                                     title="Edit"
                                     className="btn btn-xs btn-warning edit-btn"
+                                    onClick={e => e.preventDefault()}
                                   >
                                     <i data-feather="edit"></i>
                                     <span className="hidden-xs hidden-sm">Edit</span>
-                                  </Link>
+                                  </a>
                                   <a
                                     href="#"
                                     className="action-icon text-danger"
                                     onClick={e => {
                                       e.preventDefault();
-                                      handleDelete(product.id);
+                                      handleDelete(coupon.id);
                                     }}
                                   >
                                     <i data-feather="trash-2"></i>
@@ -409,11 +352,10 @@ export default function BusinessProducts() {
                     </div>
                   </div>
 
-                  {/* Pagination (uses 'products' length, no change needed) */}
                   <div className="row">
                     <div className="col-sm-12 col-md-5">
                       <div className="dataTables_info" id="basic-datatable_info" role="status" aria-live="polite">
-                        Showing {products.length > 0 ? indexOfFirstEntry + 1 : 0} to {Math.min(indexOfLastEntry, products.length)} of {products.length} entries
+                        Showing {coupons.length > 0 ? indexOfFirstEntry + 1 : 0} to {Math.min(indexOfLastEntry, coupons.length)} of {coupons.length} entries
                       </div>
                     </div>
                     <div className="col-sm-12 col-md-7">
@@ -460,8 +402,8 @@ export default function BusinessProducts() {
                     </div>
                   </div>
                 </div>
-              </div> {/* end card-body */}
-            </div> {/* end card */}
+              </div> 
+            </div> 
           </div>
         </div>
       </main>

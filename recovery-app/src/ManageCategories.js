@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./Layout";
-import "./ManageTags.css";
+import api from "./utils/api";
+import "./ManageCategories.css";
 import feather from "feather-icons";
 
-const transformApiTag = (apiTag) => ({
-  id: apiTag.id,
-  tagname: apiTag.tagname,
-  createddate: apiTag.createddate,
-  updateddate: apiTag.updateddate,
+const transformApiCategory = (apiCategory) => ({
+  id: apiCategory.id,
+  categoryname: apiCategory.categoryname,
+  createddate: apiCategory.createddate,
+  updateddate: apiCategory.updateddate,
 });
 
-export default function ManageTags() {
-  const [filters, setFilters] = useState({ tagname: "", dateRange: "" });
+export default function ManageCategories() {
+  const [filters, setFilters] = useState({ categoryname: "", dateRange: "" });
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState("10");
   
-  const [masterTagList, setMasterTagList] = useState([]);
-  const [tags, setTags] = useState([]);
+  const [masterCategoryList, setMasterCategoryList] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -24,26 +25,26 @@ export default function ManageTags() {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
   
-  const [editingTagId, setEditingTagId] = useState(null);
-  const [editingTagName, setEditingTagName] = useState("");
+  const [editingCategoryId, setEditingCategoryId] = useState(null);
+  const [editingCategoryName, setEditingCategoryName] = useState("");
 
-  const fetchTags = async () => {
+  const fetchCategories = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:5050/tags');
+      const response = await api('http://localhost:5050/categories');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       
-      const transformedTags = data.tags.map(transformApiTag);
+      const transformedCategories = data.categories.map(transformApiCategory);
       
-      setMasterTagList(transformedTags);
-      setTags(transformedTags);
+      setMasterCategoryList(transformedCategories);
+      setCategories(transformedCategories);
       
     } catch (e) {
-      console.error("Failed to fetch tags:", e);
+      console.error("Failed to fetch categories:", e);
       setError(e.message);
     } finally {
       setIsLoading(false);
@@ -51,51 +52,57 @@ export default function ManageTags() {
   };
 
   useEffect(() => {
-    fetchTags();
+    fetchCategories();
   }, []);
 
-  const handleEditClick = (tag) => {
-    setEditingTagId(tag.id);
-    setEditingTagName(tag.tagname);
+  useEffect(() => {
+    if (!isLoading) {
+      feather.replace();
+    }
+  }, [isLoading, categories, currentPage, entriesPerPage]);
+
+  const handleEditClick = (category) => {
+    setEditingCategoryId(category.id);
+    setEditingCategoryName(category.categoryname);
   };
 
   const handleCancelClick = () => {
-    setEditingTagId(null);
-    setEditingTagName("");
+    setEditingCategoryId(null);
+    setEditingCategoryName("");
   };
 
-  const handleConfirmClick = async (tagId) => {
+  const handleConfirmClick = async (categoryId) => {
     try {
-      const response = await fetch(`http://localhost:5050/tags/${tagId}/name`, {
-        method: 'POST',
+      const response = await api(`http://localhost:5050/categories/${categoryId}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: editingTagName }),
+        body: JSON.stringify({ "categoryname": editingCategoryName }),
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      await fetchTags(); // Re-fetch to get the latest data
-      setEditingTagId(null);
-      setEditingTagName("");
+      await fetchCategories(); // Re-fetch to get the latest data
+      setEditingCategoryId(null);
+      setEditingCategoryName("");
 
     } catch (error) {
-      console.error("Failed to update tag name:", error);
+      console.error("Failed to update category name:", error);
       // Optionally, show an error message to the user
     }
   };
 
-  const sortTags = (key) => {
+  const sortCategories = (key) => {
     let direction = 'ascending';
     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
 
-    const sortedTags = [...tags].sort((a, b) => {
+    const sortedCategories = [...categories].sort((a, b) => {
       if (a[key] < b[key]) {
         return direction === 'ascending' ? -1 : 1;
       }
@@ -104,25 +111,25 @@ export default function ManageTags() {
       }
       return 0;
     });
-    setTags(sortedTags);
+    setCategories(sortedCategories);
   };
 
   const handleFilterSearch = (e) => {
     e.preventDefault();
-    let filtered = masterTagList;
-    if (filters.tagname) {
-      filtered = filtered.filter(t => t.tagname.toLowerCase().includes(filters.tagname.toLowerCase()));
+    let filtered = masterCategoryList;
+    if (filters.categoryname) {
+      filtered = filtered.filter(c => c.categoryname.toLowerCase().includes(filters.categoryname.toLowerCase()));
     }
     if (filters.dateRange) {
       // This is a placeholder for date range filtering logic
     }
-    setTags(filtered);
+    setCategories(filtered);
     setCurrentPage(1);
   };
 
   const handleFilterReset = () => {
-    setFilters({ tagname: "", dateRange: "" });
-    setTags(masterTagList);
+    setFilters({ categoryname: "", dateRange: "" });
+    setCategories(masterCategoryList);
     setSearch("");
     setCurrentPage(1);
   };
@@ -130,39 +137,69 @@ export default function ManageTags() {
   const handleTableSearch = value => {
     setSearch(value);
     if (!value.trim()) {
-      setTags(masterTagList);
+      setCategories(masterCategoryList);
       setCurrentPage(1);
       return;
     }
-    const filtered = masterTagList.filter(t =>
-      t.tagname.toLowerCase().includes(value.toLowerCase())
+    const filtered = masterCategoryList.filter(c =>
+      c.categoryname.toLowerCase().includes(value.toLowerCase())
     );
-    setTags(filtered);
+    setCategories(filtered);
     setCurrentPage(1);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this tag?")) {
-      const updatedTags = tags.filter(t => t.id !== id);
-      const updatedMasterList = masterTagList.filter(t => t.id !== id);
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this category?")) {
+      try {
+        const response = await api(`http://localhost:5050/categories/${id}`, {
+          method: 'DELETE',
+        });
 
-      setTags(updatedTags);
-      setMasterTagList(updatedMasterList);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        await fetchCategories(); // Re-fetch to get the latest data
+      } catch (error) {
+        console.error("Failed to delete category:", error);
+        // Optionally, show an error message to the user
+      }
+    }
+  };
+
+  const handleAddCategory = async () => {
+    try {
+      const response = await api('http://localhost:5050/categories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ categoryname: 'New Category' }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      await fetchCategories(); // Re-fetch to get the latest data
+    } catch (error) {
+      console.error("Failed to add category:", error);
+      // Optionally, show an error message to the user
     }
   };
 
   const indexOfLastEntry = currentPage * parseInt(entriesPerPage);
   const indexOfFirstEntry = indexOfLastEntry - parseInt(entriesPerPage);
-  const currentEntries = tags.slice(indexOfFirstEntry, indexOfLastEntry);
-  const totalPages = Math.ceil(tags.length / parseInt(entriesPerPage));
+  const currentEntries = categories.slice(indexOfFirstEntry, indexOfLastEntry);
+  const totalPages = Math.ceil(categories.length / parseInt(entriesPerPage));
   
   return (
     <Layout>
-      <main className="manage-tags-page dashboard-main" style={{ width: '100%' }}>
+      <main className="manage-categories-page dashboard-main" style={{ width: '100%' }}>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
-              <h4 className="page-title">Manage Tags</h4>
+              <h4 className="page-title">Manage Categories</h4>
             </div>
           </div>
         </div>
@@ -175,13 +212,13 @@ export default function ManageTags() {
                 <form className="admin-filter-form" onSubmit={handleFilterSearch}>
                   <div className="admin-filter-row">
                     <div className="admin-filter-col">
-                      <label>Tag Name</label>
+                      <label>Category Name</label>
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Tag Name"
-                        value={filters.tagname}
-                        onChange={e => setFilters(f => ({ ...f, tagname: e.target.value }))}
+                        placeholder="Category Name"
+                        value={filters.categoryname}
+                        onChange={e => setFilters(f => ({ ...f, categoryname: e.target.value }))}
                       />
                     </div>
                     <div className="admin-filter-col">
@@ -251,10 +288,10 @@ export default function ManageTags() {
                       </div>
                       <button
                         className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                        onClick={e => e.preventDefault()}
+                        onClick={handleAddCategory}
                       >
                         <span dangerouslySetInnerHTML={{ __html: feather.icons.plus.toSvg({ width: 16, height: 16 }) }} />
-                        Add Tag
+                        Add Category
                       </button>
                     </div>
                   </div>
@@ -267,16 +304,16 @@ export default function ManageTags() {
                       >
                         <thead>
                           <tr>
-                            <th className="sortable-header" onClick={() => sortTags('id')}>
+                            <th className="sortable-header" onClick={() => sortCategories('id')}>
                               ID {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                             </th>
-                            <th className="sortable-header" onClick={() => sortTags('tagname')}>
-                              Tag Name {sortConfig.key === 'tagname' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
+                            <th className="sortable-header" onClick={() => sortCategories('categoryname')}>
+                              Category Name {sortConfig.key === 'categoryname' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                             </th>
-                            <th className="sortable-header" onClick={() => sortTags('createddate')}>
+                            <th className="sortable-header" onClick={() => sortCategories('createddate')}>
                               Created Date {sortConfig.key === 'createddate' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                             </th>
-                            <th className="sortable-header" onClick={() => sortTags('updateddate')}>
+                            <th className="sortable-header" onClick={() => sortCategories('updateddate')}>
                               Updated Date {sortConfig.key === 'updateddate' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                             </th>
                             <th>Action</th>
@@ -285,35 +322,35 @@ export default function ManageTags() {
                         
                         <tbody>
                           {isLoading ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Loading tags...</td></tr>
+                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Loading categories...</td></tr>
                           ) : error ? (
                             <tr><td colSpan="5" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
                           ) : currentEntries.length === 0 ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>No tags found.</td></tr>
+                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>No categories found.</td></tr>
                           ) : (
-                            currentEntries.map((tag, idx) => (
-                              <tr key={tag.id} className={idx % 2 === 0 ? "odd" : "even"}>
-                                <td>{tag.id.substring(0, 8)}...</td>
+                            currentEntries.map((category, idx) => (
+                              <tr key={category.id} className={idx % 2 === 0 ? "odd" : "even"}>
+                                <td>{category.id.substring(0, 8)}...</td>
                                 <td>
-                                  {editingTagId === tag.id ? (
+                                  {editingCategoryId === category.id ? (
                                     <input
                                       type="text"
                                       className="form-control"
-                                      value={editingTagName}
-                                      onChange={(e) => setEditingTagName(e.target.value)}
+                                      value={editingCategoryName}
+                                      onChange={(e) => setEditingCategoryName(e.target.value)}
                                     />
                                   ) : (
-                                    tag.tagname
+                                    category.categoryname
                                   )}
                                 </td>
-                                <td>{new Date(tag.createddate).toLocaleString()}</td>
-                                <td>{new Date(tag.updateddate).toLocaleString()}</td>
+                                <td>{new Date(category.createddate).toLocaleString()}</td>
+                                <td>{new Date(category.updateddate).toLocaleString()}</td>
                                 <td>
-                                  {editingTagId === tag.id ? (
+                                  {editingCategoryId === category.id ? (
                                     <>
                                       <button
                                         className="btn btn-xs btn-success"
-                                        onClick={() => handleConfirmClick(tag.id)}
+                                        onClick={() => handleConfirmClick(category.id)}
                                       >
                                         Confirm
                                       </button>
@@ -330,7 +367,7 @@ export default function ManageTags() {
                                       <button
                                         title="Edit"
                                         className="btn btn-xs btn-warning edit-btn"
-                                        onClick={() => handleEditClick(tag)}
+                                        onClick={() => handleEditClick(category)}
                                       >
                                         <span dangerouslySetInnerHTML={{ __html: feather.icons.edit.toSvg({ width: 16, height: 16 }) }} />
                                         <span className="hidden-xs hidden-sm">Edit</span>
@@ -340,7 +377,7 @@ export default function ManageTags() {
                                         className="action-icon text-danger"
                                         onClick={e => {
                                           e.preventDefault();
-                                          handleDelete(tag.id);
+                                          handleDelete(category.id);
                                         }}
                                       >
                                         <span dangerouslySetInnerHTML={{ __html: feather.icons['trash-2'].toSvg({ width: 16, height: 16 }) }} />
@@ -359,7 +396,7 @@ export default function ManageTags() {
                   <div className="row">
                     <div className="col-sm-12 col-md-5">
                       <div className="dataTables_info" id="basic-datatable_info" role="status" aria-live="polite">
-                        Showing {tags.length > 0 ? indexOfFirstEntry + 1 : 0} to {Math.min(indexOfLastEntry, tags.length)} of {tags.length} entries
+                        Showing {categories.length > 0 ? indexOfFirstEntry + 1 : 0} to {Math.min(indexOfLastEntry, categories.length)} of {categories.length} entries
                       </div>
                     </div>
                     <div className="col-sm-12 col-md-7">

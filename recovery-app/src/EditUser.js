@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import Layout from "./Layout";
+import api from "./utils/api";
 import "./EditUser.css";
 import "./Dropify.css";
 import feather from "feather-icons";
@@ -38,7 +39,7 @@ export default function EditUser() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`http://localhost:5050/users/${id}`);
+        const response = await api(`http://localhost:5050/users/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -111,7 +112,7 @@ export default function EditUser() {
       formData.append("image", files[0]);
 
       try {
-        const response = await fetch(`http://localhost:5050/users/${id}/image`, {
+        const response = await api(`http://localhost:5050/users/${id}/image`, {
           method: "POST",
           body: formData,
         });
@@ -136,7 +137,7 @@ export default function EditUser() {
       };
 
       try {
-        const response = await fetch(`http://localhost:5050/users/${id}`, {
+        const response = await api(`http://localhost:5050/users/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
