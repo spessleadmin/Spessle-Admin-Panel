@@ -49,7 +49,7 @@ function App() {
         <Route path="/admin-manage-reviews" element={<AdminManageReviews />} />
         <Route path="/manage-orders" element={<ManageOrders />} />
         <Route path="/admin-manage-orders" element={<AdminManageOrders />} />
-        <Route path="/manage-categories" element={<ManageCategories />} />
+        <Route path="/admin-manage-categories" element={<ManageCategories />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
         <Route path="/admin-manage-coupons" element={<AdminManageCoupons />} />
         <Route path="/manage-business" element={<ManageBusiness />} />
@@ -63,7 +63,7 @@ function App() {
         <Route path="/business-products/:id" element={<BusinessProducts />} />
         <Route path="/business-orders/:businessID" element={<BusinessOrders />} />
         <Route path="/edit-user/:id" element={<EditUser />} />
-        <Route path="/manage-tags" element={<ManageTags />} />
+        <Route path="/admin-manage-tags" element={<ManageTags />} />
         <Route path="/revenue-management" element={<RevenueManagement />} />
         <Route path="/admin-revenue-management" element={<AdminRevenueManagement />} />
       </Routes>
