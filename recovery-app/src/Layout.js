@@ -3,13 +3,16 @@ import React, { useState, useEffect } from "react";
 import feather from "feather-icons";
 import { Link } from "react-router-dom"; // Add this line
 import Sidebar from "./Sidebar";
+import NotificationSidebar from "./NotificationSidebar";
 import api from "./utils/api";
 import "./Layout.css"; // Add this line
+import "./NotificationSidebar.css";
 
 export default function Layout({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [user, setUser] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isNotificationOpen, setisNotificationOpen] = useState(false);
 
   useEffect(() => {
     feather.replace();
@@ -61,6 +64,10 @@ export default function Layout({ children }) {
     setIsProfileOpen(!isProfileOpen);
   };
 
+  const toggleNotificationSidebar = () => {
+    setisNotificationOpen(!isNotificationOpen);
+  };
+
   return (
     <div className={`dashboard-root ${isCollapsed ? "sidebar-collapsed" : ""}`}>
       {/* Header */}
@@ -82,10 +89,10 @@ export default function Layout({ children }) {
           <button className="icon-btn" title="Fullscreen">
             <i data-feather="maximize-2"></i>
           </button>
-          <div className="icon-badge-btn" title="Notifications">
+          <button className="icon-badge-btn" title="Notifications" onClick={toggleNotificationSidebar}>
             <i data-feather="bell"></i>
             <span className="badge">9</span>
-          </div>
+          </button>
           <div className="header-profile" onClick={toggleProfileDropdown}>
             <img
               src={user ? user.profilepictureurl || "https://randomuser.me/api/portraits/women/44.jpg" : "https://randomuser.me/api/portraits/women/44.jpg"}
@@ -115,6 +122,10 @@ export default function Layout({ children }) {
       <div className="dashboard-content-row">
         {/* Sidebar as component */}
         <Sidebar isCollapsed={isCollapsed} />
+        <NotificationSidebar 
+            isNotificationOpen={isNotificationOpen}
+            onClose={toggleNotificationSidebar}
+        />
         {/* Main */}
         <main className="dashboard-main">{children}</main>
       </div>
