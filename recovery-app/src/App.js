@@ -29,6 +29,7 @@ import ManageCategories from "./ManageCategories";
 import BusinessOrders from "./BusinessOrders";
 import ManageReviews from "./ManageReviews";
 import AdminManageReviews from "./AdminManageReviews";
+import AddProduct from "./AddProduct";
 import Logout from "./Logout";
 import "./NotificationSidebar.css";
 
@@ -43,11 +44,11 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/edit-product/:id" element={<EditProduct />} />
+        <Route path="/add-product" element={<AddProduct />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/admin-manage-product" element={<AdminManageProduct />} />
         <Route path="/manage-reviews" element={<ManageReviews />} />
-        <Route path="/admin-manage-reviews" element={<AdminManageReviews />} />
         <Route path="/manage-orders" element={<ManageOrders />} />
         <Route path="/admin-manage-orders" element={<AdminManageOrders />} />
         <Route path="/manage-categories" element={<ManageCategories />} />
