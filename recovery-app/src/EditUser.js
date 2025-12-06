@@ -177,117 +177,88 @@ export default function EditUser() {
 
   return (
     <Layout>
-      <main className="manage-user-page dashboard-main" style={{ width: "100%" }}>
-        <div className="row">
-          <div className="col-12">
-            <div className="page-title-box">
-              <h4 className="page-title">Edit User</h4>
-            </div>
-          </div>
-        </div>
-
-        <div className="row">
-          <div className="col-12">
-            <div className="admin-card card">
-              <div className="card-body">
-                <div {...getRootProps({ className: 'dropify-wrapper' })}>
-                  <input {...getInputProps()} />
-                  {imagePreview ? (
-                    <div className="dropify-preview">
-                      <span className="dropify-render">
-                        <img src={imagePreview} alt="Profile" />
-                      </span>
-                      <div className="dropify-infos">
-                        <div className="dropify-infos-inner">
-                          <p className="dropify-filename">
-                            {files.length > 0 && <span className="file-icon"></span>}
-                            {files.length > 0 ? files[0].name : ''}
-                          </p>
-                          <p className="dropify-infos-message">Drag and drop or click to replace</p>
-                        </div>
-                      </div>
+      <div className="edit-user-page">
+        <h2>Edit User</h2>
+        <div className="edit-user-card">
+          <form className="edit-user-form">
+            <div {...getRootProps({ className: 'dropify-wrapper' })}>
+              <input {...getInputProps()} />
+              {imagePreview ? (
+                <div className="dropify-preview">
+                  <span className="dropify-render">
+                    <img src={imagePreview} alt="Profile" />
+                  </span>
+                  <div className="dropify-infos">
+                    <div className="dropify-infos-inner">
+                      <p className="dropify-filename">
+                        {files.length > 0 && <span className="file-icon"></span>}
+                        {files.length > 0 ? files[0].name : ''}
+                      </p>
+                      <p className="dropify-infos-message">Drag and drop or click to replace</p>
                     </div>
-                  ) : (
-                    <div className="dropify-message">
-                      <span className="file-icon"></span>
-                      <p>Drag and drop a file here or click</p>
-                    </div>
-                  )}
+                  </div>
                 </div>
-
-                <form className="admin-filter-form" style={{ marginTop: "20px" }}>
-                  <div className="admin-filter-row">
-                    <div className="admin-filter-col">
-                      <label>Email Address</label>
-                      <input
-                        type="email"
-                        className="form-control"
-                        name="email"
-                        value={userInfo.email}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="admin-filter-col">
-                      <label>Username</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="username"
-                        value={userInfo.username}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="admin-filter-row">
-                    <div className="admin-filter-col">
-                      <label>First Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="firstname"
-                        value={userInfo.firstname}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="admin-filter-col">
-                      <label>Last Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="lastname"
-                        value={userInfo.lastname}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="admin-filter-row">
-                    <div className="admin-filter-col">
-                      <label>Phone Number</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="phonenumber"
-                        value={userInfo.phonenumber}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="admin-filter-row">
-                    <div className="admin-filter-col filter-actions buttons-row">
-                      <button type="button" className="btn btn-blue admin-filter-button" onClick={handleEditUser}>
-                        Edit User
-                      </button>
-                      <button type="button" className="btn btn-secondary admin-filter-button" onClick={handleReset}>
-                        Reset
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
+              ) : (
+                <div className="dropify-message">
+                  <span className="file-icon"></span>
+                  <p>Drag and drop a file here or click</p>
+                </div>
+              )}
             </div>
-          </div>
+
+            <div className="form-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={userInfo.email}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Username</label>
+              <input
+                type="text"
+                name="username"
+                value={userInfo.username}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>First Name</label>
+              <input
+                type="text"
+                name="firstname"
+                value={userInfo.firstname}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Last Name</label>
+              <input
+                type="text"
+                name="lastname"
+                value={userInfo.lastname}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Phone Number</label>
+              <input
+                type="text"
+                name="phonenumber"
+                value={userInfo.phonenumber}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <button type="button" className="btn-submit" onClick={handleEditUser}>
+                Save Changes
+              </button>
+            </div>
+          </form>
         </div>
-      </main>
+      </div>
     </Layout>
   );
 }

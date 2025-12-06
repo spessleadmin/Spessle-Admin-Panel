@@ -181,7 +181,7 @@ export default function Sidebar({ isCollapsed }) {
 
   useEffect(() => {
     feather.replace();
-  }, [location.pathname, isCollapsed, sidebarLinks]);
+  }, [location.pathname, isCollapsed, sidebarLinks]); // Removed isProfileOpen
 
   const handleLinkClick = (index) => {
     const newSidebarLinks = [...sidebarLinks];
