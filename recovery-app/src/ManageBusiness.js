@@ -346,12 +346,6 @@ export default function ManageBusiness() {
                           />
                         </label>
                       </div>
-                      <button
-                        className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <i data-feather="plus"></i>Add Business
-                      </button>
                     </div>
                   </div>
 

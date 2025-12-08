@@ -13,6 +13,7 @@ import AdminManageBusiness from "./AdminManageBusiness";
 import ManageCoupons from "./ManageCoupons";
 import AdminManageCoupons from "./AdminManageCoupons";
 import ManageOrders from "./ManageOrders";
+import BusinessAddProduct from "./BusinessAddProduct";
 import AdminManageOrders from "./AdminManageOrders";
 import EditOrder from "./EditOrder";
 import Notification from "./Notification";
@@ -43,6 +44,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/edit-product/:id" element={<EditProduct />} />
+        <Route path="/business/:id/add-product" element={<BusinessAddProduct />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/admin-manage-product" element={<AdminManageProduct />} />
