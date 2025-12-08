@@ -295,12 +295,12 @@ export default function BusinessProducts() {
                           />
                         </label>
                       </div>
-                      <button
+                      <Link
+                        to={`/business/${id}/add-product`}
                         className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                        onClick={e => e.preventDefault()}
                       >
                         <i data-feather="plus"></i>Add Product
-                      </button>
+                      </Link>
                     </div>
                   </div>
 
