@@ -290,12 +290,6 @@ export default function ManageProduct() {
                           />
                         </label>
                       </div>
-                      <button
-                        className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                        onClick={e => e.preventDefault()}
-                      >
-                        <i data-feather="plus"></i>Add Product
-                      </button>
                     </div>
                   </div>
 
