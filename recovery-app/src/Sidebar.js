@@ -160,6 +160,9 @@ export default function Sidebar({ isCollapsed }) {
           if (link.label === "Manage Business") {
             return { ...link, href: `/business-details/${businessId}` };
           }
+          if (link.label === "Manage Product") {
+            return { ...link, href: `/business-products/${businessId}` };
+          }
           return link;
         });
 
