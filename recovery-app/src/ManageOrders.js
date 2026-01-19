@@ -211,14 +211,14 @@ const ManageOrders = () => {
                       <label>Order Status</label>
                       <select
                         className="form-control form-select form-select-sm"
-                        value={filters.status || "Processing"}
+                        value={filters.status || "processing"}
                         onChange={(e) =>
                           setFilters({ ...filters, status: e.target.value })
                         }
                       >
-                        <option value="Processing">Processing</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Cancelled">Cancelled</option>
+                        <option value="processing">Processing</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
                         <option value="refunded">Refunded</option>
                       </select>
                     </div>
@@ -318,12 +318,7 @@ const ManageOrders = () => {
                                 <td>{order.orderDate}</td>
                                 <td>{order.totalAmount}</td>
                                 <td>
-                                  <select className="form-control form-select form-select-sm" defaultValue={order.orderStatus}>
-                                    <option>Processing</option>
-                                    <option>Completed</option>
-                                    <option>Cancelled</option>
-                                    <option>New</option>
-                                  </select>
+                                  {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
                                 </td>
                                 <td className="action-cell">
                                   <Link to={`/edit-order/${order.orderNo}`} className="tooltip-wrapper blue-square-icon">

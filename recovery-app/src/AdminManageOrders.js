@@ -308,12 +308,7 @@ const ManageOrders = () => {
                                 <td>{order.orderDate}</td>
                                 <td>{order.totalAmount}</td>
                                 <td>
-                                  <select className="form-control form-select form-select-sm" defaultValue={order.orderStatus}>
-                                    <option>Processing</option>
-                                    <option>Completed</option>
-                                    <option>Cancelled</option>
-                                    <option>New</option>
-                                  </select>
+                                  {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
                                 </td>
                                 <td className="action-cell">
                                   <Link to={`/edit-order/${order.orderNo}`} className="tooltip-wrapper blue-square-icon">
