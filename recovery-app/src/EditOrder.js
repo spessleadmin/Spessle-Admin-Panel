@@ -11,6 +11,13 @@ const EditOrder = () => {
   const [orderInfo, setOrderInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [status, setStatus] = useState("");
+
+  useEffect(() => {
+    if (orderInfo) {
+      setStatus(orderInfo.status);
+    }
+  }, [orderInfo]);
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -38,13 +45,32 @@ const EditOrder = () => {
   }, [loading]);
 
   const handleStatusChange = (e) => {
-    const { value } = e.target;
-    setOrderInfo((prevInfo) => ({ ...prevInfo, status: value }));
+    setStatus(e.target.value);
   };
 
-  const handleSaveStatus = () => {
-    console.log("Saving Order Status:", orderInfo.status);
-    // API call to save order status
+  const handleSaveStatus = async () => {
+    try {
+      const response = await api(
+        `http://localhost:5050/orders/${orderID}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      // Optionally, you can handle the success response here
+      console.log("Order status updated successfully");
+    } catch (error) {
+      console.error("Failed to update order status:", error);
+      // Optionally, you can show an error message to the user
+    }
   };
 
   if (loading) {
@@ -91,13 +117,13 @@ const EditOrder = () => {
                       <select
                         className="form-control form-select form-select-sm"
                         name="orderStatus"
-                        value={orderInfo.status || "New"}
+                        value={status}
                         onChange={handleStatusChange}
                       >
-                        <option>Processing</option>
-                        <option>Completed</option>
-                        <option>Cancelled</option>
-                        <option>New</option>
+                        <option value="processing">Processing</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="refunded">Refunded</option>
                       </select>
                     </div>
                     <div className="admin-filter-col filter-actions buttons-row">

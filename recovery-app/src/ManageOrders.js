@@ -219,7 +219,7 @@ const ManageOrders = () => {
                         <option value="Processing">Processing</option>
                         <option value="Completed">Completed</option>
                         <option value="Cancelled">Cancelled</option>
-                        <option value="New">New</option>
+                        <option value="refunded">Refunded</option>
                       </select>
                     </div>
                     <div className="admin-filter-col filter-actions buttons-row">
