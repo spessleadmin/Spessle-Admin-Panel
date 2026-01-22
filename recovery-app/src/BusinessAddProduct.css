@@ -455,3 +455,8 @@
       color: #222;
       text-align: right;
     }
+
+    .disabled-section {
+      opacity: 0.5;
+      pointer-events: none;
+    }

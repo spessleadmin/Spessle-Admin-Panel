@@ -12,8 +12,18 @@ export default function BusinessAddProduct() {
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [files, setFiles] = useState([]);
+  const [isProductInfoFilled, setIsProductInfoFilled] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
+
+  useEffect(() => {
+    setIsProductInfoFilled(
+      productName.trim() !== "" &&
+      description.trim() !== "" &&
+      price.trim() !== "" &&
+      quantity.trim() !== ""
+    );
+  }, [productName, description, price, quantity]);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -27,6 +37,7 @@ export default function BusinessAddProduct() {
     onDrop,
     accept: "image/*",
     multiple: false,
+    disabled: !isProductInfoFilled
   });
 
   useEffect(() => {
@@ -143,7 +154,7 @@ export default function BusinessAddProduct() {
         </div>
         <div className="row">
           <div className="col-12">
-            <div className="admin-card card">
+            <div className={`admin-card card ${!isProductInfoFilled ? 'disabled-section' : ''}`}>
               <div className="card-body">
                 <h4 className="header-title">Product Images</h4>
                 <div className="row mb-3">
