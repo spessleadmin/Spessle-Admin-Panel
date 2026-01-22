@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import feather from "feather-icons";
 
-const OptionManager = ({ productOptions, onAdd, onDelete }) => {
+const OptionManager = ({ productOptions, onAdd, onDelete, disabled }) => {
   const [newOption, setNewOption] = useState({ type: "", value: "" });
   const [newValue, setNewValue] = useState({}); // State for new values for existing options
 
@@ -63,6 +63,7 @@ const OptionManager = ({ productOptions, onAdd, onDelete }) => {
                 placeholder="Option Type"
                 value={newOption.type}
                 onChange={handleNewOptionChange}
+                disabled={disabled}
               />
               <label htmlFor="floatingOptionType">Option Type</label>
             </div>
@@ -77,6 +78,7 @@ const OptionManager = ({ productOptions, onAdd, onDelete }) => {
                 placeholder="Option Value"
                 value={newOption.value}
                 onChange={handleNewOptionChange}
+                disabled={disabled}
               />
               <label htmlFor="floatingOptionValue">Option Value</label>
             </div>
@@ -86,6 +88,7 @@ const OptionManager = ({ productOptions, onAdd, onDelete }) => {
               type="button"
               className="btn btn-primary"
               onClick={handleAddNewOption}
+              disabled={disabled}
             >
               <i data-feather="plus"></i> Add
             </button>
@@ -104,7 +107,7 @@ const OptionManager = ({ productOptions, onAdd, onDelete }) => {
                   <a
                     href="#!"
                     className="ms-1 text-light"
-                    onClick={() => onDelete(id)}
+                    onClick={() => !disabled && onDelete(id)}
                   >
                     <i
                       data-feather="x"
@@ -124,6 +127,7 @@ const OptionManager = ({ productOptions, onAdd, onDelete }) => {
                     placeholder="Add new value..."
                     value={newValue[name] || ""}
                     onChange={(e) => handleNewValueChange(name, e.target.value)}
+                    disabled={disabled}
                   />
                   <label htmlFor={`floatingNewValue-${name}`}>New Value</label>
                 </div>
@@ -133,6 +137,7 @@ const OptionManager = ({ productOptions, onAdd, onDelete }) => {
                   type="button"
                   className="btn btn-sm btn-outline-primary"
                   onClick={() => handleAddNewValue(name, type)}
+                  disabled={disabled}
                 >
                   <i
                     data-feather="plus"

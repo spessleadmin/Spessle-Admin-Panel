@@ -187,12 +187,13 @@ export default function BusinessAddProduct() {
             </div>
           </div>
         </div>
-        <div className="row">
+        <div className={`row ${!isProductInfoFilled ? 'disabled-section' : ''}`}>
           <div className="col-12">
             <OptionManager
               productOptions={productOptions}
               onAdd={handleAddOption}
               onDelete={handleDeleteOption}
+              disabled={!isProductInfoFilled}
             />
           </div>
         </div>
@@ -235,7 +236,7 @@ export default function BusinessAddProduct() {
         <div className="row">
             <div className="col-12">
                 <div className="admin-filter-col filter-actions buttons-row">
-                    <button type="button" className="btn btn-blue admin-filter-button" onClick={handleSave}>
+                    <button type="button" className={`btn btn-blue admin-filter-button ${!isProductInfoFilled ? 'disabled-button' : ''}`} onClick={handleSave} disabled={!isProductInfoFilled}>
                     Add Product
                     </button>
                 </div>

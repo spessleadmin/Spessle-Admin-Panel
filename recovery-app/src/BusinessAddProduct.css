@@ -460,3 +460,10 @@
       opacity: 0.5;
       pointer-events: none;
     }
+
+    .disabled-button {
+      background-color: #cccccc;
+      border-color: #cccccc;
+      color: #666666;
+      cursor: not-allowed;
+    }
