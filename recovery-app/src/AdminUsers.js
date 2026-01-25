@@ -262,12 +262,6 @@ export default function AdminUsers() {
                                                                                           style={{ width: '200px', height: '38px' }}
                                                                                         />                          </label>
                         </div>
-                        <button
-                          className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i data-feather="plus"></i>Add User
-                        </button>
                       </div>
                     </div>
 

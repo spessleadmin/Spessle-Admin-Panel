@@ -207,10 +207,10 @@ const BusinessOrders = () => {
                           setFilters({ ...filters, status: e.target.value })
                         }
                       >
-                        <option value="Processing">Processing</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Cancelled">Cancelled</option>
-                        <option value="New">New</option>
+                        <option value="processing">Processing</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="refunded">Refunded</option>
                       </select>
                     </div>
                     <div className="admin-filter-col filter-actions buttons-row">

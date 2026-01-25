@@ -18,7 +18,7 @@ const transformApiProduct = (apiProduct) => ({
   productName: apiProduct.productname,
   cost: apiProduct.price,
   dateTime: apiProduct.createddate, // Using createddate from API
-  rating: 0.0 // Defaulting rating as it's not in the API response
+  rating: apiProduct.averageRating // Defaulting rating as it's not in the API response
 });
 
 export default function ManageProduct() {
@@ -44,7 +44,7 @@ export default function ManageProduct() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await api('http://localhost:5050/products/state/California');
+        const response = await api('http://localhost:5050/products');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -146,7 +146,7 @@ export default function ManageProduct() {
       p.businessName.toLowerCase().includes(value.toLowerCase()) ||
       p.category.toLowerCase().includes(value.toLowerCase()) ||
       p.cost.toString().includes(value) ||
-      p.rating.toString().includes(value)
+      (p.averageRating || "").toString().includes(value)
     );
     setProducts(filtered);
     setCurrentPage(1);
@@ -290,12 +290,6 @@ export default function ManageProduct() {
                           />
                         </label>
                       </div>
-                      <button
-                        className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                        onClick={e => e.preventDefault()}
-                      >
-                        <i data-feather="plus"></i>Add Product
-                      </button>
                     </div>
                   </div>
 
@@ -376,7 +370,7 @@ export default function ManageProduct() {
                                 </td>
                                 <td>${product.cost.toFixed(2)}</td>
                                 <td>{new Date(product.dateTime).toLocaleString()}</td>
-                                <td>⭐ {product.rating.toFixed(1)}</td>
+                                <td>⭐ {product.rating ? product.rating.toFixed(1) : "N/A"}</td>
                                 <td>
                                   <Link
                                     to={`/edit-product/${product.id}`}
