@@ -30,6 +30,7 @@ import ManageCategories from "./ManageCategories";
 import BusinessOrders from "./BusinessOrders";
 import ManageReviews from "./ManageReviews";
 import AdminManageReviews from "./AdminManageReviews";
+import AddProduct from "./AddProduct";
 import Logout from "./Logout";
 import "./NotificationSidebar.css";
 
@@ -49,7 +50,6 @@ function App() {
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/admin-manage-product" element={<AdminManageProduct />} />
         <Route path="/manage-reviews" element={<ManageReviews />} />
-        <Route path="/admin-manage-reviews" element={<AdminManageReviews />} />
         <Route path="/manage-orders" element={<ManageOrders />} />
         <Route path="/admin-manage-orders" element={<AdminManageOrders />} />
         <Route path="/admin-manage-categories" element={<ManageCategories />} />

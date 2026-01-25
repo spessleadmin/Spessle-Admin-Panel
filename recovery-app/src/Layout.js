@@ -9,7 +9,16 @@ import "./Layout.css"; // Add this line
 import "./NotificationSidebar.css";
 
 export default function Layout({ children }) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const savedState = localStorage.getItem("sidebar-collapsed");
+    return savedState !== null ? JSON.parse(savedState) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebar-collapsed", JSON.stringify(isCollapsed));
+    feather.replace();
+
+  }, [isCollapsed]);
   const [user, setUser] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setisNotificationOpen] = useState(false);
