@@ -101,15 +101,7 @@ export default function RevenueManagement() {
               </div>
             </div>
           </div>
-          <div className="col-md-3">
-            <div className="stat-box">
-              <h5>TOTAL REVENUE</h5>
-              <div className="main-stat">$68,541</div>
-              <div className="sub-stat">
-                <span className="text-success">+17.48%</span> Total revenue: $1.21
-              </div>
-            </div>
-          </div>
+          
         </div>
 
         {/* Revenue Card */}

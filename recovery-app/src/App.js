@@ -13,6 +13,7 @@ import AdminManageBusiness from "./AdminManageBusiness";
 import ManageCoupons from "./ManageCoupons";
 import AdminManageCoupons from "./AdminManageCoupons";
 import ManageOrders from "./ManageOrders";
+import BusinessAddProduct from "./BusinessAddProduct";
 import AdminManageOrders from "./AdminManageOrders";
 import EditOrder from "./EditOrder";
 import Notification from "./Notification";
@@ -29,7 +30,9 @@ import ManageCategories from "./ManageCategories";
 import BusinessOrders from "./BusinessOrders";
 import ManageReviews from "./ManageReviews";
 import AdminManageReviews from "./AdminManageReviews";
+import AddProduct from "./AddProduct";
 import Logout from "./Logout";
+import "./NotificationSidebar.css";
 
 function App() {
   return (
@@ -42,14 +45,14 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/edit-product/:id" element={<EditProduct />} />
+        <Route path="/business/:id/add-product" element={<BusinessAddProduct />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
         <Route path="/admin-manage-product" element={<AdminManageProduct />} />
         <Route path="/manage-reviews" element={<ManageReviews />} />
-        <Route path="/admin-manage-reviews" element={<AdminManageReviews />} />
         <Route path="/manage-orders" element={<ManageOrders />} />
         <Route path="/admin-manage-orders" element={<AdminManageOrders />} />
-        <Route path="/manage-categories" element={<ManageCategories />} />
+        <Route path="/admin-manage-categories" element={<ManageCategories />} />
         <Route path="/manage-coupons" element={<ManageCoupons />} />
         <Route path="/admin-manage-coupons" element={<AdminManageCoupons />} />
         <Route path="/manage-business" element={<ManageBusiness />} />
@@ -63,7 +66,7 @@ function App() {
         <Route path="/business-products/:id" element={<BusinessProducts />} />
         <Route path="/business-orders/:businessID" element={<BusinessOrders />} />
         <Route path="/edit-user/:id" element={<EditUser />} />
-        <Route path="/manage-tags" element={<ManageTags />} />
+        <Route path="/admin-manage-tags" element={<ManageTags />} />
         <Route path="/revenue-management" element={<RevenueManagement />} />
         <Route path="/admin-revenue-management" element={<AdminRevenueManagement />} />
       </Routes>

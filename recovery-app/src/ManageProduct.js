@@ -18,7 +18,7 @@ const transformApiProduct = (apiProduct) => ({
   productName: apiProduct.productname,
   cost: apiProduct.price,
   dateTime: apiProduct.createddate, // Using createddate from API
-  rating: 0.0 // Defaulting rating as it's not in the API response
+  rating: apiProduct.averageRating // Defaulting rating as it's not in the API response
 });
 
 export default function ManageProduct() {
@@ -37,6 +37,8 @@ export default function ManageProduct() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+  const [businessId, setBusinessId] = useState(null);
+
 
   // Fetch data from API on component mount
   useEffect(() => {
@@ -51,6 +53,7 @@ export default function ManageProduct() {
         }
         const userInfo = await userInfoResponse.json();
         const businessId = userInfo.user.businesses_on_user[0]?.id;
+        setBusinessId(businessId);
         if (!businessId) {
           throw new Error("Business ID not found in user info.");
         }
@@ -159,7 +162,7 @@ export default function ManageProduct() {
       p.businessName.toLowerCase().includes(value.toLowerCase()) ||
       p.category.toLowerCase().includes(value.toLowerCase()) ||
       p.cost.toString().includes(value) ||
-      p.rating.toString().includes(value)
+      (p.rating || "").toString().includes(value)
     );
     setProducts(filtered);
     setCurrentPage(1);
@@ -303,12 +306,12 @@ export default function ManageProduct() {
                           />
                         </label>
                       </div>
-                      <button
+                      <Link
+                        to={`/business/${businessId}/add-product`}
                         className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                        onClick={e => e.preventDefault()}
                       >
                         <i data-feather="plus"></i>Add Product
-                      </button>
+                      </Link>
                     </div>
                   </div>
 
@@ -389,7 +392,7 @@ export default function ManageProduct() {
                                 </td>
                                 <td>${product.cost.toFixed(2)}</td>
                                 <td>{new Date(product.dateTime).toLocaleString()}</td>
-                                <td>⭐ {product.rating.toFixed(1)}</td>
+                                <td>⭐ {product.rating ? product.rating.toFixed(1) : "N/A"}</td>
                                 <td>
                                   <Link
                                     to={`/edit-product/${product.id}`}
