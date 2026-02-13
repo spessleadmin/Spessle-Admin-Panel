@@ -48,6 +48,7 @@ function App() {
         <Route path="/business/:id/add-product" element={<BusinessAddProduct />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
+        <Route path="/add-product" element={<AddProduct />} />
         <Route path="/admin-manage-product" element={<AdminManageProduct />} />
         <Route path="/manage-reviews" element={<ManageReviews />} />
         <Route path="/admin-manage-reviews" element={<AdminManageReviews />} />
