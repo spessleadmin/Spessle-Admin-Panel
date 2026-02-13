@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Layout from "./Layout";
 import api from "./utils/api";
 import "./EditOrder.css";
@@ -12,6 +12,7 @@ const EditOrder = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("");
+  const [refundAmount, setRefundAmount] = useState("");
 
   useEffect(() => {
     if (orderInfo) {
@@ -73,6 +74,33 @@ const EditOrder = () => {
     }
   };
 
+  const handleRefund = async () => {
+    try {
+      const response = await api(
+        `http://localhost:5050/businesses/${orderInfo.business.id}/orders/${orderID}/refund`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            refundAmount: parseFloat(refundAmount),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      console.log("Refund processed successfully");
+      // Optionally, refresh order details or show a success message
+    } catch (error) {
+      console.error("Failed to process refund:", error);
+      // Optionally, show an error message to the user
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -129,6 +157,51 @@ const EditOrder = () => {
                     <div className="admin-filter-col filter-actions buttons-row">
                       <button type="button" className="btn btn-blue admin-filter-button" onClick={handleSaveStatus}>
                         Save
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Refund Card */}
+        <div className="row">
+          <div className="col-12">
+            <div className="admin-card card">
+              <div className="card-body">
+                <div className="admin-filter-title header-title">Refund</div>
+                <form className="admin-filter-form">
+                  <div className="admin-filter-row">
+                    <div className="admin-filter-col">
+                      <label>Refund Amount</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        name="refundAmount"
+                        value={refundAmount}
+                        onChange={(e) => setRefundAmount(e.target.value)}
+                        placeholder="Enter amount to refund"
+                      />
+                    </div>
+                    <div className="admin-filter-col filter-actions buttons-row">
+                      <button
+                        type="button"
+                        className="btn admin-filter-button"
+                        style={{ backgroundColor: '#6c757d', color: '#fff' }}
+                        onClick={() => setRefundAmount(orderInfo.totalamount)}
+                      >
+                        Full Refund
+                      </button>
+                      <button
+                        type="button"
+                        className="btn admin-filter-button"
+                        style={{ backgroundColor: '#15adad', color: '#fff' }}
+                        onClick={handleRefund}
+                        disabled={!refundAmount || parseFloat(refundAmount) <= 0}
+                      >
+                        Submit Refund
                       </button>
                     </div>
                   </div>
