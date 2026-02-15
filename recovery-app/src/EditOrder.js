@@ -13,30 +13,47 @@ const EditOrder = () => {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("");
   const [refundAmount, setRefundAmount] = useState("");
+  const [totalRefunded, setTotalRefunded] = useState(0);
+  const [amountRefundable, setAmountRefundable] = useState(0);
+
+  const fetchOrderDetails = async () => {
+    try {
+      const response = await api(`http://localhost:5050/orders/${orderID}`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setOrderInfo(data.order);
+      setLoading(false);
+    } catch (error) {
+      setError(error);
+      setLoading(false);
+    }
+  };
+
+  const fetchAmountRefundable = async () => {
+    try {
+      const response = await api(`http://localhost:5050/admin/orders/${orderID}/amount-refundable`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setAmountRefundable(data.amountRefundable);
+    } catch (error) {
+      console.error("Failed to fetch amount refundable:", error);
+    }
+  };
 
   useEffect(() => {
     if (orderInfo) {
       setStatus(orderInfo.status);
+      setTotalRefunded(orderInfo.totalrefunded || 0);
     }
   }, [orderInfo]);
 
   useEffect(() => {
-    const fetchOrderDetails = async () => {
-      try {
-        const response = await api(`http://localhost:5050/orders/${orderID}`);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setOrderInfo(data.order);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
-
     fetchOrderDetails();
+    fetchAmountRefundable();
   }, [orderID]);
 
   useEffect(() => {
@@ -77,13 +94,14 @@ const EditOrder = () => {
   const handleRefund = async () => {
     try {
       const response = await api(
-        `http://localhost:5050/businesses/${orderInfo.business.id}/orders/${orderID}/refund`,
+        `http://localhost:5050/admin/orders/${orderID}/refund`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            paymentIntentId: orderInfo.stripe_payment_intent_id,
             refundAmount: parseFloat(refundAmount),
           }),
         }
@@ -94,6 +112,9 @@ const EditOrder = () => {
       }
 
       console.log("Refund processed successfully");
+      setRefundAmount("");
+      fetchOrderDetails();
+      fetchAmountRefundable();
       // Optionally, refresh order details or show a success message
     } catch (error) {
       console.error("Failed to process refund:", error);
@@ -172,6 +193,13 @@ const EditOrder = () => {
             <div className="admin-card card">
               <div className="card-body">
                 <div className="admin-filter-title header-title">Refund</div>
+                <div className="mb-3">
+                  <div>Total Amount: ${orderInfo.totalamount}</div>
+                  <div>Total Refunded: ${totalRefunded.toFixed(2)}</div>
+                  <div>
+                    Remaining Refundable: ${amountRefundable.toFixed(2)}
+                  </div>
+                </div>
                 <form className="admin-filter-form">
                   <div className="admin-filter-row">
                     <div className="admin-filter-col">
@@ -190,7 +218,7 @@ const EditOrder = () => {
                         type="button"
                         className="btn admin-filter-button"
                         style={{ backgroundColor: '#6c757d', color: '#fff' }}
-                        onClick={() => setRefundAmount(orderInfo.totalamount)}
+                        onClick={() => setRefundAmount(amountRefundable.toFixed(2))}
                       >
                         Full Refund
                       </button>
@@ -199,7 +227,12 @@ const EditOrder = () => {
                         className="btn admin-filter-button"
                         style={{ backgroundColor: '#15adad', color: '#fff' }}
                         onClick={handleRefund}
-                        disabled={!refundAmount || parseFloat(refundAmount) <= 0}
+                        disabled={
+                          !refundAmount ||
+                          parseFloat(refundAmount) <= 0 ||
+                          parseFloat(refundAmount) >
+                            parseFloat(amountRefundable.toFixed(2))
+                        }
                       >
                         Submit Refund
                       </button>
