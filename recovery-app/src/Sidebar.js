@@ -109,9 +109,9 @@ const initialSidebarLinks = [
     featureFlag: "notification",
   },
   {
-    label: "Admin Notification",
+    label: "Admin Notifications",
     icon: "bell",
-    href: "/admin-notification",
+    href: "/admin-notifications",
     featureFlag: "admin-notification",
   },
   {

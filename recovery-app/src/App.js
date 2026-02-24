@@ -18,7 +18,7 @@ import AdminManageOrders from "./AdminManageOrders";
 import EditOrder from "./EditOrder";
 import Notification from "./Notification";
 import AdminNotification from "./AdminNotification";
-import EditNotification from "./EditNotification";
+import AdminNotificationDetails from "./AdminNotificationDetails";
 import BusinessDetails from "./BusinessDetails"
 import EditBusiness from "./EditBusiness"
 import BusinessProducts from "./BusinessProducts"
@@ -60,8 +60,8 @@ function App() {
         <Route path="/manage-business" element={<ManageBusiness />} />
         <Route path="/admin-manage-business" element={<AdminManageBusiness />} />
         <Route path="/notification" element={<Notification />} />
-        <Route path="/admin-notification" element={<AdminNotification />} />
-        <Route path="/edit-notification/:id" element={<EditNotification />} />
+        <Route path="/admin-notifications" element={<AdminNotification />} />
+        <Route path="/admin-notification/:id" element={<AdminNotificationDetails />} />
         <Route path="/business-details/:id" element={<BusinessDetails />} />
         <Route path="/edit-business/:id" element={<EditBusiness />} />
         <Route path="/edit-order/:orderID" element={<EditOrder />} />
