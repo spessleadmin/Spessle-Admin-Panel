@@ -15,6 +15,8 @@ const EditOrder = () => {
   const [refundAmount, setRefundAmount] = useState("");
   const [totalRefunded, setTotalRefunded] = useState(0);
   const [amountRefundable, setAmountRefundable] = useState(0);
+  const [deliveryMethod, setDeliveryMethod] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
 
   const fetchOrderDetails = async () => {
     try {
@@ -48,6 +50,8 @@ const EditOrder = () => {
     if (orderInfo) {
       setStatus(orderInfo.status);
       setTotalRefunded(orderInfo.totalrefunded || 0);
+      setDeliveryMethod(orderInfo.delivery_method || "");
+      setDeliveryAddress(orderInfo.delivery_address || "");
     }
   }, [orderInfo]);
 
@@ -88,6 +92,32 @@ const EditOrder = () => {
     } catch (error) {
       console.error("Failed to update order status:", error);
       // Optionally, you can show an error message to the user
+    }
+  };
+
+  const handleSaveDeliveryInfo = async () => {
+    try {
+      const response = await api(
+        `http://localhost:5050/orders/${orderID}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            delivery_address: deliveryAddress,
+            delivery_method: deliveryMethod,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      console.log("Order delivery info updated successfully");
+    } catch (error) {
+      console.error("Failed to update order delivery info:", error);
     }
   };
 
@@ -177,6 +207,46 @@ const EditOrder = () => {
                     </div>
                     <div className="admin-filter-col filter-actions buttons-row">
                       <button type="button" className="btn btn-blue admin-filter-button" onClick={handleSaveStatus}>
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Delivery Information Card */}
+        <div className="row">
+          <div className="col-12">
+            <div className="admin-card card">
+              <div className="card-body">
+                <div className="admin-filter-title header-title">Delivery Information</div>
+                <form className="admin-filter-form">
+                  <div className="admin-filter-row">
+                    <div className="admin-filter-col">
+                      <label>Delivery Method</label>
+                      <select
+                        className="form-control form-select form-select-sm"
+                        value={deliveryMethod}
+                        onChange={(e) => setDeliveryMethod(e.target.value)}
+                      >
+                        <option value="Pickup">Pickup</option>
+                        <option value="Delivery">Delivery</option>
+                      </select>
+                    </div>
+                    <div className="admin-filter-col">
+                      <label>Delivery Address</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={deliveryAddress}
+                        onChange={(e) => setDeliveryAddress(e.target.value)}
+                      />
+                    </div>
+                    <div className="admin-filter-col filter-actions buttons-row">
+                      <button type="button" className="btn btn-blue admin-filter-button" onClick={handleSaveDeliveryInfo}>
                         Save
                       </button>
                     </div>
