@@ -69,7 +69,7 @@ export default function NotificationSidebar({ isNotificationOpen, onClose, user 
           </div>
         ) : (
           notifications.map((notification) => (
-            <div key={notification.id} className="notification-item">
+            <div key={notification.id} className={`notification-item ${!notification.readAt ? 'notification-item-unread' : ''}`}>
               <div className="notification-item-header">
                 <span className="notification-item-name">{notification.title}</span>
                 <span className="notification-item-time">{new Date(notification.sentAt).toLocaleString()}</span>
