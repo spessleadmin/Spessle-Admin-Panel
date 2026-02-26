@@ -23,4 +23,12 @@ const api = async (url, options = {}) => {
   return response;
 };
 
+export const getNotifications = async (userId) => {
+  const response = await api(`http://localhost:5050/users/${userId}/notifications`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch notifications');
+  }
+  return response.json();
+};
+
 export default api;
