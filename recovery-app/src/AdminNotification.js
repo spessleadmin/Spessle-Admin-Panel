@@ -134,7 +134,7 @@ export default function Notification() {
                                 </td>
                                 <td>{notification.userId}</td>
                                 <td>{notification.sentFromId}</td>
-                                <td>{notification.user.username}</td>
+                                <td>{notification.sender_user.username}</td>
                                 <td>{notification.message}</td>
                                 <td>
                                   <Link
