@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import feather from "feather-icons";
-import { getNotifications } from "./utils/api";
+import { getNotifications, markNotificationAsRead } from "./utils/api";
 import "./NotificationSidebar.css";
 
 export default function NotificationSidebar({ isNotificationOpen, onClose, user }) {
@@ -45,6 +45,18 @@ export default function NotificationSidebar({ isNotificationOpen, onClose, user 
     }
   };
 
+  const handleMarkAsRead = (notificationId) => {
+    markNotificationAsRead(notificationId)
+      .then(() => {
+        const updatedNotifications = notifications.map(n =>
+          n.id === notificationId ? { ...n, readAt: new Date().toISOString() } : n
+        );
+        setNotifications(updatedNotifications);
+        setAllNotifications(updatedNotifications);
+      })
+      .catch(err => console.error("Failed to mark notification as read", err));
+  };
+
   return (
     <aside className={`notification-sidebar ${isNotificationOpen ? "open" : ""}`}>
       <div className="notification-sidebar-header">
@@ -78,13 +90,17 @@ export default function NotificationSidebar({ isNotificationOpen, onClose, user 
                 <p>{notification.message}</p>
               </div>
                 <div className="notification-item-footer">
-                    <Link
-                        to={`/admin-notification/${notification.id}`}
-                        title="View"
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleMarkAsRead(notification.id);
+                        }}
+                        title="Mark as Read"
                         className="btn btn-xs btn-warning edit-btn"
                         >
                         <i data-feather="eye"></i>
-                        </Link>
+                        </a>
                     <a
                         href="#"
                         className="action-icon text-danger"

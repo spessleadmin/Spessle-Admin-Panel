@@ -31,4 +31,14 @@ export const getNotifications = async (userId) => {
   return response.json();
 };
 
+export const markNotificationAsRead = async (notificationId) => {
+  const response = await api(`http://localhost:5050/notifications/${notificationId}/read`, {
+    method: 'POST',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to mark notification as read');
+  }
+  return response.json();
+};
+
 export default api;
