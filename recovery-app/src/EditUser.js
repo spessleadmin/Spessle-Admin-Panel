@@ -15,10 +15,28 @@ export default function EditUser() {
     firstname: "",
     lastname: "",
     username: "",
-    phonenumber: "",
+    phonenum: "",
   });
   const [files, setFiles] = useState([]);
   const [profilePictureUrl, setProfilePictureUrl] = useState(null);
+  const [loggedInUserProfilePictureUrl, setLoggedInUserProfilePictureUrl] = useState(null);
+
+  useEffect(() => {
+    const fetchLoggedInUser = async () => {
+      try {
+        const response = await api("http://localhost:5050/user-info");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setLoggedInUserProfilePictureUrl(data.user.profilepictureurl);
+      } catch (error) {
+        throw new Error("Failed to fetch logged-in user:", error);
+      }
+    };
+
+    fetchLoggedInUser();
+  }, []);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -44,13 +62,16 @@ export default function EditUser() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        const user = data.users[0];
+        const user = data.user || (data.users && data.users[0]);
+        if (!user) {
+          throw new Error("User data not found in response");
+        }
         const initialState = {
           email: user.email,
           firstname: user.firstname,
           lastname: user.lastname,
           username: user.username,
-          phonenumber: user.phonenum,
+          phonenum: user.phonenum,
           profilepictureurl: user.profilepictureurl,
         };
         setInitialUserState(initialState);
@@ -59,11 +80,11 @@ export default function EditUser() {
           firstname: initialState.firstname,
           lastname: initialState.lastname,
           username: initialState.username,
-          phonenumber: initialState.phonenumber,
+          phonenum: initialState.phonenum,
         });
         setProfilePictureUrl(initialState.profilepictureurl);
       } catch (error) {
-        console.error("Failed to fetch user:", error);
+        throw new Error("Failed to fetch user:", error);
       }
     };
 
@@ -89,7 +110,7 @@ export default function EditUser() {
       firstname: userInfo.firstname,
       lastname: userInfo.lastname,
       username: userInfo.username,
-      phonenum: userInfo.phonenumber,
+      phonenum: userInfo.phonenum,
     };
 
     const initialDetails = {
@@ -97,7 +118,7 @@ export default function EditUser() {
       firstname: initialUserState.firstname,
       lastname: initialUserState.lastname,
       username: initialUserState.username,
-      phonenum: initialUserState.phonenumber,
+      phonenum: initialUserState.phonenum,
     };
 
     return JSON.stringify(currentDetails) !== JSON.stringify(initialDetails);
@@ -123,7 +144,7 @@ export default function EditUser() {
 
         console.log("Image uploaded successfully");
       } catch (error) {
-        console.error("Failed to upload image:", error);
+        throw new Error("Failed to upload image:", error);
       }
     }
 
@@ -133,7 +154,7 @@ export default function EditUser() {
         firstname: userInfo.firstname,
         lastname: userInfo.lastname,
         username: userInfo.username,
-        phonenum: userInfo.phonenumber,
+        phonenum: userInfo.phonenum,
       };
 
       try {
@@ -151,7 +172,7 @@ export default function EditUser() {
 
         console.log("User details updated successfully");
       } catch (error) {
-        console.error("Failed to update user details:", error);
+        throw new Error("Failed to update user details:", error);
       }
     }
 
@@ -167,7 +188,7 @@ export default function EditUser() {
         firstname: initialUserState.firstname,
         lastname: initialUserState.lastname,
         username: initialUserState.username,
-        phonenumber: initialUserState.phonenumber,
+        phonenum: initialUserState.phonenum,
       });
       setFiles([]);
     }
@@ -179,6 +200,11 @@ export default function EditUser() {
     <Layout>
       <div className="edit-user-page">
         <h2>Edit User</h2>
+        <div className="logged-in-user-profile">
+          {loggedInUserProfilePictureUrl && (
+            <img src={loggedInUserProfilePictureUrl} alt="Logged-in user" />
+          )}
+        </div>
         <div className="edit-user-card">
           <form className="edit-user-form">
             <div {...getRootProps({ className: 'dropify-wrapper' })}>
@@ -246,8 +272,8 @@ export default function EditUser() {
               <label>Phone Number</label>
               <input
                 type="text"
-                name="phonenumber"
-                value={userInfo.phonenumber}
+                name="phonenum"
+                value={userInfo.phonenum}
                 onChange={handleChange}
               />
             </div>
