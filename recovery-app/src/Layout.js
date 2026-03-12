@@ -116,7 +116,7 @@ export default function Layout({ children }) {
           </button>
           <div className="header-profile" onClick={toggleProfileDropdown}>
             <img
-              src={user ? user.profilepictureurl || "https://randomuser.me/api/portraits/women/44.jpg" : "https://randomuser.me/api/portraits/women/44.jpg"}
+              src={user ? user.profilepictureurl || "https://www.pngitem.com/pimgs/m/522-5220445_anonymous-profile-grey-person-sticker-glitch-empty-profile.png" : "https://www.pngitem.com/pimgs/m/522-5220445_anonymous-profile-grey-person-sticker-glitch-empty-profile.png"}
               alt="Profile"
               className="avatar"
               draggable="false"
