@@ -227,49 +227,58 @@ export default function EditUser() {
                 <h4 className="header-title">User Image</h4>
                 <div className="row mb-3">
                   <div className="col-md-9">
-                    <div {...getRootProps({ className: 'dropify-wrapper' })}>
-                      <input {...getInputProps()} />
-                      {files.length > 0 ? (
-                        <div className="dropify-preview">
-                          <span className="dropify-render">
-                            <img src={files[0].preview} alt={files[0].name} />
-                          </span>
-                          <div className="dropify-infos">
-                            <div className="dropify-infos-inner">
-                              <p className="dropify-filename">
-                                <span className="file-icon"></span> {files[0].name}
-                              </p>
-                              <p className="dropify-infos-message">Drag and drop or click to replace</p>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="dropify-message">
-                          <span className="file-icon"></span>
-                          <p>Drag and drop a file here or click</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <button type="button" className="btn btn-primary" onClick={handleImageUpload}>Upload</button>
-                  </div>
-                </div>
-                <div className="row">
-                  {userImage && (
-                    <div className="col-md-3">
-                      <div className="card position-relative">
-                        <img src={userImage} className="card-img-top" alt="User" style={{ height: '150px', objectFit: 'cover' }} />
-                        <button
-                          onClick={handleDeleteImage}
-                          className="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
-                          style={{ zIndex: 10 }}
-                        >
-                          <i className="d-block" data-feather="trash-2"></i>
-                        </button>
-                      </div>
-                    </div>
-                  )}
+  <div {...getRootProps({ className: 'dropify-wrapper' })}>
+    <input {...getInputProps()} />
+    {files.length > 0 ? (
+      <div className="dropify-preview">
+        <span className="dropify-render">
+          <img src={files[0].preview} alt={files[0].name} />
+        </span>
+        <div className="dropify-infos">
+          <div className="dropify-infos-inner">
+            <p className="dropify-filename">
+              <span className="file-icon"></span> {files[0].name}
+            </p>
+            <p className="dropify-infos-message">Drag and drop or click to replace</p>
+          </div>
+        </div>
+      </div>
+    ) : userImage ? (
+      <div className="dropify-preview">
+        <span className="dropify-render">
+          <img src={userImage} alt="User" />
+        </span>
+        <div className="dropify-infos">
+          <div className="dropify-infos-inner">
+            <p className="dropify-filename">
+              <span className="file-icon"></span> Current Image
+            </p>
+            <p className="dropify-infos-message">Drag and drop or click to replace</p>
+          </div>
+        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // prevent opening file dialog
+            handleDeleteImage();
+          }}
+          className="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
+          style={{ zIndex: 10 }}
+        >
+          <i className="d-block" data-feather="trash-2"></i>
+        </button>
+      </div>
+    ) : (
+      <div className="dropify-message">
+        <span className="file-icon"></span>
+        <p>Drag and drop a file here or click</p>
+      </div>
+    )}
+  </div>
+</div>
+<div className="col-md-3">
+  <button type="button" className="btn btn-primary" onClick={handleImageUpload}>Upload</button>
+</div>
+
                 </div>
               </div>
             </div>

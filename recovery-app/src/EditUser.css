@@ -89,3 +89,13 @@
 .edit-user-form .btn-submit:hover {
   background-color: #138783;
 }
+
+.dropify-preview {
+  position: relative;
+}
+
+.dropify-preview .btn-danger .feather {
+  color: #f1556c !important;
+}
+
+
