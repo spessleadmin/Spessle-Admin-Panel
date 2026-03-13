@@ -70,7 +70,7 @@ export default function EditUser() {
         firstname: user.firstname,
         lastname: user.lastname,
         username: user.username,
-        phonenumber: user.phonenumber,
+        phonenum: user.phonenum,
         profilepictureurl: user.profilepictureurl,
       };
       setInitialUserState(initialState);
@@ -79,7 +79,7 @@ export default function EditUser() {
         firstname: initialState.firstname,
         lastname: initialState.lastname,
         username: initialState.username,
-        phonenumber: initialState.phonenumber,
+        phonenum: initialState.phonenum,
       });
       setUserImage(initialState.profilepictureurl);
     } catch (error) {
@@ -171,7 +171,7 @@ export default function EditUser() {
         firstname: userInfo.firstname,
         lastname: userInfo.lastname,
         username: userInfo.username,
-        phonenumber: userInfo.phonenumber,
+        phonenum: userInfo.phonenum,
       };
 
       try {
@@ -205,7 +205,7 @@ export default function EditUser() {
         firstname: initialUserState.firstname,
         lastname: initialUserState.lastname,
         username: initialUserState.username,
-        phonenumber: initialUserState.phonenumber,
+        phonenum: initialUserState.phonenum,
       });
       setFiles([]);
     }
@@ -326,8 +326,8 @@ export default function EditUser() {
               <label>Phone Number</label>
               <input
                 type="text"
-                name="phonenumber"
-                value={userInfo.phonenumber}
+                name="phonenum"
+                value={userInfo.phonenum}
                 onChange={handleChange}
               />
             </div>
