@@ -18,7 +18,7 @@ export default function EditUser() {
     phonenum: "",
   });
   const [files, setFiles] = useState([]);
-  const [profilePictureUrl, setProfilePictureUrl] = useState(null);
+  const [userImage, setUserImage] = useState(null);
   const [loggedInUserProfilePictureUrl, setLoggedInUserProfilePictureUrl] = useState(null);
 
   useEffect(() => {
@@ -54,48 +54,48 @@ export default function EditUser() {
     multiple: false,
   });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await api(`http://localhost:5050/users/${id}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        const user = data.user || (data.users && data.users[0]);
-        if (!user) {
-          throw new Error("User data not found in response");
-        }
-        const initialState = {
-          email: user.email,
-          firstname: user.firstname,
-          lastname: user.lastname,
-          username: user.username,
-          phonenum: user.phonenum,
-          profilepictureurl: user.profilepictureurl,
-        };
-        setInitialUserState(initialState);
-        setUserInfo({
-          email: initialState.email,
-          firstname: initialState.firstname,
-          lastname: initialState.lastname,
-          username: initialState.username,
-          phonenum: initialState.phonenum,
-        });
-        setProfilePictureUrl(initialState.profilepictureurl);
-      } catch (error) {
-        throw new Error("Failed to fetch user:", error);
+  const fetchUser = useCallback(async () => {
+    try {
+      const response = await api(`http://localhost:5050/users/${id}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
-
-    if (id) {
-      fetchUser();
+      const data = await response.json();
+      const user = data.user || (data.users && data.users[0]);
+      if (!user) {
+        throw new Error("User data not found in response");
+      }
+      const initialState = {
+        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        username: user.username,
+        phonenumber: user.phonenumber,
+        profilepictureurl: user.profilepictureurl,
+      };
+      setInitialUserState(initialState);
+      setUserInfo({
+        email: initialState.email,
+        firstname: initialState.firstname,
+        lastname: initialState.lastname,
+        username: initialState.username,
+        phonenumber: initialState.phonenumber,
+      });
+      setUserImage(initialState.profilepictureurl);
+    } catch (error) {
+      throw new Error("Failed to fetch user:", error);
     }
   }, [id]);
 
   useEffect(() => {
+    if (id) {
+      fetchUser();
+    }
+  }, [id, fetchUser]);
+
+  useEffect(() => {
     feather.replace();
-  }, [userInfo]);
+  }, [userInfo, userImage]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -124,29 +124,46 @@ export default function EditUser() {
     return JSON.stringify(currentDetails) !== JSON.stringify(initialDetails);
   };
 
-  const handleEditUser = async () => {
-    const imageChanged = files.length > 0;
-    const detailsChanged = haveDetailsChanged();
-
-    if (imageChanged) {
-      const formData = new FormData();
-      formData.append("image", files[0]);
-
-      try {
-        const response = await api(`http://localhost:5050/users/${id}/image`, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        console.log("Image uploaded successfully");
-      } catch (error) {
-        throw new Error("Failed to upload image:", error);
-      }
+  const handleImageUpload = async () => {
+    if (files.length === 0) {
+      alert("Please select an image to upload.");
+      return;
     }
+    const file = files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+    try {
+      const response = await api(`http://localhost:5050/users/${id}/image`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      await response.json();
+      setFiles([]); // Clear the selected file
+    } catch (error) {
+      throw new Error("Failed to upload image:", error);
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    try {
+      const response = await api(
+        `http://localhost:5050/users/${id}/image`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete image");
+      }
+      setUserImage(null);
+    } catch (error) {
+      throw new Error("Failed to delete image:", error);
+    }
+  };
+
+  const handleEditUser = async () => {
+    const detailsChanged = haveDetailsChanged();
 
     if (detailsChanged) {
       const payload = {
@@ -154,7 +171,7 @@ export default function EditUser() {
         firstname: userInfo.firstname,
         lastname: userInfo.lastname,
         username: userInfo.username,
-        phonenum: userInfo.phonenum,
+        phonenumber: userInfo.phonenumber,
       };
 
       try {
@@ -176,7 +193,7 @@ export default function EditUser() {
       }
     }
 
-    if (!imageChanged && !detailsChanged) {
+    if (!detailsChanged) {
       console.log("No changes to save.");
     }
   };
@@ -188,13 +205,11 @@ export default function EditUser() {
         firstname: initialUserState.firstname,
         lastname: initialUserState.lastname,
         username: initialUserState.username,
-        phonenum: initialUserState.phonenum,
+        phonenumber: initialUserState.phonenumber,
       });
       setFiles([]);
     }
   };
-
-  const imagePreview = files.length > 0 ? files[0].preview : profilePictureUrl;
 
   return (
     <Layout>
@@ -205,33 +220,63 @@ export default function EditUser() {
             <img src={loggedInUserProfilePictureUrl} alt="Logged-in user" />
           )}
         </div>
-        <div className="edit-user-card">
-          <form className="edit-user-form">
-            <div {...getRootProps({ className: 'dropify-wrapper' })}>
-              <input {...getInputProps()} />
-              {imagePreview ? (
-                <div className="dropify-preview">
-                  <span className="dropify-render">
-                    <img src={imagePreview} alt="Profile" />
-                  </span>
-                  <div className="dropify-infos">
-                    <div className="dropify-infos-inner">
-                      <p className="dropify-filename">
-                        {files.length > 0 && <span className="file-icon"></span>}
-                        {files.length > 0 ? files[0].name : ''}
-                      </p>
-                      <p className="dropify-infos-message">Drag and drop or click to replace</p>
+        <div className="row">
+          <div className="col-12">
+            <div className="admin-card card">
+              <div className="card-body">
+                <h4 className="header-title">User Image</h4>
+                <div className="row mb-3">
+                  <div className="col-md-9">
+                    <div {...getRootProps({ className: 'dropify-wrapper' })}>
+                      <input {...getInputProps()} />
+                      {files.length > 0 ? (
+                        <div className="dropify-preview">
+                          <span className="dropify-render">
+                            <img src={files[0].preview} alt={files[0].name} />
+                          </span>
+                          <div className="dropify-infos">
+                            <div className="dropify-infos-inner">
+                              <p className="dropify-filename">
+                                <span className="file-icon"></span> {files[0].name}
+                              </p>
+                              <p className="dropify-infos-message">Drag and drop or click to replace</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="dropify-message">
+                          <span className="file-icon"></span>
+                          <p>Drag and drop a file here or click</p>
+                        </div>
+                      )}
                     </div>
                   </div>
+                  <div className="col-md-3">
+                    <button type="button" className="btn btn-primary" onClick={handleImageUpload}>Upload</button>
+                  </div>
                 </div>
-              ) : (
-                <div className="dropify-message">
-                  <span className="file-icon"></span>
-                  <p>Drag and drop a file here or click</p>
+                <div className="row">
+                  {userImage && (
+                    <div className="col-md-3">
+                      <div className="card position-relative">
+                        <img src={userImage} className="card-img-top" alt="User" style={{ height: '150px', objectFit: 'cover' }} />
+                        <button
+                          onClick={handleDeleteImage}
+                          className="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
+                          style={{ zIndex: 10 }}
+                        >
+                          <i className="d-block" data-feather="trash-2"></i>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
-
+          </div>
+        </div>
+        <div className="edit-user-card">
+          <form className="edit-user-form">
             <div className="form-group">
               <label>Email Address</label>
               <input
@@ -272,8 +317,8 @@ export default function EditUser() {
               <label>Phone Number</label>
               <input
                 type="text"
-                name="phonenum"
-                value={userInfo.phonenum}
+                name="phonenumber"
+                value={userInfo.phonenumber}
                 onChange={handleChange}
               />
             </div>
