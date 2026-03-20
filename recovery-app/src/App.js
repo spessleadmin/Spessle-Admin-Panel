@@ -18,7 +18,9 @@ import AdminManageOrders from "./AdminManageOrders";
 import EditOrder from "./EditOrder";
 import Notification from "./Notification";
 import AdminNotification from "./AdminNotification";
-import EditNotification from "./EditNotification";
+import AdminNotificationDetails from "./AdminNotificationDetails";
+import UserNotification from "./UserNotification";
+import BusinessNotification from "./BusinessNotification";
 import BusinessDetails from "./BusinessDetails"
 import EditBusiness from "./EditBusiness"
 import BusinessProducts from "./BusinessProducts"
@@ -30,6 +32,7 @@ import ManageCategories from "./ManageCategories";
 import BusinessOrders from "./BusinessOrders";
 import ManageReviews from "./ManageReviews";
 import AdminManageReviews from "./AdminManageReviews";
+import AddProduct from "./AddProduct";
 import Logout from "./Logout";
 import "./NotificationSidebar.css";
 
@@ -47,6 +50,7 @@ function App() {
         <Route path="/business/:id/add-product" element={<BusinessAddProduct />} />
         <Route path="/admin-users" element={<AdminUsers />} />
         <Route path="/manage-product" element={<ManageProduct />} />
+        <Route path="/add-product" element={<AddProduct />} />
         <Route path="/admin-manage-product" element={<AdminManageProduct />} />
         <Route path="/manage-reviews" element={<ManageReviews />} />
         <Route path="/admin-manage-reviews" element={<AdminManageReviews />} />
@@ -58,8 +62,11 @@ function App() {
         <Route path="/manage-business" element={<ManageBusiness />} />
         <Route path="/admin-manage-business" element={<AdminManageBusiness />} />
         <Route path="/notification" element={<Notification />} />
-        <Route path="/admin-notification" element={<AdminNotification />} />
-        <Route path="/edit-notification/:id" element={<EditNotification />} />
+        <Route path="/admin-notifications" element={<AdminNotification />} />
+        <Route path="/admin-notification/:id" element={<AdminNotificationDetails />} />
+        <Route path="/notification/:id" element={<AdminNotificationDetails />} />
+        <Route path="/user-notification" element={<UserNotification />} />
+        <Route path="/business-notification" element={<BusinessNotification />} />
         <Route path="/business-details/:id" element={<BusinessDetails />} />
         <Route path="/edit-business/:id" element={<EditBusiness />} />
         <Route path="/edit-order/:orderID" element={<EditOrder />} />

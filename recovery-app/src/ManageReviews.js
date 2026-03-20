@@ -2,56 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Layout from "./Layout";
 import "./ManageReviews.css";
+import api from "./utils/api";
 import feather from "feather-icons";
-
-// Placeholder data for reviews
-const placeholderReviews = [
-  {
-    id: "rev1",
-    reviewerUsername: "JohnDoe",
-    productName: "Awesome T-Shirt",
-    productId: "prod101",
-    comment: "Great quality, fits perfectly!",
-    rating: 5.0,
-    createdDate: "2023-10-27T10:00:00Z",
-  },
-  {
-    id: "rev2",
-    reviewerUsername: "JaneSmith",
-    productName: "Cool Gadget",
-    productId: "prod102",
-    comment: "Very useful, but the battery life could be better.",
-    rating: 4.0,
-    createdDate: "2023-10-26T14:30:00Z",
-  },
-  {
-    id: "rev3",
-    reviewerUsername: "MikeB",
-    productName: "Awesome T-Shirt",
-    productId: "prod101",
-    comment: "I love the design.",
-    rating: 4.5,
-    createdDate: "2023-10-25T09:00:00Z",
-  },
-  {
-    id: "rev4",
-    reviewerUsername: "SaraK",
-    productName: "Handmade Mug",
-    productId: "prod103",
-    comment: "Beautiful and well-made. A bit pricey though.",
-    rating: 4.0,
-    createdDate: "2023-10-24T18:00:00Z",
-  },
-  {
-    id: "rev5",
-    reviewerUsername: "ChrisP",
-    productName: "Cool Gadget",
-    productId: "prod102",
-    comment: "Stopped working after a week. Very disappointed.",
-    rating: 1.0,
-    createdDate: "2023-10-23T11:45:00Z",
-  },
-];
 
 export default function ManageReviews() {
   const [filters, setFilters] = useState({
@@ -67,22 +19,56 @@ export default function ManageReviews() {
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [businessId, setBusinessId] = useState(null); // Add businessId state
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
   useEffect(() => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      setMasterReviewList(placeholderReviews);
-      setReviews(placeholderReviews);
-    } catch (e) {
-      console.error("Failed to load reviews:", e);
-      setError(e.message);
-    } finally {
-      setIsLoading(false);
-    }
+    const fetchReviews = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        // First, fetch user info to get the business ID
+        const userInfoResponse = await api("http://localhost:5050/user-info");
+        if (!userInfoResponse.ok) {
+          throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
+        }
+        const userInfo = await userInfoResponse.json();
+        const currentBusinessId = userInfo.user.businesses_on_user[0]?.id;
+        setBusinessId(currentBusinessId);
+
+        if (!currentBusinessId) {
+          throw new Error("Business ID not found in user info. Cannot fetch reviews.");
+        }
+
+        // Now, fetch reviews using the dynamic business ID
+        const response = await api(`http://localhost:5050/businesses/${currentBusinessId}/reviews`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch reviews");
+        }
+        const data = await response.json();
+        // Access data.business.reviews from the new response format
+        const formattedReviews = data.business.reviews.map(review => ({
+          id: review.id,
+          reviewerUsername: review.user ? review.user.username : 'N/A', // Access nested user.username
+          productName: review.product ? review.product.productname : 'N/A', // Access nested product.productname
+          productId: review.product ? review.product.id : 'N/A',
+          comment: review.comment,
+          rating: review.rating,
+          createdDate: review.createddate,
+        }));
+        setMasterReviewList(formattedReviews);
+        setReviews(formattedReviews);
+      } catch (e) {
+        console.error("Failed to load reviews:", e);
+        setError(e.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchReviews();
   }, []);
 
   const sortReviews = (key) => {
@@ -348,7 +334,7 @@ export default function ManageReviews() {
                                 <td>{review.productId}</td>
                                 <td>{review.comment}</td>
                                 <td>⭐ {review.rating.toFixed(1)}</td>
-                                <td>{new Date(review.createdDate).toLocaleString()}</td>
+                                <td>{review.createdDate ? new Date(review.createdDate).toLocaleString() : "N/A"}</td>
                                 <td>
                                   <a
                                     href="#"

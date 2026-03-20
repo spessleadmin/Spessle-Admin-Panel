@@ -1,0 +1,14 @@
+.notification-details {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+  }
+  
+  .notification-details p {
+    margin-bottom: 10px;
+  }
+  
+  .notification-details strong {
+    margin-right: 10px;
+  }
+  

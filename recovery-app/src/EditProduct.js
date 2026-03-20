@@ -16,6 +16,7 @@ export default function EditProduct() {
     cost: "",
     description: "",
     quantity: "",
+    leadTimeDays: "",
   });
   const [files, setFiles] = useState([]);
   const [productOptions, setProductOptions] = useState([]);
@@ -73,6 +74,7 @@ export default function EditProduct() {
         cost: productData.price,
         description: productData.description,
         quantity: productData.quantity,
+        lead_time_days: productData.lead_time_days,
         tags: productData.producttags_on_product.map(tag => ({
           value: tag.tag.id,
           label: tag.tag.tagname,
@@ -84,6 +86,7 @@ export default function EditProduct() {
         cost: initial.cost,
         description: initial.description,
         quantity: initial.quantity,
+        leadTimeDays: initial.lead_time_days,
       });
       setSelectedTags(initial.tags);
       setProductOptions(
@@ -184,6 +187,7 @@ export default function EditProduct() {
       description: productInfo.description,
       price: parseFloat(productInfo.cost),
       quantity: parseInt(productInfo.quantity, 10),
+      lead_time_days: parseInt(productInfo.leadTimeDays, 10),
     };
     try {
       const response = await fetch(`http://localhost:5050/products/${id}`, {
@@ -207,6 +211,7 @@ export default function EditProduct() {
       cost: initialProductState.cost,
       description: initialProductState.description,
       quantity: initialProductState.quantity,
+      leadTimeDays: initialProductState.lead_time_days,
     });
     setSelectedTags(initialProductState.tags);
     setFiles([]);
@@ -343,6 +348,16 @@ export default function EditProduct() {
                         className="form-control"
                         name="quantity"
                         value={productInfo.quantity}
+                        onChange={handleProductInfoChange}
+                      />
+                    </div>
+                    <div className="admin-filter-col">
+                      <label>Lead Time (Days)</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="leadTimeDays"
+                        value={productInfo.leadTimeDays}
                         onChange={handleProductInfoChange}
                       />
                     </div>

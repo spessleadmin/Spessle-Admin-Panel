@@ -7,6 +7,54 @@ import feather from "feather-icons";
 export default function RevenueManagement() {
   const [filters, setFilters] = useState({ businessName: "", dateRange: "" });
   const [activeTimeRange, setActiveTimeRange] = useState("1 Month");
+  const [revenueMetrics, setRevenueMetrics] = useState({
+    totalEarnings: 0,
+    totalOrders: 0,
+    totalCustomers: 0,
+    totalRefunds: 0,
+  });
+  const [allTimeRevenueMetrics, setAllTimeRevenueMetrics] = useState({
+    totalEarnings: 0,
+    totalOrders: 0,
+    totalCustomers: 0,
+    totalRefunds: 0,
+  });
+
+  useEffect(() => {
+    const fetchAllTimeRevenueMetrics = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5050/admin/revenue-metrics"
+        );
+        const data = await response.json();
+        setAllTimeRevenueMetrics(data);
+      } catch (error) {
+        console.error("Error fetching all-time revenue metrics:", error);
+      }
+    };
+
+    fetchAllTimeRevenueMetrics();
+  }, []);
+
+  useEffect(() => {
+    const fetchRevenueMetrics = async () => {
+      let url = "http://localhost:5050/admin/revenue-metrics";
+      if (activeTimeRange !== "All") {
+        const month = activeTimeRange.split(" ")[0];
+        url += `?month=${month}`;
+      }
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setRevenueMetrics(data);
+      } catch (error) {
+        console.error("Error fetching revenue metrics:", error);
+      }
+    };
+
+    fetchRevenueMetrics();
+  }, [activeTimeRange]);
 
   const handleFilterSearch = (e) => {
     e.preventDefault();
@@ -16,6 +64,12 @@ export default function RevenueManagement() {
 
   const handleFilterReset = () => {
     setFilters({ businessName: "", dateRange: "" });
+  };
+
+  const calculatePercentage = (current, allTime) => {
+    if (allTime === 0) return "N/A";
+    const percentage = ((current / allTime) * 100).toFixed(2);
+    return `${percentage}%`;
   };
 
   return (
@@ -29,75 +83,50 @@ export default function RevenueManagement() {
           </div>
         </div>
 
-        {/* Filter Card */}
-        <div className="row">
-          <div className="col-12">
-            <div className="admin-card card">
-              <div className="card-body">
-                <div className="admin-filter-title header-title">Filter</div>
-                <form className="admin-filter-form" onSubmit={handleFilterSearch}>
-                  <div className="admin-filter-row">
-                    <div className="admin-filter-col">
-                      <label>Business Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Business Name"
-                        value={filters.businessName}
-                        onChange={e => setFilters(f => ({ ...f, businessName: e.target.value }))}
-                      />
-                    </div>
-                    <div className="admin-filter-col">
-                      <label>Date Range</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Select date range"
-                        value={filters.dateRange}
-                        onChange={e => setFilters(f => ({ ...f, dateRange: e.target.value }))}
-                      />
-                    </div>
-                    <div className="admin-filter-col filter-actions buttons-row" style={{ alignSelf: 'flex-end' }}>
-                      <button type="submit" className="btn btn-blue admin-filter-button">
-                        Filter
-                      </button>
-                      <button type="button" className="btn btn-secondary admin-filter-button" onClick={handleFilterReset}>
-                        Reset
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Stats Card */}
         <div className="row stats-card-row">
           <div className="col-md-3">
             <div className="stat-box">
               <h5>TOTAL EARNINGS</h5>
-              <div className="main-stat">$31,570</div>
+              <div className="main-stat">${revenueMetrics.totalEarnings}</div>
               <div className="sub-stat">
-                <span className="text-success">+10.25%</span> Total Earnings: $3157010.25%
+                <span className="text-success">
+                  {calculatePercentage(
+                    revenueMetrics.totalEarnings,
+                    allTimeRevenueMetrics.totalEarnings
+                  )}
+                </span>{" "}
+                Total Earnings: ${allTimeRevenueMetrics.totalEarnings}
               </div>
             </div>
           </div>
           <div className="col-md-3">
             <div className="stat-box">
               <h5>ORDERS</h5>
-              <div className="main-stat">683</div>
+              <div className="main-stat">{revenueMetrics.totalOrders}</div>
               <div className="sub-stat">
-                <span className="text-success">+7.85%</span> Total Orders: 2398
+                <span className="text-success">
+                  {calculatePercentage(
+                    revenueMetrics.totalOrders,
+                    allTimeRevenueMetrics.totalOrders
+                  )}
+                </span>{" "}
+                Total Orders: {allTimeRevenueMetrics.totalOrders}
               </div>
             </div>
           </div>
           <div className="col-md-3">
             <div className="stat-box">
               <h5>CUSTOMERS</h5>
-              <div className="main-stat">345</div>
+              <div className="main-stat">{revenueMetrics.totalCustomers}</div>
               <div className="sub-stat">
-                <span className="text-success">+3.64%</span> Total Customers: 345
+                <span className="text-success">
+                  {calculatePercentage(
+                    revenueMetrics.totalCustomers,
+                    allTimeRevenueMetrics.totalCustomers
+                  )}
+                </span>{" "}
+                Total Customers: {allTimeRevenueMetrics.totalCustomers}
               </div>
             </div>
           </div>
@@ -111,7 +140,7 @@ export default function RevenueManagement() {
                 <div className="d-flex justify-content-between align-items-center">
                   <h4 className="card-title">Revenue</h4>
                   <div className="btn-group" role="group">
-                    {["All", "1 Month", "6 months", "1 year"].map(range => (
+                    {["All", "1 Month", "6 months", "12 months"].map(range => (
                       <button
                         key={range}
                         type="button"
@@ -130,7 +159,7 @@ export default function RevenueManagement() {
                       <span className="stat-label">Orders</span>
                       <span dangerouslySetInnerHTML={{ __html: feather.icons['shopping-cart'].toSvg({ color: '#fff', width: 20, height: 20 }) }} />
                     </div>
-                    <div className="stat-value">683</div>
+                    <div className="stat-value">{revenueMetrics.totalOrders}</div>
                     <div className="progress-bar-container">
                       <div className="progress-bar" style={{ width: '75%' }}></div>
                     </div>
@@ -140,7 +169,7 @@ export default function RevenueManagement() {
                       <span className="stat-label">Earnings</span>
                       <span dangerouslySetInnerHTML={{ __html: feather.icons['dollar-sign'].toSvg({ color: '#fff', width: 20, height: 20 }) }} />
                     </div>
-                    <div className="stat-value">$31,570</div>
+                    <div className="stat-value">${revenueMetrics.totalEarnings}</div>
                     <div className="progress-bar-container">
                       <div className="progress-bar" style={{ width: '60%' }}></div>
                     </div>
@@ -150,7 +179,7 @@ export default function RevenueManagement() {
                       <span className="stat-label">Refunds</span>
                       <span dangerouslySetInnerHTML={{ __html: feather.icons['refresh-cw'].toSvg({ color: '#fff', width: 20, height: 20 }) }} />
                     </div>
-                    <div className="stat-value">367</div>
+                    <div className="stat-value">{revenueMetrics.totalRefunds}</div>
                     <div className="progress-bar-container">
                       <div className="progress-bar" style={{ width: '30%' }}></div>
                     </div>

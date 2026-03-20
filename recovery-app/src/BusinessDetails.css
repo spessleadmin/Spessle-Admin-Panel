@@ -58,8 +58,8 @@
   margin-right: 10px;
 }
 
-.btn-red {
-  background-color: #dc3545;
+.btn.btn-red {
+  background-color: #dc3545 !important;
   color: white;
   border: none;
 }
