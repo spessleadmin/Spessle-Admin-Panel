@@ -14,8 +14,8 @@ export default function UserNotificationDetails() {
     const cachedUserInfo = localStorage.getItem("user-info");
     if (cachedUserInfo) {
       const userInfo = JSON.parse(cachedUserInfo);
-      if (userInfo.users && userInfo.users.length > 0) {
-        setUser(userInfo.users[0]);
+      if (userInfo.user && userInfo.user.length > 0) {
+        setUser(userInfo.user[0]);
       }
     }
   }, []);
