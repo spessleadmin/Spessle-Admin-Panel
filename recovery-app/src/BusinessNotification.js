@@ -22,7 +22,7 @@ export default function UserNotification() {
 
   useEffect(() => {
     if (user) {
-      fetch(`http://localhost:5050/users/${user.id}/notifications`)
+      fetch(`http://localhost:5050/businesses/${user.businesses_on_user[0]?.id}/notifications`)
         .then((response) => response.json())
         .then((data) => {
           setNotifications(data.notifications);
@@ -96,6 +96,7 @@ export default function UserNotification() {
                         entries
                       </label>
                     </div>
+                    
                   </div>
 
                   <div className="row">
@@ -109,7 +110,7 @@ export default function UserNotification() {
                             <th>Notification Title</th>
                             <th>Type Name</th>
                             <th>Date & Time</th>
-                            <th>Receiving User ID</th>
+                            <th>Business Name</th>
                             <th>Sender User ID</th>
                             <th>Username</th>
                             <th>Notification Message</th>
@@ -137,7 +138,7 @@ export default function UserNotification() {
                                     notification.sentAt
                                   ).toLocaleString()}
                                 </td>
-                                <td>{notification.userId}</td>
+                                <td>{notification.business.businessname}</td>
                                 <td>{notification.sentFromId}</td>
                                 <td>{notification.sender_user.username}</td>
                                 <td>{notification.message}</td>
