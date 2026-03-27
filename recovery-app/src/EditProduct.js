@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone";
 import Select from "react-select";
 import Layout from "./Layout";
 import OptionManager from "./components/OptionManager";
+import SuccessMessage from "./components/SuccessMessage"; // Import the new component
 import "./EditProduct.css";
 import "./Dropify.css";
 import feather from "feather-icons";
@@ -23,7 +24,7 @@ export default function EditProduct() {
   const [tagOptions, setTagOptions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [showOptionAddedToast, setShowOptionAddedToast] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(""); // New state for dynamic message
   const [productImages, setProductImages] = useState([]);
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -57,6 +58,8 @@ export default function EditProduct() {
       await response.json();
       fetchProduct(); // Re-fetch product data
       setFiles([]); // Clear the selected file
+      setSuccessMessage("Image uploaded successfully!"); // Set success message
+      setShowSuccessToast(true); // Show toast
     } catch (error) {
       console.error("Failed to upload image:", error);
       alert("Failed to upload image.");
@@ -132,19 +135,11 @@ export default function EditProduct() {
     if (showSuccessToast) {
       const timer = setTimeout(() => {
         setShowSuccessToast(false);
+        setSuccessMessage(""); // Clear message after hiding
       }, 3000); // Hide after 3 seconds
       return () => clearTimeout(timer);
     }
   }, [showSuccessToast]);
-
-  useEffect(() => {
-    if (showOptionAddedToast) {
-      const timer = setTimeout(() => {
-        setShowOptionAddedToast(false);
-      }, 3000); // Hide after 3 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [showOptionAddedToast]);
 
   const handleProductInfoChange = (e) => {
     const { name, value } = e.target;
@@ -198,7 +193,8 @@ export default function EditProduct() {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const result = await response.json();
       console.log("Product updated successfully:", result);
-      setShowSuccessToast(true);
+      setSuccessMessage("Product updated successfully!"); // Set success message
+      setShowSuccessToast(true); // Show toast
     } catch (error) {
       console.error("Failed to update product:", error);
       alert("Failed to update product.");
@@ -237,7 +233,8 @@ export default function EditProduct() {
 
       await response.json();
       fetchProduct(); // Re-fetch product data
-      setShowOptionAddedToast(true);
+      setSuccessMessage("Product option added successfully!"); // Set success message
+      setShowSuccessToast(true); // Show toast
     } catch (error) {
       console.error("Failed to add product option:", error);
       alert("Failed to add product option.");
@@ -259,7 +256,8 @@ export default function EditProduct() {
       setProductOptions(
         productOptions.filter((option) => option.productoptionsid !== optionId)
       );
-      alert("Product option deleted successfully!");
+      setSuccessMessage("Product option deleted successfully!"); // Set success message
+      setShowSuccessToast(true); // Show toast
     } catch (error) {
       console.error("Failed to delete product option:", error);
       alert("Failed to delete product option.");
@@ -278,6 +276,8 @@ export default function EditProduct() {
         throw new Error("Failed to delete image");
       }
       setProductImages(productImages.filter((image) => image.id !== imageId));
+      setSuccessMessage("Image deleted successfully!"); // Set success message
+      setShowSuccessToast(true); // Show toast
     } catch (error) {
       console.error("Failed to delete image:", error);
       alert("Failed to delete image.");
@@ -286,27 +286,12 @@ export default function EditProduct() {
 
   return (
     <Layout>
+      <SuccessMessage
+        message={successMessage}
+        show={showSuccessToast}
+        onClose={() => setShowSuccessToast(false)}
+      />
       <main className="manage-product-page dashboard-main" style={{ width: "100%" }}>
-        <div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 1100 }}>
-          <div id="liveToast" className={`toast ${showSuccessToast ? 'show' : 'hide'}`} role="alert" aria-live="assertive" aria-atomic="true">
-            <div className="toast-header">
-              <strong className="me-auto">Success</strong>
-              <button type="button" className="btn-close" onClick={() => setShowSuccessToast(false)} aria-label="Close"></button>
-            </div>
-            <div className="toast-body">
-              Product updated successfully!
-            </div>
-          </div>
-          <div id="optionAddedToast" className={`toast ${showOptionAddedToast ? 'show' : 'hide'}`} role="alert" aria-live="assertive" aria-atomic="true">
-            <div className="toast-header">
-              <strong className="me-auto">Success</strong>
-              <button type="button" className="btn-close" onClick={() => setShowOptionAddedToast(false)} aria-label="Close"></button>
-            </div>
-            <div className="toast-body">
-              Product option added successfully!
-            </div>
-          </div>
-        </div>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
