@@ -12,6 +12,7 @@ export default function BusinessAddProduct() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [leadTimeDays, setLeadTimeDays] = useState("");
   const [files, setFiles] = useState([]);
   const [productOptions, setProductOptions] = useState([]);
   const [isProductInfoFilled, setIsProductInfoFilled] = useState(false);
@@ -23,9 +24,10 @@ export default function BusinessAddProduct() {
       productName.trim() !== "" &&
       description.trim() !== "" &&
       price.trim() !== "" &&
-      quantity.trim() !== ""
+      quantity.trim() !== "" &&
+      leadTimeDays.trim() !== ""
     );
-  }, [productName, description, price, quantity]);
+  }, [productName, description, price, quantity, leadTimeDays]);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -69,6 +71,7 @@ export default function BusinessAddProduct() {
       description: description,
       price: parseFloat(price),
       quantity: parseInt(quantity, 10),
+      lead_time_days: parseInt(leadTimeDays, 10),
     };
 
     try {
@@ -168,6 +171,15 @@ export default function BusinessAddProduct() {
                         className="form-control"
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
+                      />
+                    </div>
+                    <div className="admin-filter-col">
+                      <label>Lead Time (Days)</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={leadTimeDays}
+                        onChange={(e) => setLeadTimeDays(e.target.value)}
                       />
                     </div>
                   </div>

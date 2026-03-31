@@ -4,19 +4,32 @@ import Layout from "./Layout";
 import "./Notification.css";
 import feather from "feather-icons";
 
-export default function Notification() {
+export default function UserNotification() {
   const [notifications, setNotifications] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState("10");
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5050/notifications")
-      .then((response) => response.json())
-      .then((data) => {
-        setNotifications(data.notifications);
-      })
-      .catch((error) => console.error("Error fetching notifications:", error));
+    const cachedUserInfo = localStorage.getItem("user-info");
+    if (cachedUserInfo) {
+      const userInfo = JSON.parse(cachedUserInfo);
+      if (userInfo.user && userInfo.user.length > 0) {
+        setUser(userInfo.user[0]);
+      }
+    }
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetch(`http://localhost:5050/users/${user.id}/notifications`)
+        .then((response) => response.json())
+        .then((data) => {
+          setNotifications(data.notifications);
+        })
+        .catch((error) => console.error("Error fetching notifications:", error));
+    }
+  }, [user]);
 
   useEffect(() => {
     feather.replace();
@@ -47,7 +60,7 @@ export default function Notification() {
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
-              <h4 className="page-title">Notifications</h4>
+              <h4 className="page-title">User Notifications</h4>
             </div>
           </div>
         </div>
@@ -82,14 +95,6 @@ export default function Notification() {
                         </select>
                         entries
                       </label>
-                    </div>
-                    <div className="d-flex">
-                      <button
-                        className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <i data-feather="plus"></i>Add
-                      </button>
                     </div>
                   </div>
 
@@ -138,13 +143,13 @@ export default function Notification() {
                                 <td>{notification.message}</td>
                                 <td>
                                   <Link
-                                    to={`/admin-notification/${notification.id}`}
+                                    to={`/notification/${notification.id}`}
                                     title="Edit"
                                     className="btn btn-xs btn-warning edit-btn"
                                   >
-                                    <i data-feather="edit"></i>
+                                    <i data-feather="eye"></i>
                                     <span className="hidden-xs hidden-sm">
-                                      Edit
+                                      View
                                     </span>
                                   </Link>
                                   <a

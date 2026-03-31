@@ -15,6 +15,8 @@ export default function ManageTags() {
   const [filters, setFilters] = useState({ tagname: "", dateRange: "" });
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState("10");
+  const [isAddTagPopupOpen, setIsAddTagPopupOpen] = useState(false);
+  const [newTagName, setNewTagName] = useState("");
   
   const [masterTagList, setMasterTagList] = useState([]);
   const [tags, setTags] = useState([]);
@@ -161,23 +163,32 @@ export default function ManageTags() {
     }
   };
 
-  const handleAddTag = async () => {
+  const handleAddTag = () => {
+    setIsAddTagPopupOpen(true);
+  };
+
+  const handlePopupSubmit = async (e) => {
+    e.preventDefault();
     try {
       const response = await api('http://localhost:5050/tags', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ tagname: 'New Tag' }),
+        body: JSON.stringify({ tagname: newTagName }),
       });
   
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
   
       await fetchTags(); // Re-fetch to get the latest data
+      setIsAddTagPopupOpen(false);
+      setNewTagName("");
     } catch (error) {
       console.error("Failed to add tag:", error);
+      alert(error.message);
       // Optionally, show an error message to the user
     }
   };
@@ -197,6 +208,30 @@ export default function ManageTags() {
             </div>
           </div>
         </div>
+
+        {isAddTagPopupOpen && (
+          <div className="add-tag-popup">
+            <div className="popup-content">
+              <h2>Add Tag</h2>
+              <form onSubmit={handlePopupSubmit}>
+                <div className="form-group">
+                  <label>Tag Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={newTagName}
+                    onChange={(e) => setNewTagName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-buttons">
+                  <button type="submit" className="btn btn-primary">Submit</button>
+                  <button type="button" className="btn btn-secondary" onClick={() => setIsAddTagPopupOpen(false)}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         <div className="row">
           <div className="col-12">

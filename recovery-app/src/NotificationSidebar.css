@@ -87,4 +87,12 @@
   .notification-item-footer .btn {
     margin-left: 0.5rem;
   }
+
+  .notification-item-unread {
+    background-color: #e7f3ff;
+    border-left: 3px solid #007bff;
+  }
   
+  .notification-item-unread .notification-item-name {
+    color: #0056b3;
+  }

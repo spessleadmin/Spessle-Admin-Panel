@@ -4,6 +4,7 @@ import feather from "feather-icons";
 import { Link } from "react-router-dom"; // Add this line
 import Sidebar from "./Sidebar";
 import NotificationSidebar from "./NotificationSidebar";
+import { getNotifications } from "./utils/api";
 import api from "./utils/api";
 import "./Layout.css"; // Add this line
 import "./NotificationSidebar.css";
@@ -22,6 +23,17 @@ export default function Layout({ children }) {
   const [user, setUser] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setisNotificationOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (user && user.id) {
+      getNotifications(user.id)
+        .then(data => {
+          setUnreadCount(data.unread_count);
+        })
+        .catch(err => console.error("Failed to fetch notifications", err));
+    }
+  }, [user]);
 
   useEffect(() => {
     feather.replace();
@@ -100,11 +112,11 @@ export default function Layout({ children }) {
           </button>
           <button className="icon-badge-btn" title="Notifications" onClick={toggleNotificationSidebar}>
             <i data-feather="bell"></i>
-            <span className="badge">9</span>
+            {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
           </button>
           <div className="header-profile" onClick={toggleProfileDropdown}>
             <img
-              src={user ? user.profilepictureurl || "https://randomuser.me/api/portraits/women/44.jpg" : "https://randomuser.me/api/portraits/women/44.jpg"}
+              src={user ? user.profilepictureurl || "https://www.pngitem.com/pimgs/m/522-5220445_anonymous-profile-grey-person-sticker-glitch-empty-profile.png" : "https://www.pngitem.com/pimgs/m/522-5220445_anonymous-profile-grey-person-sticker-glitch-empty-profile.png"}
               alt="Profile"
               className="avatar"
               draggable="false"
@@ -134,6 +146,7 @@ export default function Layout({ children }) {
         <NotificationSidebar 
             isNotificationOpen={isNotificationOpen}
             onClose={toggleNotificationSidebar}
+            user={user}
         />
         {/* Main */}
         <main className="dashboard-main">{children}</main>

@@ -83,49 +83,6 @@ export default function RevenueManagement() {
           </div>
         </div>
 
-        {/* Filter Card */}
-        <div className="row">
-          <div className="col-12">
-            <div className="admin-card card">
-              <div className="card-body">
-                <div className="admin-filter-title header-title">Filter</div>
-                <form className="admin-filter-form" onSubmit={handleFilterSearch}>
-                  <div className="admin-filter-row">
-                    <div className="admin-filter-col">
-                      <label>Business Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Business Name"
-                        value={filters.businessName}
-                        onChange={e => setFilters(f => ({ ...f, businessName: e.target.value }))}
-                      />
-                    </div>
-                    <div className="admin-filter-col">
-                      <label>Date Range</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Select date range"
-                        value={filters.dateRange}
-                        onChange={e => setFilters(f => ({ ...f, dateRange: e.target.value }))}
-                      />
-                    </div>
-                    <div className="admin-filter-col filter-actions buttons-row" style={{ alignSelf: 'flex-end' }}>
-                      <button type="submit" className="btn btn-blue admin-filter-button">
-                        Filter
-                      </button>
-                      <button type="button" className="btn btn-secondary admin-filter-button" onClick={handleFilterReset}>
-                        Reset
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Stats Card */}
         <div className="row stats-card-row">
           <div className="col-md-3">
