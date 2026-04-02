@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import Layout from "./Layout";
 import api from "./utils/api";
+import SuccessMessage from "./components/SuccessMessage";
 import "./EditUser.css";
 import "./Dropify.css";
 import feather from "feather-icons";
@@ -20,6 +21,24 @@ export default function EditUser() {
   const [files, setFiles] = useState([]);
   const [userImage, setUserImage] = useState(null);
   const [loggedInUserProfilePictureUrl, setLoggedInUserProfilePictureUrl] = useState(null);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const triggerSuccess = (msg) => {
+    setSuccessMessage(msg);
+    setShowSuccessToast(true);
+  };
+
+  useEffect(() => {
+    if (showSuccessToast) {
+      const timer = setTimeout(() => {
+        setShowSuccessToast(false);
+        setSuccessMessage("");
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessToast]);
 
   useEffect(() => {
     const fetchLoggedInUser = async () => {
@@ -140,6 +159,7 @@ export default function EditUser() {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       await response.json();
       setFiles([]); // Clear the selected file
+      triggerSuccess("Image uploaded successfully!");
     } catch (error) {
       throw new Error("Failed to upload image:", error);
     }
@@ -157,6 +177,7 @@ export default function EditUser() {
         throw new Error("Failed to delete image");
       }
       setUserImage(null);
+      triggerSuccess("Image deleted successfully!");
     } catch (error) {
       throw new Error("Failed to delete image:", error);
     }
@@ -187,7 +208,7 @@ export default function EditUser() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        console.log("User details updated successfully");
+        triggerSuccess("User details updated successfully!");
       } catch (error) {
         throw new Error("Failed to update user details:", error);
       }
@@ -213,6 +234,11 @@ export default function EditUser() {
 
   return (
     <Layout>
+      <SuccessMessage
+        message={successMessage}
+        show={showSuccessToast}
+        onClose={() => setShowSuccessToast(false)}
+      />
       <div className="edit-user-page">
         <h2>Edit User</h2>
         <div className="logged-in-user-profile">
