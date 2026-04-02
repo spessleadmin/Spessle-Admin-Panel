@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone";
 import Select from "react-select";
 import Layout from "./Layout";
 import api from "./utils/api";
+import SuccessMessage from "./components/SuccessMessage";
 import "./EditBusiness.css";
 import "./Dropify.css";
 import feather from "feather-icons";
@@ -26,6 +27,24 @@ export default function EditBusiness() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const triggerSuccess = (msg) => {
+    setSuccessMessage(msg);
+    setShowSuccessToast(true);
+  };
+
+  useEffect(() => {
+    if (showSuccessToast) {
+      const timer = setTimeout(() => {
+        setShowSuccessToast(false);
+        setSuccessMessage("");
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessToast]);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -198,7 +217,7 @@ export default function EditBusiness() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        console.log("Image uploaded successfully");
+        triggerSuccess("Image uploaded successfully!");
       } catch (error) {
         console.error("Failed to upload image:", error);
       }
@@ -231,7 +250,7 @@ export default function EditBusiness() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        console.log("Business details updated successfully");
+        triggerSuccess("Business details updated successfully!");
       } catch (error) {
         console.error("Failed to update business details:", error);
       }
@@ -262,6 +281,11 @@ export default function EditBusiness() {
 
   return (
     <Layout>
+      <SuccessMessage
+        message={successMessage}
+        show={showSuccessToast}
+        onClose={() => setShowSuccessToast(false)}
+      />
       <main className="manage-business-page dashboard-main" style={{ width: "100%" }}>
         <div className="row">
           <div className="col-12">
