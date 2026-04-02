@@ -6,14 +6,20 @@ import feather from "feather-icons";
 
 export default function Notification() {
   const [notifications, setNotifications] = useState([]);
+  const [masterNotificationList, setMasterNotificationList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState("10");
+  const [filters, setFilters] = useState({
+    notificationTitle: "",
+    notificationType: "",
+  });
 
   useEffect(() => {
     fetch("http://localhost:5050/notifications")
       .then((response) => response.json())
       .then((data) => {
         setNotifications(data.notifications);
+        setMasterNotificationList(data.notifications);
       })
       .catch((error) => console.error("Error fetching notifications:", error));
   }, []);
@@ -27,6 +33,31 @@ export default function Notification() {
       const updatedNotifications = notifications.filter((n) => n.id !== id);
       setNotifications(updatedNotifications);
     }
+  };
+
+  const handleFilterSearch = (e) => {
+    e.preventDefault();
+    let filtered = masterNotificationList;
+    if (filters.notificationTitle) {
+      filtered = filtered.filter((n) =>
+        n.title.toLowerCase().includes(filters.notificationTitle.toLowerCase())
+      );
+    }
+    if (filters.notificationType) {
+      if (filters.notificationType === "Business") {
+        filtered = filtered.filter((n) => n.businessId !== null);
+      } else if (filters.notificationType === "User") {
+        filtered = filtered.filter((n) => n.businessId === null);
+      }
+    }
+    setNotifications(filtered);
+    setCurrentPage(1);
+  };
+
+  const handleFilterReset = () => {
+    setFilters({ notificationTitle: "", notificationType: "" });
+    setNotifications(masterNotificationList);
+    setCurrentPage(1);
   };
 
   const indexOfLastEntry = currentPage * parseInt(entriesPerPage);
@@ -48,6 +79,60 @@ export default function Notification() {
           <div className="col-12">
             <div className="page-title-box">
               <h4 className="page-title">Notifications</h4>
+            </div>
+          </div>
+        </div>
+
+        {/* Filter Card */}
+        <div className="row">
+          <div className="col-12">
+            <div className="admin-card card">
+              <div className="card-body">
+                <div className="admin-filter-title header-title">Filter</div>
+                <form className="admin-filter-form" onSubmit={handleFilterSearch}>
+                  <div className="admin-filter-row">
+                    <div className="admin-filter-col">
+                      <label>Notification Title</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Notification Title"
+                        value={filters.notificationTitle}
+                        onChange={(e) =>
+                          setFilters({ ...filters, notificationTitle: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="admin-filter-col">
+                      <label>Notification Type</label>
+                      <select
+                        value={filters.notificationType}
+                        onChange={(e) =>
+                          setFilters({ ...filters, notificationType: e.target.value })
+                        }
+                      >
+                        <option value="">Select type</option>
+                        <option>Business</option>
+                        <option>User</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="admin-filter-row">
+                    <div className="admin-filter-col filter-actions buttons-row">
+                      <button type="submit" className="btn btn-blue admin-filter-button">
+                        Search
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary admin-filter-button"
+                        onClick={handleFilterReset}
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
