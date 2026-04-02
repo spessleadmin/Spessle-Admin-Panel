@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Layout from "./Layout";
 import "./RevenueManagement.css";
 import feather from "feather-icons";
 import api from "./utils/api";
-
 
 export default function RevenueManagement() {
   const [filters, setFilters] = useState({ businessName: "", dateRange: "" });
@@ -21,20 +21,29 @@ export default function RevenueManagement() {
     totalCustomers: 0,
     totalRefunds: 0,
   });
+  const location = useLocation();
 
   useEffect(() => {
     const fetchAllTimeRevenueMetrics = async () => {
       try {
-        const userInfoResponse = await api("http://localhost:5050/user-info");
-        if (!userInfoResponse.ok) {
-          throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
+        const params = new URLSearchParams(location.search);
+        const businessIdFromQuery = params.get("business_id");
+
+        let currentBusinessId = businessIdFromQuery;
+
+        if (!currentBusinessId) {
+          const userInfoResponse = await api("http://localhost:5050/user-info");
+          if (!userInfoResponse.ok) {
+            throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
+          }
+          const userInfo = await userInfoResponse.json();
+          currentBusinessId = userInfo.user.businesses_on_user[0]?.id;
         }
-        const userInfo = await userInfoResponse.json();
-        const currentBusinessId = userInfo.user.businesses_on_user[0]?.id;
+
         setBusinessId(currentBusinessId);
 
         if (!currentBusinessId) {
-          throw new Error("Business ID not found in user info. Cannot fetch reviews.");
+          throw new Error("Business ID not found. Cannot fetch revenue metrics.");
         }
 
         const response = await fetch(
@@ -48,22 +57,13 @@ export default function RevenueManagement() {
     };
 
     fetchAllTimeRevenueMetrics();
-  }, []);
+  }, [location.search]);
 
   useEffect(() => {
     const fetchRevenueMetrics = async () => {
-      const userInfoResponse = await api("http://localhost:5050/user-info");
-      if (!userInfoResponse.ok) {
-        throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
-      }
-      const userInfo = await userInfoResponse.json();
-      const currentBusinessId = userInfo.user.businesses_on_user[0]?.id;
-      setBusinessId(currentBusinessId);
+      if (!businessId) return;
 
-      if (!currentBusinessId) {
-        throw new Error("Business ID not found in user info. Cannot fetch reviews.");
-      }
-      let url = `http://localhost:5050/businesses/${currentBusinessId}/revenue-metrics`;
+      let url = `http://localhost:5050/businesses/${businessId}/revenue-metrics`;
       if (activeTimeRange !== "All") {
         const month = activeTimeRange.split(" ")[0];
         url += `?month=${month}`;
@@ -79,7 +79,7 @@ export default function RevenueManagement() {
     };
 
     fetchRevenueMetrics();
-  }, [activeTimeRange]);
+  }, [activeTimeRange, businessId]);
 
   const handleFilterSearch = (e) => {
     e.preventDefault();

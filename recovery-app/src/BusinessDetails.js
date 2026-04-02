@@ -10,6 +10,7 @@ export default function BusinessDetails() {
   const [businessDetails, setBusinessDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     const fetchBusinessDetails = async () => {
@@ -27,7 +28,21 @@ export default function BusinessDetails() {
       }
     };
 
+    const fetchUserInfo = async () => {
+      try {
+        const response = await api('http://localhost:5050/user-info');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setUserRole(data.user.role);
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+      }
+    };
+
     fetchBusinessDetails();
+    fetchUserInfo();
   }, [id]);
 
   useEffect(() => {
@@ -65,9 +80,9 @@ export default function BusinessDetails() {
               <div className="card-header">
                 <div className="header-buttons">
                   <Link to={`/business-products/${id}`} className="btn btn-blue">Products</Link>
-                  <Link to={`/manage-reviews`} className="btn btn-blue">Reviews</Link>
+                  <Link to={`/manage-reviews?business_id=${id}`} className="btn btn-blue">Reviews</Link>
                   <Link to={`/business-orders/${id}`} className="btn btn-blue">Orders</Link>
-                  <Link to={`/revenue-management`} className="btn btn-blue">Revenue</Link>
+                  <Link to={userRole === 'admin' ? `/revenue-management?business_id=${id}` : `/revenue-management`} className="btn btn-blue">Revenue</Link>
                 </div>
                 <Link to={`/edit-business/${id}`} className="btn btn-red">
                   <i data-feather="edit-2" className="feather"></i>

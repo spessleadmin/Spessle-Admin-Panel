@@ -29,17 +29,25 @@ export default function ManageReviews() {
       setIsLoading(true);
       setError(null);
       try {
-        // First, fetch user info to get the business ID
-        const userInfoResponse = await api("http://localhost:5050/user-info");
-        if (!userInfoResponse.ok) {
-          throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
+        const params = new URLSearchParams(window.location.search);
+        const businessIdFromQuery = params.get('business_id');
+
+        let currentBusinessId = businessIdFromQuery;
+
+        if (!currentBusinessId) {
+          // First, fetch user info to get the business ID
+          const userInfoResponse = await api("http://localhost:5050/user-info");
+          if (!userInfoResponse.ok) {
+            throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
+          }
+          const userInfo = await userInfoResponse.json();
+          currentBusinessId = userInfo.user.businesses_on_user[0]?.id;
         }
-        const userInfo = await userInfoResponse.json();
-        const currentBusinessId = userInfo.user.businesses_on_user[0]?.id;
+        
         setBusinessId(currentBusinessId);
 
         if (!currentBusinessId) {
-          throw new Error("Business ID not found in user info. Cannot fetch reviews.");
+          throw new Error("Business ID not found. Cannot fetch reviews.");
         }
 
         // Now, fetch reviews using the dynamic business ID
