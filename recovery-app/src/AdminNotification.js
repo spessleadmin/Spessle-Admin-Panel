@@ -224,12 +224,12 @@ export default function Notification() {
                                 <td>
                                   <Link
                                     to={`/admin-notification/${notification.id}`}
-                                    title="Edit"
+                                    title="View"
                                     className="btn btn-xs btn-warning edit-btn"
                                   >
-                                    <i data-feather="edit"></i>
+                                    <i data-feather="eye"></i>
                                     <span className="hidden-xs hidden-sm">
-                                      Edit
+                                      View
                                     </span>
                                   </Link>
                                   <a
