@@ -45,9 +45,12 @@ export default function RevenueManagement() {
           throw new Error("Business ID not found. Cannot fetch revenue metrics.");
         }
 
-        const response = await fetch(
+        const response = await api(
           `http://localhost:5050/businesses/${currentBusinessId}/revenue-metrics`
         );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setAllTimeRevenueMetrics(data);
       } catch (error) {
@@ -69,7 +72,10 @@ export default function RevenueManagement() {
       }
 
       try {
-        const response = await fetch(url);
+        const response = await api(url);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setRevenueMetrics(data);
       } catch (error) {
