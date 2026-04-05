@@ -5,4 +5,5 @@ export const ORDER_STATUS_VALUES = [
   "Partially Refunded",
   "Paid",
   "Cancelled",
+  "Completed"
 ];
