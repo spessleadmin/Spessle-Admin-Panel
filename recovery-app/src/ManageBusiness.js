@@ -357,17 +357,6 @@ export default function ManageBusiness() {
                           <tr>
                             <th
                               className="sortable-header"
-                              onClick={() => sortBusinesses("id")}
-                            >
-                              ID{" "}
-                              {sortConfig.key === "id"
-                                ? sortConfig.direction === "ascending"
-                                  ? "🔼"
-                                  : "🔽"
-                                : ""}
-                            </th>
-                            <th
-                              className="sortable-header"
                               onClick={() => sortBusinesses("ownerName")}
                             >
                               Owner Name{" "}
@@ -419,14 +408,14 @@ export default function ManageBusiness() {
                         <tbody>
                           {isLoading ? (
                             <tr>
-                              <td colSpan="8" style={{ textAlign: "center" }}>
+                              <td colSpan="7" style={{ textAlign: "center" }}>
                                 Loading businesses...
                               </td>
                             </tr>
                           ) : error ? (
                             <tr>
                               <td
-                                colSpan="8"
+                                colSpan="7"
                                 style={{ textAlign: "center", color: "red" }}
                               >
                                 Error: {error}
@@ -434,7 +423,7 @@ export default function ManageBusiness() {
                             </tr>
                           ) : currentEntries.length === 0 ? (
                             <tr>
-                              <td colSpan="8" style={{ textAlign: "center" }}>
+                              <td colSpan="7" style={{ textAlign: "center" }}>
                                 No businesses found.
                               </td>
                             </tr>
@@ -444,7 +433,6 @@ export default function ManageBusiness() {
                                 key={business.id}
                                 className={idx % 2 === 0 ? "odd" : "even"}
                               >
-                                <td>{business.id.substring(0, 8)}...</td>
                                 <td>{business.ownerName}</td>
                                 <td>{business.businessName}</td>
                                 <td>⭐ {business.rating.toFixed(1)}</td>

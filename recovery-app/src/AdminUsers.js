@@ -271,9 +271,6 @@ export default function AdminUsers() {
                         >
                           <thead>
                             <tr>
-                              <th className="sortable-header" onClick={() => sortUsers('id')}>
-                                ID {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                              </th>
                               <th className="sortable-header" onClick={() => sortUsers('username')}>
                                 Name {sortConfig.key === 'username' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                               </th>
@@ -292,7 +289,6 @@ export default function AdminUsers() {
                           <tbody>
                             {currentEntries.map((user, idx) => (
                               <tr key={user.id} className={idx % 2 === 0 ? "odd" : "even"}>
-                                <td>{user.id}</td>
                                 <td>{user.username}</td>
                                 <td>{user.email}</td>
                                 <td>{user.phonenum}</td>

@@ -311,9 +311,6 @@ export default function BusinessProducts() {
                         {/* Headers (no change) */}
                         <thead>
                           <tr>
-                            <th className="sortable-header" onClick={() => sortProducts('id')}>
-                              ID {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                            </th>
                             <th>Image</th>
                             <th className="sortable-header" onClick={() => sortProducts('businessName')}>
                               Business Name {sortConfig.key === 'businessName' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
@@ -340,15 +337,14 @@ export default function BusinessProducts() {
                         {/* === UPDATED TABLE BODY === */}
                         <tbody>
                           {isLoading ? (
-                            <tr><td colSpan="9" style={{ textAlign: 'center' }}>Loading products...</td></tr>
+                            <tr><td colSpan="8" style={{ textAlign: 'center' }}>Loading products...</td></tr>
                           ) : error ? (
-                            <tr><td colSpan="9" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                            <tr><td colSpan="8" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
                           ) : currentEntries.length === 0 ? (
-                            <tr><td colSpan="9" style={{ textAlign: 'center' }}>No products found.</td></tr>
+                            <tr><td colSpan="8" style={{ textAlign: 'center' }}>No products found.</td></tr>
                           ) : (
                             currentEntries.map((product, idx) => (
                               <tr key={product.id} className={idx % 2 === 0 ? "odd" : "even"}>
-                                <td>{product.id.substring(0, 8)}...</td> {/* Shorten ID for display */}
                                 <td>
                                   {/* VERY SMALL ICON/IMAGE */}
                                   {product.imageUrl ? (

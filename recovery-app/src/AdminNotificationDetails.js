@@ -76,14 +76,11 @@ export default function AdminNotificationDetails() {
                   Notification Information
                 </div>
                 <div className="notification-details">
-                  <p><strong>ID:</strong> {notification.id}</p>
                   <p><strong>Title:</strong> {notification.title}</p>
                   <p><strong>Message:</strong> {notification.message}</p>
                   <p><strong>Sent At:</strong> {new Date(notification.sentAt).toLocaleString()}</p>
                   <p><strong>Read At:</strong> {notification.readAt ? new Date(notification.readAt).toLocaleString() : 'Not read yet'}</p>
-                  <p><strong>User ID:</strong> {notification.userId}</p>
                   <p><strong>Username:</strong> {notification.sender_user.username}</p>
-                  <p><strong>Sender User ID:</strong> {notification.sentFromId}</p>
                   <p><strong>Type:</strong> {notification.type.type_name}</p>
                   <p><strong>Type Description:</strong> {notification.type.description}</p>
                 </div>

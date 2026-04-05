@@ -336,9 +336,6 @@ export default function ManageCategories() {
                       >
                         <thead>
                           <tr>
-                            <th className="sortable-header" onClick={() => sortCategories('id')}>
-                              ID {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                            </th>
                             <th className="sortable-header" onClick={() => sortCategories('categoryname')}>
                               Category Name {sortConfig.key === 'categoryname' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                             </th>
@@ -354,15 +351,14 @@ export default function ManageCategories() {
                         
                         <tbody>
                           {isLoading ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Loading categories...</td></tr>
+                            <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading categories...</td></tr>
                           ) : error ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                            <tr><td colSpan="4" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
                           ) : currentEntries.length === 0 ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>No categories found.</td></tr>
+                            <tr><td colSpan="4" style={{ textAlign: 'center' }}>No categories found.</td></tr>
                           ) : (
                             currentEntries.map((category, idx) => (
                               <tr key={category.id} className={idx % 2 === 0 ? "odd" : "even"}>
-                                <td>{category.id.substring(0, 8)}...</td>
                                 <td>
                                   {editingCategoryId === category.id ? (
                                     <input

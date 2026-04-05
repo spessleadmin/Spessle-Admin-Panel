@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import api from "./utils/api";
 import SuccessMessage from "./components/SuccessMessage";
+import { ORDER_STATUS_VALUES } from "./constants/orderStatuses";
 import "./EditOrder.css";
 import feather from "feather-icons";
 
@@ -204,10 +205,11 @@ const EditOrder = () => {
                   value={status}
                   onChange={handleStatusChange}
                 >
-                  <option value="processing">Processing</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                  <option value="refunded">Refunded</option>
+                  {ORDER_STATUS_VALUES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
                 </select>
                 <button className="btn btn-blue mt-2" onClick={handleSaveStatus}>
                   Save

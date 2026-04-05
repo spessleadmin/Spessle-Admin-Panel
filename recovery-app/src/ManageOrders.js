@@ -4,8 +4,9 @@ import { Link } from "react-router-dom";
 import api from "./utils/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./ManageOrders.css"; 
+import "./ManageOrders.css";
 import feather from "feather-icons";
+import { ORDER_STATUS_VALUES } from "./constants/orderStatuses";
 
 const transformApiOrder = (apiOrder) => ({
   orderNo: apiOrder.id,
@@ -13,7 +14,7 @@ const transformApiOrder = (apiOrder) => ({
   businessName: apiOrder.business.businessname,
   orderDate: new Date(apiOrder.createddate).toLocaleString(),
   totalAmount: `$${apiOrder.totalamount}`,
-  orderStatus: apiOrder.status || "Processing",
+  orderStatus: apiOrder.status ?? "",
 });
 
 const ManageOrders = () => {
@@ -209,15 +210,17 @@ const ManageOrders = () => {
                       <label>Order Status</label>
                       <select
                         className="form-control form-select form-select-sm"
-                        value={filters.status || "processing"}
+                        value={filters.status ?? ""}
                         onChange={(e) =>
                           setFilters({ ...filters, status: e.target.value })
                         }
                       >
-                        <option value="processing">Processing</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
-                        <option value="refunded">Refunded</option>
+                        <option value="">All statuses</option>
+                        {ORDER_STATUS_VALUES.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className="admin-filter-col filter-actions buttons-row">
@@ -291,7 +294,6 @@ const ManageOrders = () => {
                       >
                         <thead>
                           <tr>
-                            <th>ID</th>
                             <th>Username</th>
                             <th>Business Name</th>
                             <th>Order Date</th>
@@ -302,22 +304,19 @@ const ManageOrders = () => {
                         </thead>
                         <tbody>
                           {isLoading ? (
-                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>Loading orders...</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>Loading orders...</td></tr>
                           ) : error ? (
-                            <tr><td colSpan="7" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
                           ) : currentEntries.length === 0 ? (
-                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>No orders found.</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>No orders found.</td></tr>
                           ) : (
                             currentEntries.map((order, idx) => (
                               <tr key={order.orderNo} className={idx % 2 === 0 ? "odd" : "even"}>
-                                <td>{order.orderNo.substring(0, 8)}...</td>
                                 <td>{order.customerName}</td>
                                 <td>{order.businessName}</td>
                                 <td>{order.orderDate}</td>
                                 <td>{order.totalAmount}</td>
-                                <td>
-                                  {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
-                                </td>
+                                <td>{order.orderStatus || "—"}</td>
                                 <td className="action-cell">
                                   <Link to={`/edit-order/${order.orderNo}`} className="tooltip-wrapper blue-square-icon">
                                     <i data-feather="eye" className="blue-eye"></i>

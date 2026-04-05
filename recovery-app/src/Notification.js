@@ -186,7 +186,6 @@ export default function Notification() {
                           <tr>
                             <th>Name</th>
                             <th>Date & Time</th>
-                            <th>Order ID</th>
                             <th>Notification Message</th>
                             <th>Action</th>
                           </tr>
@@ -194,13 +193,12 @@ export default function Notification() {
                         
                         <tbody>
                           {currentEntries.length === 0 ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>No notifications found.</td></tr>
+                            <tr><td colSpan="4" style={{ textAlign: 'center' }}>No notifications found.</td></tr>
                           ) : (
                             currentEntries.map((notification, idx) => (
                               <tr key={notification.id} className={idx % 2 === 0 ? "odd" : "even"}>
                                 <td>{notification.name}</td>
                                 <td>{notification.dateTime}</td>
-                                <td>{notification.orderId}</td>
                                 <td>{notification.message}</td>
                                 <td>
                                   <Link

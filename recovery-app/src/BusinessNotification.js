@@ -109,7 +109,6 @@ export default function UserNotification() {
                             <th>Type Name</th>
                             <th>Date & Time</th>
                             <th>Business Name</th>
-                            <th>Sender User ID</th>
                             <th>Username</th>
                             <th>Notification Message</th>
                             <th>Action</th>
@@ -119,7 +118,7 @@ export default function UserNotification() {
                         <tbody>
                           {currentEntries.length === 0 ? (
                             <tr>
-                              <td colSpan="8" style={{ textAlign: "center" }}>
+                              <td colSpan="7" style={{ textAlign: "center" }}>
                                 No notifications found.
                               </td>
                             </tr>
@@ -137,7 +136,6 @@ export default function UserNotification() {
                                   ).toLocaleString()}
                                 </td>
                                 <td>{notification.business.businessname}</td>
-                                <td>{notification.sentFromId}</td>
                                 <td>{notification.sender_user.username}</td>
                                 <td>{notification.message}</td>
                                 <td>

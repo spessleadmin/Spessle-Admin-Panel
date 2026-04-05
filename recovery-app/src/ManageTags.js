@@ -331,9 +331,6 @@ export default function ManageTags() {
                       >
                         <thead>
                           <tr>
-                            <th className="sortable-header" onClick={() => sortTags('id')}>
-                              ID {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
-                            </th>
                             <th className="sortable-header" onClick={() => sortTags('tagname')}>
                               Tag Name {sortConfig.key === 'tagname' ? (sortConfig.direction === 'ascending' ? '🔼' : '🔽') : ''}
                             </th>
@@ -349,15 +346,14 @@ export default function ManageTags() {
                         
                         <tbody>
                           {isLoading ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Loading tags...</td></tr>
+                            <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading tags...</td></tr>
                           ) : error ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                            <tr><td colSpan="4" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
                           ) : currentEntries.length === 0 ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>No tags found.</td></tr>
+                            <tr><td colSpan="4" style={{ textAlign: 'center' }}>No tags found.</td></tr>
                           ) : (
                             currentEntries.map((tag, idx) => (
                               <tr key={tag.id} className={idx % 2 === 0 ? "odd" : "even"}>
-                                <td>{tag.id.substring(0, 8)}...</td>
                                 <td>
                                   {editingTagId === tag.id ? (
                                     <input

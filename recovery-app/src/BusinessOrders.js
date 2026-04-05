@@ -4,8 +4,9 @@ import { Link, useParams } from "react-router-dom";
 import api from "./utils/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./BusinessOrders.css"; 
+import "./BusinessOrders.css";
 import feather from "feather-icons";
+import { ORDER_STATUS_VALUES } from "./constants/orderStatuses";
 
 const transformApiOrder = (apiOrder) => ({
   orderNo: apiOrder.id,
@@ -13,7 +14,7 @@ const transformApiOrder = (apiOrder) => ({
   businessName: apiOrder.business.businessname,
   orderDate: new Date(apiOrder.createddate).toLocaleString(),
   totalAmount: `$${apiOrder.totalamount}`,
-  orderStatus: apiOrder.status || "Processing",
+  orderStatus: apiOrder.status ?? "",
 });
 
 const BusinessOrders = () => {
@@ -200,15 +201,17 @@ const BusinessOrders = () => {
                       <label>Order Status</label>
                       <select
                         className="form-control form-select form-select-sm"
-                        value={filters.status || "Processing"}
+                        value={filters.status ?? ""}
                         onChange={(e) =>
                           setFilters({ ...filters, status: e.target.value })
                         }
                       >
-                        <option value="processing">Processing</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
-                        <option value="refunded">Refunded</option>
+                        <option value="">All statuses</option>
+                        {ORDER_STATUS_VALUES.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className="admin-filter-col filter-actions buttons-row">
@@ -282,7 +285,6 @@ const BusinessOrders = () => {
                       >
                         <thead>
                           <tr>
-                            <th>ID</th>
                             <th>Username</th>
                             <th>Business Name</th>
                             <th>Order Date</th>
@@ -293,25 +295,28 @@ const BusinessOrders = () => {
                         </thead>
                         <tbody>
                           {isLoading ? (
-                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>Loading orders...</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>Loading orders...</td></tr>
                           ) : error ? (
-                            <tr><td colSpan="7" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
                           ) : currentEntries.length === 0 ? (
-                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>No orders found.</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>No orders found.</td></tr>
                           ) : (
                             currentEntries.map((order, idx) => (
                               <tr key={order.orderNo} className={idx % 2 === 0 ? "odd" : "even"}>
-                                <td>{order.orderNo.substring(0, 8)}...</td>
                                 <td>{order.customerName}</td>
                                 <td>{order.businessName}</td>
                                 <td>{order.orderDate}</td>
                                 <td>{order.totalAmount}</td>
                                 <td>
-                                  <select className="form-control form-select form-select-sm" defaultValue={order.orderStatus}>
-                                    <option>Processing</option>
-                                    <option>Completed</option>
-                                    <option>Cancelled</option>
-                                    <option>New</option>
+                                  <select
+                                    className="form-control form-select form-select-sm"
+                                    defaultValue={order.orderStatus}
+                                  >
+                                    {ORDER_STATUS_VALUES.map((s) => (
+                                      <option key={s} value={s}>
+                                        {s}
+                                      </option>
+                                    ))}
                                   </select>
                                 </td>
                                 <td className="action-cell">
