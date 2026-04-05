@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
-import Layout from "./Layout";
 import OptionManager from "./components/OptionManager";
 import "./BusinessAddProduct.css";
 import "./Dropify.css";
@@ -130,8 +129,7 @@ export default function BusinessAddProduct() {
   };
 
   return (
-    <Layout>
-      <main className="add-product-page dashboard-main" style={{ width: "100%" }}>
+    <main className="add-product-page dashboard-main" style={{ width: "100%" }}>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
@@ -255,6 +253,5 @@ export default function BusinessAddProduct() {
             </div>
         </div>
       </main>
-    </Layout>
   );
 }

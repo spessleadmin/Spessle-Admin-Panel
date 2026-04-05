@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Layout from "./Layout";
 import api from "./utils/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -125,8 +124,7 @@ const ManageOrders = () => {
   const totalPages = Math.ceil(filteredOrders.length / parseInt(entriesPerPage));
 
   return (
-    <Layout>
-      <main className="manage-product-page dashboard-main" style={{ width: '100%' }}>
+    <main className="manage-product-page dashboard-main" style={{ width: '100%' }}>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
@@ -406,7 +404,6 @@ const ManageOrders = () => {
           </div>
         </div>
       </main>
-    </Layout>
   );
 };
 

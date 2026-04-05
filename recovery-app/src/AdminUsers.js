@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Layout from "./Layout";
 import api from "./utils/api";
 import "./AdminUsers.css";
 import feather from "feather-icons";
@@ -146,8 +145,7 @@ export default function AdminUsers() {
   }, [currentEntries]);
 
   return (
-    <Layout>
-        <main className="admin-users-page dashboard-main" style={{ width: '100%' }}>
+    <main className="admin-users-page dashboard-main" style={{ width: '100%' }}>
           {/* Page Title */}
           <div className="row">
             <div className="col-12">
@@ -381,6 +379,5 @@ export default function AdminUsers() {
             </div>
           </div>
         </main>
-    </Layout>
   );
 }

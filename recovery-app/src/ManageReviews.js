@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Layout from "./Layout";
 import "./ManageReviews.css";
 import api from "./utils/api";
 import feather from "feather-icons";
@@ -183,8 +182,7 @@ export default function ManageReviews() {
   }, [currentEntries, isLoading, error]);
 
   return (
-    <Layout>
-      <main className="manage-reviews-page dashboard-main" style={{ width: '100%' }}>
+    <main className="manage-reviews-page dashboard-main" style={{ width: '100%' }}>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
@@ -418,6 +416,5 @@ export default function ManageReviews() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }

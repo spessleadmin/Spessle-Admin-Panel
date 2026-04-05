@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import Layout from "./Layout";
 import "./RevenueManagement.css";
 import feather from "feather-icons";
 import api from "./utils/api";
@@ -98,8 +97,7 @@ export default function RevenueManagement() {
   };
 
   return (
-    <Layout>
-      <main className="revenue-management-page dashboard-main" style={{ width: '100%' }}>
+    <main className="revenue-management-page dashboard-main" style={{ width: '100%' }}>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
@@ -217,6 +215,5 @@ export default function RevenueManagement() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }

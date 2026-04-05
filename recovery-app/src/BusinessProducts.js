@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import Layout from "./Layout";
 import api from "./utils/api";
 import "./BusinessProducts.css"; // Using the new CSS file
 import feather from "feather-icons";
@@ -179,8 +178,7 @@ export default function BusinessProducts() {
   }, [currentEntries, isLoading, error]); // Re-run when entries, loading, or error change
 
   return (
-    <Layout>
-      <main className="business-products-page dashboard-main" style={{ width: '100%' }}>
+    <main className="business-products-page dashboard-main" style={{ width: '100%' }}>
         {/* Page Title */}
         <div className="row">
           <div className="col-12">
@@ -466,6 +464,5 @@ export default function BusinessProducts() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import feather from "feather-icons";
-import { Link } from "react-router-dom"; // Add this line
+import { Link, Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import NotificationSidebar from "./NotificationSidebar";
 import { getNotifications } from "./utils/api";
@@ -9,7 +9,7 @@ import api from "./utils/api";
 import "./Layout.css"; // Add this line
 import "./NotificationSidebar.css";
 
-export default function Layout({ children }) {
+export default function Layout() {
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const savedState = localStorage.getItem("sidebar-collapsed");
     return savedState !== null ? JSON.parse(savedState) : false;
@@ -149,7 +149,9 @@ export default function Layout({ children }) {
             user={user}
         />
         {/* Main */}
-        <main className="dashboard-main">{children}</main>
+        <main className="dashboard-main">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

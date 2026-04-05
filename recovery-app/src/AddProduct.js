@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import Select from "react-select";
-import Layout from "./Layout";
 import OptionManager from "./components/OptionManager";
 import "./AddProduct.css";
 import "./Dropify.css";
@@ -113,8 +112,7 @@ export default function AddProduct() {
   };
 
   return (
-    <Layout>
-      <main className="manage-product-page dashboard-main" style={{ width: "100%" }}>
+    <main className="manage-product-page dashboard-main" style={{ width: "100%" }}>
         <div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 1100 }}>
           <div id="liveToast" className={`toast ${showSuccessToast ? 'show' : 'hide'}`} role="alert" aria-live="assertive" aria-atomic="true">
             <div className="toast-header">
@@ -213,6 +211,5 @@ export default function AddProduct() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }

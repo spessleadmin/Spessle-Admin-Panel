@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Layout from "./Layout";
 import "./ManageCoupons.css"; // Using the same CSS file
 import feather from "feather-icons";
 
@@ -153,8 +152,7 @@ export default function ManageCoupons() {
   const totalPages = Math.ceil(coupons.length / parseInt(entriesPerPage));
   
   return (
-    <Layout>
-      <main className="manage-product-page dashboard-main" style={{ width: '100%' }}>
+    <main className="manage-product-page dashboard-main" style={{ width: '100%' }}>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
@@ -407,6 +405,5 @@ export default function ManageCoupons() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }

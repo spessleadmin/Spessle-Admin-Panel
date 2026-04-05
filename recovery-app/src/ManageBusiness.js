@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Layout from "./Layout";
 import api from "./utils/api";
 import "./ManageBusiness.css"; // Using the same CSS file
 import feather from "feather-icons";
@@ -205,8 +204,7 @@ export default function ManageBusiness() {
   }, [currentEntries, isLoading, error]); // Re-run when entries, loading, or error change
 
   return (
-    <Layout>
-      <main
+    <main
         className="manage-business-page dashboard-main"
         style={{ width: "100%" }}
       >
@@ -570,6 +568,5 @@ export default function ManageBusiness() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Layout from "./Layout";
 import api from "./utils/api";
 import SuccessMessage from "./components/SuccessMessage";
 import "./EditOrder.css";
@@ -162,26 +161,22 @@ const EditOrder = () => {
 
   if (loading) {
     return (
-      <Layout>
-        <main className="manage-product-page dashboard-main" style={{ width: "100%" }}>
+      <main className="manage-product-page dashboard-main" style={{ width: "100%" }}>
           <div>Loading...</div>
         </main>
-      </Layout>
     );
   }
 
   if (error) {
     return (
-      <Layout>
-        <main className="manage-product-page dashboard-main" style={{ width: "100%" }}>
+      <main className="manage-product-page dashboard-main" style={{ width: "100%" }}>
           <div>Error: {error.message}</div>
         </main>
-      </Layout>
     );
   }
 
   return (
-    <Layout>
+    <>
       {/* ✅ Success Toast */}
       <SuccessMessage
         message={successMessage}
@@ -280,7 +275,7 @@ const EditOrder = () => {
           </div>
         </div>
       </main>
-    </Layout>
+    </>
   );
 };
 

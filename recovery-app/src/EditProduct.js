@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import Select from "react-select";
-import Layout from "./Layout";
 import OptionManager from "./components/OptionManager";
 import SuccessMessage from "./components/SuccessMessage"; // Import the new component
 import "./EditProduct.css";
@@ -285,7 +284,7 @@ export default function EditProduct() {
   };
 
   return (
-    <Layout>
+    <>
       <SuccessMessage
         message={successMessage}
         show={showSuccessToast}
@@ -453,6 +452,6 @@ export default function EditProduct() {
           </div>
         </div>
       </main>
-    </Layout>
+    </>
   );
 }

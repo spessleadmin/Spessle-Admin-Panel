@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
-import Layout from "./Layout";
 import api from "./utils/api";
 import SuccessMessage from "./components/SuccessMessage";
 import "./EditUser.css";
@@ -233,7 +232,7 @@ export default function EditUser() {
   };
 
   return (
-    <Layout>
+    <>
       <SuccessMessage
         message={successMessage}
         show={showSuccessToast}
@@ -365,6 +364,6 @@ export default function EditUser() {
           </form>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

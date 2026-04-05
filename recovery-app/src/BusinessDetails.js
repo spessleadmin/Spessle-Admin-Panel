@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import Layout from './Layout';
 import api from './utils/api';
 import './BusinessDetails.css';
 import feather from 'feather-icons';
@@ -64,8 +63,7 @@ export default function BusinessDetails() {
   } : {};
 
   return (
-    <Layout>
-      <main className="business-details-page dashboard-main" style={{ width: '100%' }}>
+    <main className="business-details-page dashboard-main" style={{ width: '100%' }}>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
@@ -123,6 +121,5 @@ export default function BusinessDetails() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }

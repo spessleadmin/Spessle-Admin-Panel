@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Layout from "./Layout";
 import api from "./utils/api";
 import "./ManageProduct.css"; // Using the same CSS file
 import feather from "feather-icons";
@@ -174,8 +173,7 @@ export default function ManageProduct() {
   }, [currentEntries, isLoading, error]); // Re-run when entries, loading, or error change
 
   return (
-    <Layout>
-      <main className="manage-product-page dashboard-main" style={{ width: '100%' }}>
+    <main className="manage-product-page dashboard-main" style={{ width: '100%' }}>
         {/* Page Title */}
         <div className="row">
           <div className="col-12">
@@ -455,6 +453,5 @@ export default function ManageProduct() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }

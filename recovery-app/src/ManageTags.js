@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Layout from "./Layout";
 import api from "./utils/api";
 import "./ManageTags.css";
 import feather from "feather-icons";
@@ -199,8 +198,7 @@ export default function ManageTags() {
   const totalPages = Math.ceil(tags.length / parseInt(entriesPerPage));
   
   return (
-    <Layout>
-      <main className="manage-tags-page dashboard-main" style={{ width: '100%' }}>
+    <main className="manage-tags-page dashboard-main" style={{ width: '100%' }}>
         <div className="row">
           <div className="col-12">
             <div className="page-title-box">
@@ -477,6 +475,5 @@ export default function ManageTags() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }

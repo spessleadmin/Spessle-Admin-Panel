@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"; // ✅ Added useState and useEffect
-import Layout from "./Layout";
 import api from "./utils/api";
 import "./Dashboard.css";
 
@@ -76,7 +75,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <Layout>
+    <>
       <h2>Dashboard</h2>
       <div className="dashboard-cards">
         {stats.map(({ icon, iconColor, value, label }) => (
@@ -94,6 +93,6 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
-    </Layout>
+    </>
   );
 }

@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Layout from "./Layout";
 
 import "./AdminNotificationDetails.css";
 import feather from "feather-icons";
@@ -32,8 +31,7 @@ export default function AdminNotificationDetails() {
 
   if (!notification) {
     return (
-      <Layout>
-        <main
+      <main
           className="edit-notification-page dashboard-main"
           style={{ width: "100%" }}
         >
@@ -54,13 +52,11 @@ export default function AdminNotificationDetails() {
             </div>
           </div>
         </main>
-      </Layout>
     );
   }
 
   return (
-    <Layout>
-      <main
+    <main
         className="edit-notification-page dashboard-main"
         style={{ width: "100%" }}
       >
@@ -96,7 +92,6 @@ export default function AdminNotificationDetails() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }
 

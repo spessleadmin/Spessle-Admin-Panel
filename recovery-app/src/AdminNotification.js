@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Layout from "./Layout";
 import "./Notification.css";
 import feather from "feather-icons";
 
@@ -69,8 +68,7 @@ export default function Notification() {
   const totalPages = Math.ceil(notifications.length / parseInt(entriesPerPage));
 
   return (
-    <Layout>
-      <main
+    <main
         className="notification-page dashboard-main"
         style={{ width: "100%" }}
       >
@@ -339,6 +337,5 @@ export default function Notification() {
           </div>
         </div>
       </main>
-    </Layout>
   );
 }
