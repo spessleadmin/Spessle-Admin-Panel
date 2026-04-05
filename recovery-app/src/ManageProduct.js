@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "./utils/api";
+import ProductDetailsModal from "./components/ProductDetailsModal";
 import "./ManageProduct.css"; // Using the same CSS file
 import feather from "feather-icons";
 
@@ -37,6 +38,7 @@ export default function ManageProduct() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
   const [businessId, setBusinessId] = useState(null);
+  const [detailsProductId, setDetailsProductId] = useState(null);
 
 
   // Fetch data from API on component mount
@@ -382,7 +384,16 @@ export default function ManageProduct() {
                                 <td>{product.businessName}</td>
                                 <td>{product.category}</td>
                                 <td>
-                                  <a href="#" onClick={e => e.preventDefault()}>{product.productName}</a>
+                                  <a
+                                    href="#"
+                                    className="product-name-link"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setDetailsProductId(product.id);
+                                    }}
+                                  >
+                                    {product.productName}
+                                  </a>
                                 </td>
                                 <td>${product.cost.toFixed(2)}</td>
                                 <td>{new Date(product.dateTime).toLocaleString()}</td>
@@ -470,6 +481,12 @@ export default function ManageProduct() {
             </div> {/* end card */}
           </div>
         </div>
+
+        <ProductDetailsModal
+          productId={detailsProductId}
+          isOpen={detailsProductId != null}
+          onClose={() => setDetailsProductId(null)}
+        />
       </main>
   );
 }
