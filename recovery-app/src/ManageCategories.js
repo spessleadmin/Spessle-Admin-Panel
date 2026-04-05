@@ -15,7 +15,9 @@ export default function ManageCategories() {
   const [filters, setFilters] = useState({ categoryname: "", dateRange: "" });
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState("10");
-  
+  const [isAddCategoryPopupOpen, setIsAddCategoryPopupOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+
   const [masterCategoryList, setMasterCategoryList] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -167,24 +169,32 @@ export default function ManageCategories() {
     }
   };
 
-  const handleAddCategory = async () => {
+  const handleAddCategory = () => {
+    setIsAddCategoryPopupOpen(true);
+  };
+
+  const handlePopupSubmit = async (e) => {
+    e.preventDefault();
     try {
       const response = await api('http://localhost:5050/categories', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ categoryname: 'New Category' }),
+        body: JSON.stringify({ categoryname: newCategoryName }),
       });
-  
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
-  
-      await fetchCategories(); // Re-fetch to get the latest data
+
+      await fetchCategories();
+      setIsAddCategoryPopupOpen(false);
+      setNewCategoryName("");
     } catch (error) {
       console.error("Failed to add category:", error);
-      // Optionally, show an error message to the user
+      alert(error.message);
     }
   };
 
@@ -203,6 +213,30 @@ export default function ManageCategories() {
             </div>
           </div>
         </div>
+
+        {isAddCategoryPopupOpen && (
+          <div className="add-tag-popup">
+            <div className="popup-content">
+              <h2>Add Category</h2>
+              <form onSubmit={handlePopupSubmit}>
+                <div className="form-group">
+                  <label>Category Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-buttons">
+                  <button type="submit" className="btn btn-primary">Submit</button>
+                  <button type="button" className="btn btn-secondary" onClick={() => setIsAddCategoryPopupOpen(false)}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         <div className="row">
           <div className="col-12">
