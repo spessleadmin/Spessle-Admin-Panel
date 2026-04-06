@@ -12,6 +12,8 @@ const transformApiOrder = (apiOrder) => ({
   orderNo: apiOrder.id,
   customerName: apiOrder.user.username,
   businessName: apiOrder.business.businessname,
+  productName: apiOrder.product?.productname ?? "",
+  productId: apiOrder.product?.id ?? null,
   orderDate: new Date(apiOrder.createddate).toLocaleString(),
   totalAmount: `$${apiOrder.totalamount}`,
   orderStatus: apiOrder.status ?? "",
@@ -113,6 +115,7 @@ const ManageOrders = () => {
     const filtered = masterOrderList.filter(order =>
       order.customerName.toLowerCase().includes(value.toLowerCase()) ||
       order.businessName.toLowerCase().includes(value.toLowerCase()) ||
+      order.productName.toLowerCase().includes(value.toLowerCase()) ||
       order.orderNo.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredOrders(filtered);
@@ -286,6 +289,7 @@ const ManageOrders = () => {
                           <tr>
                             <th>Username</th>
                             <th>Business Name</th>
+                            <th>Product name</th>
                             <th>Order Date</th>
                             <th>Total Amount</th>
                             <th>Order Status</th>
@@ -294,16 +298,25 @@ const ManageOrders = () => {
                         </thead>
                         <tbody>
                           {isLoading ? (
-                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>Loading orders...</td></tr>
+                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>Loading orders...</td></tr>
                           ) : error ? (
-                            <tr><td colSpan="6" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
+                            <tr><td colSpan="7" style={{ textAlign: 'center', color: 'red' }}>Error: {error}</td></tr>
                           ) : currentEntries.length === 0 ? (
-                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>No orders found.</td></tr>
+                            <tr><td colSpan="7" style={{ textAlign: 'center' }}>No orders found.</td></tr>
                           ) : (
                             currentEntries.map((order, idx) => (
                               <tr key={order.orderNo} className={idx % 2 === 0 ? "odd" : "even"}>
                                 <td>{order.customerName}</td>
                                 <td>{order.businessName}</td>
+                                <td>
+                                  {order.productId ? (
+                                    <Link to={`/edit-product/${order.productId}`}>
+                                      {order.productName || "—"}
+                                    </Link>
+                                  ) : (
+                                    order.productName || "—"
+                                  )}
+                                </td>
                                 <td>{order.orderDate}</td>
                                 <td>{order.totalAmount}</td>
                                 <td>{order.orderStatus || "—"}</td>
