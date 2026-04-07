@@ -7,6 +7,7 @@ import "./AddProduct.css";
 import "./Dropify.css";
 import feather from "feather-icons";
 import { API_BASE_URL } from "./config";
+import api from "./utils/api";
 
 export default function AddProduct() {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function AddProduct() {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/tags`);
+        const response = await api(`${API_BASE_URL}/tags`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setTagOptions(
@@ -84,7 +85,7 @@ export default function AddProduct() {
       quantity: parseInt(productInfo.quantity, 10),
     };
     try {
-      const response = await fetch(`${API_BASE_URL}/products`, {
+      const response = await api(`${API_BASE_URL}/products`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

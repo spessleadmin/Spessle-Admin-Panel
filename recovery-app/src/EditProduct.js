@@ -8,6 +8,7 @@ import "./EditProduct.css";
 import "./Dropify.css";
 import feather from "feather-icons";
 import { API_BASE_URL } from "./config";
+import api from "./utils/api";
 
 export default function EditProduct() {
   const { id } = useParams();
@@ -50,7 +51,7 @@ export default function EditProduct() {
     const formData = new FormData();
     formData.append("image", file);
     try {
-      const response = await fetch(`${API_BASE_URL}/products/${id}/image`, {
+      const response = await api(`${API_BASE_URL}/products/${id}/image`, {
         method: "POST",
         body: formData,
       });
@@ -68,7 +69,7 @@ export default function EditProduct() {
 
   const fetchProduct = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/products/${id}`);
+      const response = await api(`${API_BASE_URL}/products/${id}`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       const productData = data.product;
@@ -109,7 +110,7 @@ export default function EditProduct() {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/tags`);
+        const response = await api(`${API_BASE_URL}/tags`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setTagOptions(
@@ -157,7 +158,7 @@ export default function EditProduct() {
     const tagsToRemove = initialProductState.tags.filter(t => !currentTags.includes(t.value));
     for (const tag of tagsToAdd) {
       try {
-        const response = await fetch(`${API_BASE_URL}/product-tags`, {
+        const response = await api(`${API_BASE_URL}/product-tags`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ product_id: id, tag_id: tag.value }),
@@ -169,7 +170,7 @@ export default function EditProduct() {
     }
     for (const tag of tagsToRemove) {
       try {
-        const response = await fetch(`${API_BASE_URL}/products/${id}/tags/${tag.value}`, {
+        const response = await api(`${API_BASE_URL}/products/${id}/tags/${tag.value}`, {
           method: "DELETE",
         });
         if (!response.ok) throw new Error("Failed to remove tag");
@@ -185,7 +186,7 @@ export default function EditProduct() {
       lead_time_days: parseInt(productInfo.leadTimeDays, 10),
     };
     try {
-      const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+      const response = await api(`${API_BASE_URL}/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -221,7 +222,7 @@ export default function EditProduct() {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/products/${id}/options`, {
+      const response = await api(`${API_BASE_URL}/products/${id}/options`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -244,7 +245,7 @@ export default function EditProduct() {
 
   const handleDeleteOption = async (optionId) => {
     try {
-      const response = await fetch(
+      const response = await api(
         `${API_BASE_URL}/products/${id}/options/${optionId}`,
         {
           method: "DELETE",
@@ -266,7 +267,7 @@ export default function EditProduct() {
 
   const handleDeleteImage = async (imageId) => {
     try {
-      const response = await fetch(
+      const response = await api(
         `${API_BASE_URL}/product-images/${imageId}`,
         {
           method: "DELETE",

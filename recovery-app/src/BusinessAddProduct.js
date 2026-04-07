@@ -6,6 +6,7 @@ import "./BusinessAddProduct.css";
 import "./Dropify.css";
 import feather from "feather-icons";
 import { API_BASE_URL } from "./config";
+import api from "./utils/api";
 
 export default function BusinessAddProduct() {
   const [productName, setProductName] = useState("");
@@ -75,7 +76,7 @@ export default function BusinessAddProduct() {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/products`, {
+      const response = await api(`${API_BASE_URL}/products`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -93,7 +94,7 @@ export default function BusinessAddProduct() {
         const formData = new FormData();
         formData.append("image", files[0]);
 
-        const imageResponse = await fetch(`${API_BASE_URL}/products/${productId}/image`, {
+        const imageResponse = await api(`${API_BASE_URL}/products/${productId}/image`, {
           method: "POST",
           body: formData,
         });
@@ -110,7 +111,7 @@ export default function BusinessAddProduct() {
           optionType: option.option_type,
           optionValue: option.option_value,
         };
-        const optionResponse = await fetch(`${API_BASE_URL}/products/${productId}/options`, {
+        const optionResponse = await api(`${API_BASE_URL}/products/${productId}/options`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(optionPayload),

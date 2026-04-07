@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./RevenueManagement.css";
 import feather from "feather-icons";
 import { API_BASE_URL } from "./config";
+import api from "./utils/api";
 
 export default function RevenueManagement() {
   const [filters, setFilters] = useState({ businessName: "", dateRange: "" });
@@ -22,7 +23,7 @@ export default function RevenueManagement() {
   useEffect(() => {
     const fetchAllTimeRevenueMetrics = async () => {
       try {
-        const response = await fetch(
+        const response = await api(
           `${API_BASE_URL}/admin/revenue-metrics`
         );
         const data = await response.json();
@@ -44,7 +45,7 @@ export default function RevenueManagement() {
       }
 
       try {
-        const response = await fetch(url);
+        const response = await api(url);
         const data = await response.json();
         setRevenueMetrics(data);
       } catch (error) {

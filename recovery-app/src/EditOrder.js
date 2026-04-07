@@ -26,6 +26,22 @@ const EditOrder = () => {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
+  // Resolve role + businessId from cached user-info
+  const getUserContext = () => {
+    try {
+      const cached = localStorage.getItem("user-info");
+      if (!cached) return { isAdmin: false, businessId: null };
+      const parsed = JSON.parse(cached);
+      const user = parsed.users?.[0] || parsed.user?.[0] || parsed.user;
+      if (!user) return { isAdmin: false, businessId: null };
+      const roleName = (user.role?.roleName || "").toLowerCase();
+      const businessId = user.businesses_on_user?.[0]?.id || null;
+      return { isAdmin: roleName === "admin", businessId };
+    } catch {
+      return { isAdmin: false, businessId: null };
+    }
+  };
+
   // ✅ Helper
   const triggerSuccess = (msg) => {
     setSuccessMessage(msg);
@@ -48,9 +64,12 @@ const EditOrder = () => {
 
   const fetchAmountRefundable = async () => {
     try {
-      const response = await api(
-        `${API_BASE_URL}/admin/orders/${orderID}/amount-refundable`
-      );
+      const { isAdmin, businessId } = getUserContext();
+      const url = isAdmin
+        ? `${API_BASE_URL}/admin/orders/${orderID}/amount-refundable`
+        : `${API_BASE_URL}/businesses/${businessId}/orders/${orderID}/amount-refundable`;
+
+      const response = await api(url);
       if (!response.ok) throw new Error("Network response was not ok");
 
       const data = await response.json();
@@ -136,17 +155,19 @@ const EditOrder = () => {
 
   const handleRefund = async () => {
     try {
-      const response = await api(
-        `${API_BASE_URL}/admin/orders/${orderID}/refund`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            paymentIntentId: orderInfo.stripe_payment_intent_id,
-            refundAmount: parseFloat(refundAmount),
-          }),
-        }
-      );
+      const { isAdmin, businessId } = getUserContext();
+      const url = isAdmin
+        ? `${API_BASE_URL}/admin/orders/${orderID}/refund`
+        : `${API_BASE_URL}/businesses/${businessId}/orders/${orderID}/refund`;
+
+      const response = await api(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          paymentIntentId: orderInfo.stripe_payment_intent_id,
+          refundAmount: parseFloat(refundAmount),
+        }),
+      });
 
       if (!response.ok) throw new Error("Network response was not ok");
 
@@ -264,13 +285,13 @@ const EditOrder = () => {
                 />
 
                 <button
-                  className="btn mt-2"
+                  className="btn btn-secondary mt-2"
                   onClick={() => setRefundAmount(amountRefundable.toFixed(2))}
                 >
                   Full Refund
                 </button>
 
-                <button className="btn btn-success mt-2" onClick={handleRefund}>
+                <button className="btn btn-blue mt-2 ms-2" onClick={handleRefund}>
                   Submit Refund
                 </button>
               </div>

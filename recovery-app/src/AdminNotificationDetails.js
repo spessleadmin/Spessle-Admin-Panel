@@ -7,17 +7,17 @@ import { useParams } from "react-router-dom";
 import "./AdminNotificationDetails.css";
 import feather from "feather-icons";
 import { API_BASE_URL } from "./config";
+import api from "./utils/api";
 
 export default function AdminNotificationDetails() {
   const { id } = useParams();
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/notifications`)
+    api(`${API_BASE_URL}/notifications/${id}`)
       .then((response) => response.json())
       .then((data) => {
-        const notif = data.notifications.find(n => n.id === id);
-        setNotification(notif);
+        setNotification(data.notification);
       })
       .catch((error) =>
         console.error("Error fetching notification details:", error)
