@@ -28,12 +28,14 @@ export default function Layout() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setisNotificationOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [userNotifications, setUserNotifications] = useState([]);
 
   useEffect(() => {
     if (user && user.id) {
       getNotifications(user.id)
         .then(data => {
           setUnreadCount(data.unread_count);
+          setUserNotifications(data.notifications || []);
         })
         .catch(err => console.error("Failed to fetch notifications", err));
     }
@@ -151,10 +153,11 @@ export default function Layout() {
       <div className="dashboard-content-row">
         {/* Sidebar as component */}
         <Sidebar isCollapsed={isCollapsed} />
-        <NotificationSidebar 
+        <NotificationSidebar
             isNotificationOpen={isNotificationOpen}
             onClose={toggleNotificationSidebar}
             user={user}
+            initialNotifications={userNotifications}
         />
         {/* Main */}
         <main className="dashboard-main">

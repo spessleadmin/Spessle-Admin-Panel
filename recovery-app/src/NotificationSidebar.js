@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import feather from "feather-icons";
-import api, { getNotifications, markNotificationAsRead } from "./utils/api";
+import api, { markNotificationAsRead } from "./utils/api";
 import { API_BASE_URL } from "./config";
 import "./NotificationSidebar.css";
 
-export default function NotificationSidebar({ isNotificationOpen, onClose, user }) {
+export default function NotificationSidebar({ isNotificationOpen, onClose, user, initialNotifications = [] }) {
   const [notifications, setNotifications] = useState([]);
   const [allNotifications, setAllNotifications] = useState([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    if (user && user.id) {
-      getNotifications(user.id)
-        .then(data => {
-          setNotifications(data.notifications);
-          setAllNotifications(data.notifications);
-        })
-        .catch(err => console.error("Failed to fetch notifications", err));
-    }
-  }, [user]);
+    setNotifications(initialNotifications);
+    setAllNotifications(initialNotifications);
+  }, [initialNotifications]);
 
   useEffect(() => {
     feather.replace();

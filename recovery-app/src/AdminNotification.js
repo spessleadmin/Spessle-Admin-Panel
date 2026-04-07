@@ -177,12 +177,6 @@ export default function Notification() {
                       </label>
                     </div>
                     <div className="d-flex">
-                      <button
-                        className="btn btn-blue btn-sm ms-2 add-user-table-btn"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <i data-feather="plus"></i>Add
-                      </button>
                     </div>
                   </div>
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./ManageReviews.css";
-import api from "./utils/api";
+import api, { getCachedBusinessId } from "./utils/api";
 import feather from "feather-icons";
 import { API_BASE_URL } from "./config";
 
@@ -34,13 +34,7 @@ export default function ManageReviews() {
         let currentBusinessId = businessIdFromQuery;
 
         if (!currentBusinessId) {
-          // First, fetch user info to get the business ID
-          const userInfoResponse = await api(`${API_BASE_URL}/user-info`);
-          if (!userInfoResponse.ok) {
-            throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
-          }
-          const userInfo = await userInfoResponse.json();
-          currentBusinessId = userInfo.user.businesses_on_user[0]?.id;
+          currentBusinessId = getCachedBusinessId();
         }
         
         setBusinessId(currentBusinessId);

@@ -105,8 +105,25 @@ export default function EditUser() {
         body: JSON.stringify(userInfo),
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      const updated = data.user;
+      const newState = {
+        email: updated.email,
+        firstname: updated.firstname,
+        lastname: updated.lastname,
+        username: updated.username,
+        phonenum: updated.phonenum,
+        profilepictureurl: updated.profilepictureurl,
+      };
+      setInitialUserState(newState);
+      setUserInfo({
+        email: newState.email,
+        firstname: newState.firstname,
+        lastname: newState.lastname,
+        username: newState.username,
+        phonenum: newState.phonenum,
+      });
       triggerSuccess("User details updated successfully!");
-      fetchUser();
     } catch (error) {
       console.error("Failed to update user details:", error);
       alert("Failed to update user.");

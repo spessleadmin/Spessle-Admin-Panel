@@ -42,4 +42,18 @@ export const markNotificationAsRead = async (notificationId) => {
   return response.json();
 };
 
+export function getCachedUser() {
+  try {
+    const cached = JSON.parse(localStorage.getItem("user-info") || "{}");
+    return cached.users?.[0] || cached.user?.[0] || cached.user || null;
+  } catch {
+    return null;
+  }
+}
+
+export function getCachedBusinessId() {
+  const user = getCachedUser();
+  return user?.businesses_on_user?.[0]?.id || null;
+}
+
 export default api;

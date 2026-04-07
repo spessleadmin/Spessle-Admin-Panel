@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import api from "./utils/api";
+import api, { getCachedBusinessId } from "./utils/api";
 import "./ManageBusiness.css"; // Using the same CSS file
 import feather from "feather-icons";
 import { API_BASE_URL } from "./config";
@@ -50,16 +50,9 @@ export default function ManageBusiness() {
       setIsLoading(true);
       setError(null);
       try {
-        // First, fetch user info to get the business ID
-        const userInfoResponse = await api(`${API_BASE_URL}/user-info`);
-        if (!userInfoResponse.ok) {
-          throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
-        }
-        const userInfo = await userInfoResponse.json();
-        const businessId = userInfo.businesses_on_user[0]?.id;
-        console.log(businessId)
+        const businessId = getCachedBusinessId();
         if (!businessId) {
-          throw new Error("Business ID not found in user info.");
+          throw new Error("Business ID not found in cached user info.");
         }
 
         // Now, fetch businesses using the dynamic ID

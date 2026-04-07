@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import feather from "feather-icons";
-import api from "./utils/api";
+import api, { getCachedBusinessId } from "./utils/api";
 import useFeatureFlags from "./hooks/useFeatureFlags";
 import "./Sidebar.css";
 import { API_BASE_URL } from "./config";
@@ -216,32 +216,18 @@ export default function Sidebar({ isCollapsed }) {
   const [sidebarLinks, setSidebarLinks] = useState([]);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await api(`${API_BASE_URL}/user-info`);
-        const data = await response.json();
-        const businessId = data.user.businesses_on_user[0]?.id;
-        const updatedLinks = initialSidebarLinks.map((link) => {
-          if (link.label === "Manage Business") {
-            return { ...link, href: `/business-details/${businessId}` };
-          }
-          return link;
-        });
-
-        const filteredLinks = updatedLinks.filter(
-          (link) => !link.featureFlag || featureFlags[link.featureFlag]
-        );
-        setSidebarLinks(filteredLinks);
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-        const filteredLinks = initialSidebarLinks.filter(
-          (link) => !link.featureFlag || featureFlags[link.featureFlag]
-        );
-        setSidebarLinks(filteredLinks);
+    const businessId = getCachedBusinessId();
+    const updatedLinks = initialSidebarLinks.map((link) => {
+      if (link.label === "Manage Business") {
+        return { ...link, href: `/business-details/${businessId}` };
       }
-    };
+      return link;
+    });
 
-    fetchUserInfo();
+    const filteredLinks = updatedLinks.filter(
+      (link) => !link.featureFlag || featureFlags[link.featureFlag]
+    );
+    setSidebarLinks(filteredLinks);
   }, [featureFlags]);
 
   useEffect(() => {

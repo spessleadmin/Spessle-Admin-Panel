@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./RevenueManagement.css";
 import feather from "feather-icons";
-import api from "./utils/api";
+import api, { getCachedBusinessId } from "./utils/api";
 import { API_BASE_URL } from "./config";
 
 export default function RevenueManagement() {
@@ -32,12 +32,7 @@ export default function RevenueManagement() {
         let currentBusinessId = businessIdFromQuery;
 
         if (!currentBusinessId) {
-          const userInfoResponse = await api(`${API_BASE_URL}/user-info`);
-          if (!userInfoResponse.ok) {
-            throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
-          }
-          const userInfo = await userInfoResponse.json();
-          currentBusinessId = userInfo.user.businesses_on_user[0]?.id;
+          currentBusinessId = getCachedBusinessId();
         }
 
         setBusinessId(currentBusinessId);

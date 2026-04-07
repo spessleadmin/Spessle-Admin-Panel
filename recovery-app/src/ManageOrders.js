@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import api from "./utils/api";
+import api, { getCachedBusinessId } from "./utils/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./ManageOrders.css";
@@ -41,15 +41,9 @@ const ManageOrders = () => {
     setIsLoading(true);
     setError(null);
     try {
-      // First, fetch user info to get the business ID
-      const userInfoResponse = await api(`${API_BASE_URL}/user-info`);
-      if (!userInfoResponse.ok) {
-        throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
-      }
-      const userInfo = await userInfoResponse.json();
-      const businessId = userInfo.user.businesses_on_user[0]?.id;
+      const businessId = getCachedBusinessId();
       if (!businessId) {
-        throw new Error("Business ID not found in user info.");
+        throw new Error("Business ID not found in cached user info.");
       }
       const response = await api(`${API_BASE_URL}/businesses/${businessId}/orders`);
       if (!response.ok) {
