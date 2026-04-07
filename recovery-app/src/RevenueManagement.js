@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import "./RevenueManagement.css";
 import feather from "feather-icons";
 import api from "./utils/api";
+import { API_BASE_URL } from "./config";
 
 export default function RevenueManagement() {
   const [filters, setFilters] = useState({ businessName: "", dateRange: "" });
@@ -31,7 +32,7 @@ export default function RevenueManagement() {
         let currentBusinessId = businessIdFromQuery;
 
         if (!currentBusinessId) {
-          const userInfoResponse = await api("http://localhost:5050/user-info");
+          const userInfoResponse = await api(`${API_BASE_URL}/user-info`);
           if (!userInfoResponse.ok) {
             throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
           }
@@ -46,7 +47,7 @@ export default function RevenueManagement() {
         }
 
         const response = await api(
-          `http://localhost:5050/businesses/${currentBusinessId}/revenue-metrics`
+          `${API_BASE_URL}/businesses/${currentBusinessId}/revenue-metrics`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -65,7 +66,7 @@ export default function RevenueManagement() {
     const fetchRevenueMetrics = async () => {
       if (!businessId) return;
 
-      let url = `http://localhost:5050/businesses/${businessId}/revenue-metrics`;
+      let url = `${API_BASE_URL}/businesses/${businessId}/revenue-metrics`;
       if (activeTimeRange !== "All") {
         const month = activeTimeRange.split(" ")[0];
         url += `?month=${month}`;

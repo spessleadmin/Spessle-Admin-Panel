@@ -5,6 +5,7 @@ import SuccessMessage from "./components/SuccessMessage";
 import { ORDER_STATUS_VALUES } from "./constants/orderStatuses";
 import "./EditOrder.css";
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 const EditOrder = () => {
   const { orderID } = useParams();
@@ -33,7 +34,7 @@ const EditOrder = () => {
 
   const fetchOrderDetails = async () => {
     try {
-      const response = await api(`http://localhost:5050/orders/${orderID}`);
+      const response = await api(`${API_BASE_URL}/orders/${orderID}`);
       if (!response.ok) throw new Error("Network response was not ok");
 
       const data = await response.json();
@@ -48,7 +49,7 @@ const EditOrder = () => {
   const fetchAmountRefundable = async () => {
     try {
       const response = await api(
-        `http://localhost:5050/admin/orders/${orderID}/amount-refundable`
+        `${API_BASE_URL}/admin/orders/${orderID}/amount-refundable`
       );
       if (!response.ok) throw new Error("Network response was not ok");
 
@@ -96,7 +97,7 @@ const EditOrder = () => {
   const handleSaveStatus = async () => {
     try {
       const response = await api(
-        `http://localhost:5050/orders/${orderID}/status`,
+        `${API_BASE_URL}/orders/${orderID}/status`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -115,7 +116,7 @@ const EditOrder = () => {
 
   const handleSaveDeliveryInfo = async () => {
     try {
-      const response = await api(`http://localhost:5050/orders/${orderID}`, {
+      const response = await api(`${API_BASE_URL}/orders/${orderID}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -136,7 +137,7 @@ const EditOrder = () => {
   const handleRefund = async () => {
     try {
       const response = await api(
-        `http://localhost:5050/admin/orders/${orderID}/refund`,
+        `${API_BASE_URL}/admin/orders/${orderID}/refund`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

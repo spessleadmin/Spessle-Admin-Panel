@@ -8,6 +8,7 @@ import { getNotifications } from "./utils/api";
 import api from "./utils/api";
 import "./Layout.css"; // Add this line
 import "./NotificationSidebar.css";
+import { API_BASE_URL } from "./config";
 
 export default function Layout() {
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -53,7 +54,7 @@ export default function Layout() {
         }
 
         console.log("Fetching from API..."); // Log API fetch
-        const response = await api("http://localhost:5050/user-info");
+        const response = await api(`${API_BASE_URL}/user-info`);
         console.log("API response:", response); // Log response
         const data = await response.json();
         console.log("API data:", data); // Log data

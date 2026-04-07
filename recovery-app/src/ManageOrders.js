@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./ManageOrders.css";
 import feather from "feather-icons";
 import { ORDER_STATUS_VALUES } from "./constants/orderStatuses";
+import { API_BASE_URL } from "./config";
 
 const transformApiOrder = (apiOrder) => ({
   orderNo: apiOrder.id,
@@ -41,7 +42,7 @@ const ManageOrders = () => {
     setError(null);
     try {
       // First, fetch user info to get the business ID
-      const userInfoResponse = await api("http://localhost:5050/user-info");
+      const userInfoResponse = await api(`${API_BASE_URL}/user-info`);
       if (!userInfoResponse.ok) {
         throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
       }
@@ -50,7 +51,7 @@ const ManageOrders = () => {
       if (!businessId) {
         throw new Error("Business ID not found in user info.");
       }
-      const response = await api(`http://localhost:5050/businesses/${businessId}/orders`);
+      const response = await api(`${API_BASE_URL}/businesses/${businessId}/orders`);
       if (!response.ok) {
         if (response.status === 404) {
           const errorData = await response.json();

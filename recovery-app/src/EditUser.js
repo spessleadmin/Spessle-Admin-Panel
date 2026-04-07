@@ -6,6 +6,7 @@ import SuccessMessage from "./components/SuccessMessage";
 import "./EditUser.css";
 import "./Dropify.css";
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 export default function EditUser() {
   const { id } = useParams();
@@ -42,7 +43,7 @@ export default function EditUser() {
   useEffect(() => {
     const fetchLoggedInUser = async () => {
       try {
-        const response = await api("http://localhost:5050/user-info");
+        const response = await api(`${API_BASE_URL}/user-info`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -74,7 +75,7 @@ export default function EditUser() {
 
   const fetchUser = useCallback(async () => {
     try {
-      const response = await api(`http://localhost:5050/users/${id}`);
+      const response = await api(`${API_BASE_URL}/users/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -151,7 +152,7 @@ export default function EditUser() {
     const formData = new FormData();
     formData.append("image", file);
     try {
-      const response = await api(`http://localhost:5050/users/${id}/image`, {
+      const response = await api(`${API_BASE_URL}/users/${id}/image`, {
         method: "POST",
         body: formData,
       });
@@ -167,7 +168,7 @@ export default function EditUser() {
   const handleDeleteImage = async () => {
     try {
       const response = await api(
-        `http://localhost:5050/users/${id}/image`,
+        `${API_BASE_URL}/users/${id}/image`,
         {
           method: "DELETE",
         }
@@ -195,7 +196,7 @@ export default function EditUser() {
       };
 
       try {
-        const response = await api(`http://localhost:5050/users/${id}`, {
+        const response = await api(`${API_BASE_URL}/users/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

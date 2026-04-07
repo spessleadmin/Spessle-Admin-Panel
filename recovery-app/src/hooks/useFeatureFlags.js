@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
+import { API_BASE_URL } from "../config";
 
 const useFeatureFlags = () => {
   const [featureFlags, setFeatureFlags] = useState({});
@@ -7,7 +8,7 @@ const useFeatureFlags = () => {
   useEffect(() => {
     const fetchFeatureFlags = async () => {
       try {
-        const response = await api('http://localhost:5050/feature-flags');
+        const response = await api(`${API_BASE_URL}/feature-flags`);
         const data = await response.json();
         setFeatureFlags(data);
       } catch (error) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../utils/api";
 import feather from "feather-icons";
+import { API_BASE_URL } from "../config";
 
 export default function ProductDetailsModal({ productId, isOpen, onClose }) {
   const [product, setProduct] = useState(null);
@@ -19,7 +20,7 @@ export default function ProductDetailsModal({ productId, isOpen, onClose }) {
       setLoading(true);
       setError(null);
       try {
-        const res = await api(`http://localhost:5050/products/${productId}`);
+        const res = await api(`${API_BASE_URL}/products/${productId}`);
         if (!res.ok) {
           throw new Error(`Failed to load product (${res.status})`);
         }

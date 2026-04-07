@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "./utils/api";
 import "./ManageBusiness.css"; // Using the same CSS file
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 // New constants for businesses
 const categories = ["Food", "Gifts", "Beauty", "Clothing"];
@@ -49,7 +50,7 @@ export default function ManageBusiness() {
       setError(null);
       try {
         // First, fetch user info to get the business ID
-        const userInfoResponse = await api("http://localhost:5050/user-info");
+        const userInfoResponse = await api(`${API_BASE_URL}/user-info`);
         if (!userInfoResponse.ok) {
           throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
         }
@@ -62,7 +63,7 @@ export default function ManageBusiness() {
 
         // Now, fetch businesses using the dynamic ID
         const response = await api(
-          `http://localhost:5050/businesses/${businessId}`
+          `${API_BASE_URL}/businesses/${businessId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

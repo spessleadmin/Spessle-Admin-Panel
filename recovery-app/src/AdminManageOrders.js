@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./ManageOrders.css";
 import feather from "feather-icons";
 import { ORDER_STATUS_VALUES } from "./constants/orderStatuses";
+import { API_BASE_URL } from "./config";
 
 const transformApiOrder = (apiOrder) => ({
   orderNo: apiOrder.id,
@@ -40,7 +41,7 @@ const ManageOrders = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api('http://localhost:5050/orders');
+      const response = await api(`${API_BASE_URL}/orders`);
       if (!response.ok) {
         if (response.status === 404) {
           const errorData = await response.json();

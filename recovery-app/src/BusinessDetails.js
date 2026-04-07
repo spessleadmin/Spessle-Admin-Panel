@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import api from './utils/api';
 import './BusinessDetails.css';
 import feather from 'feather-icons';
+import { API_BASE_URL } from "./config";
 
 export default function BusinessDetails() {
   const { id } = useParams();
@@ -12,7 +13,7 @@ export default function BusinessDetails() {
   useEffect(() => {
     const fetchBusinessDetails = async () => {
       try {
-        const response = await api(`http://localhost:5050/businesses/${id}`);
+        const response = await api(`${API_BASE_URL}/businesses/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

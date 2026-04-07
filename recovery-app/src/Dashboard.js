@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"; // ✅ Added useState and useEffect
 import api from "./utils/api";
 import "./Dashboard.css";
+import { API_BASE_URL } from "./config";
 
 export default function Dashboard() {
   // ✅ State to store the API stats
@@ -33,7 +34,7 @@ export default function Dashboard() {
 
   // ✅ Fetch real data from backend on component mount
   useEffect(() => {
-    api("http://localhost:5050/stats")
+    api(`${API_BASE_URL}/stats`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Network response was not ok");

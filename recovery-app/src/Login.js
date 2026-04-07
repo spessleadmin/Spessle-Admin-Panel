@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import feather from "feather-icons";
 import Cookies from "js-cookie";
 import "./Login.css";
+import { API_BASE_URL } from "./config";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await fetch("http://127.0.0.1:5050/login", {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -37,7 +38,7 @@ const Login = () => {
 
       try {
         const userInfoResponse = await fetch(
-          "http://127.0.0.1:5050/user-info",
+          `${API_BASE_URL}/user-info`,
           {
             headers: {
               Authorization: `Bearer ${data.idToken}`,

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "./ManageReviews.css";
 import api from "./utils/api";
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 export default function ManageReviews() {
   const [filters, setFilters] = useState({
@@ -34,7 +35,7 @@ export default function ManageReviews() {
 
         if (!currentBusinessId) {
           // First, fetch user info to get the business ID
-          const userInfoResponse = await api("http://localhost:5050/user-info");
+          const userInfoResponse = await api(`${API_BASE_URL}/user-info`);
           if (!userInfoResponse.ok) {
             throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
           }
@@ -49,7 +50,7 @@ export default function ManageReviews() {
         }
 
         // Now, fetch reviews using the dynamic business ID
-        const response = await api(`http://localhost:5050/businesses/${currentBusinessId}/reviews`);
+        const response = await api(`${API_BASE_URL}/businesses/${currentBusinessId}/reviews`);
         if (!response.ok) {
           throw new Error("Failed to fetch reviews");
         }

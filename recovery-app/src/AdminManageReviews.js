@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "./ManageReviews.css";
 import api from "./utils/api";
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 export default function ManageReviews() {
   const [filters, setFilters] = useState({
@@ -26,7 +27,7 @@ export default function ManageReviews() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await api("http://localhost:5050/reviews");
+        const response = await api(`${API_BASE_URL}/reviews`);
         if (!response.ok) {
           throw new Error("Failed to fetch reviews");
         }

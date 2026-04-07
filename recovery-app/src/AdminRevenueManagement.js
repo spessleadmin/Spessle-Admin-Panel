@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./RevenueManagement.css";
 import feather from "feather-icons";
-
+import { API_BASE_URL } from "./config";
 
 export default function RevenueManagement() {
   const [filters, setFilters] = useState({ businessName: "", dateRange: "" });
@@ -23,7 +23,7 @@ export default function RevenueManagement() {
     const fetchAllTimeRevenueMetrics = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5050/admin/revenue-metrics"
+          `${API_BASE_URL}/admin/revenue-metrics`
         );
         const data = await response.json();
         setAllTimeRevenueMetrics(data);
@@ -37,7 +37,7 @@ export default function RevenueManagement() {
 
   useEffect(() => {
     const fetchRevenueMetrics = async () => {
-      let url = "http://localhost:5050/admin/revenue-metrics";
+      let url = `${API_BASE_URL}/admin/revenue-metrics`;
       if (activeTimeRange !== "All") {
         const month = activeTimeRange.split(" ")[0];
         url += `?month=${month}`;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Notification.css";
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 export default function Notification() {
   const [notifications, setNotifications] = useState([]);
@@ -14,7 +15,7 @@ export default function Notification() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:5050/notifications")
+    fetch(`${API_BASE_URL}/notifications`)
       .then((response) => response.json())
       .then((data) => {
         setNotifications(data.notifications);

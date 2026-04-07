@@ -4,6 +4,7 @@ import api from "./utils/api";
 import ProductDetailsModal from "./components/ProductDetailsModal";
 import "./ManageProduct.css"; // Using the same CSS file
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 // New constants for products
 const categories = ["Food", "Gifts", "Beauty", "Clothing"];
@@ -45,7 +46,7 @@ export default function ManageProduct() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await api('http://localhost:5050/products');
+        const response = await api(`${API_BASE_URL}/products`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

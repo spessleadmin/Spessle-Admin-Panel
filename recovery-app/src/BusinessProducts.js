@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import api from "./utils/api";
 import "./BusinessProducts.css"; // Using the new CSS file
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 // New constants for products
 const categories = ["Food", "Gifts", "Beauty", "Clothing"];
@@ -46,7 +47,7 @@ export default function BusinessProducts() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await api(`http://localhost:5050/businesses/${id}/products`);
+        const response = await api(`${API_BASE_URL}/businesses/${id}/products`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

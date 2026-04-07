@@ -4,6 +4,7 @@ import api from "./utils/api";
 import ProductDetailsModal from "./components/ProductDetailsModal";
 import "./ManageProduct.css"; // Using the same CSS file
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 // New constants for products
 const categories = ["Food", "Gifts", "Beauty", "Clothing"];
@@ -48,7 +49,7 @@ export default function ManageProduct() {
       setError(null);
       try {
         // First, fetch user info to get the business ID
-        const userInfoResponse = await api("http://localhost:5050/user-info");
+        const userInfoResponse = await api(`${API_BASE_URL}/user-info`);
         if (!userInfoResponse.ok) {
           throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
         }
@@ -61,7 +62,7 @@ export default function ManageProduct() {
 
         // Now, fetch products using the dynamic business ID
         const response = await api(
-          `http://localhost:5050/businesses/${businessId}/products`
+          `${API_BASE_URL}/businesses/${businessId}/products`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { API_BASE_URL } from "../config";
 
 const api = async (url, options = {}) => {
   const token = Cookies.get("token");
@@ -24,7 +25,7 @@ const api = async (url, options = {}) => {
 };
 
 export const getNotifications = async (userId) => {
-  const response = await api(`http://localhost:5050/users/${userId}/notifications`);
+  const response = await api(`${API_BASE_URL}/users/${userId}/notifications`);
   if (!response.ok) {
     throw new Error('Failed to fetch notifications');
   }
@@ -32,7 +33,7 @@ export const getNotifications = async (userId) => {
 };
 
 export const markNotificationAsRead = async (notificationId) => {
-  const response = await api(`http://localhost:5050/notifications/${notificationId}/read`, {
+  const response = await api(`${API_BASE_URL}/notifications/${notificationId}/read`, {
     method: 'POST',
   });
   if (!response.ok) {

@@ -6,13 +6,14 @@ import { useParams } from "react-router-dom";
 
 import "./AdminNotificationDetails.css";
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 export default function AdminNotificationDetails() {
   const { id } = useParams();
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:5050/notifications`)
+    fetch(`${API_BASE_URL}/notifications`)
       .then((response) => response.json())
       .then((data) => {
         const notif = data.notifications.find(n => n.id === id);

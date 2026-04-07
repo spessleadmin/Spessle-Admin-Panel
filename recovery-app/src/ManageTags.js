@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "./utils/api";
 import "./ManageTags.css";
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 const transformApiTag = (apiTag) => ({
   id: apiTag.id,
@@ -33,7 +34,7 @@ export default function ManageTags() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api('http://localhost:5050/tags');
+      const response = await api(`${API_BASE_URL}/tags`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -68,7 +69,7 @@ export default function ManageTags() {
 
   const handleConfirmClick = async (tagId) => {
     try {
-      const response = await api(`http://localhost:5050/tags/${tagId}`, {
+      const response = await api(`${API_BASE_URL}/tags/${tagId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +147,7 @@ export default function ManageTags() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this tag?")) {
       try {
-        const response = await api(`http://localhost:5050/tags/${id}`, {
+        const response = await api(`${API_BASE_URL}/tags/${id}`, {
           method: 'DELETE',
         });
 
@@ -169,7 +170,7 @@ export default function ManageTags() {
   const handlePopupSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api('http://localhost:5050/tags', {
+      const response = await api(`${API_BASE_URL}/tags`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

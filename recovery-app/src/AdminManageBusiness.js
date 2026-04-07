@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "./utils/api";
 import "./ManageBusiness.css"; // Using the same CSS file
 import feather from "feather-icons";
+import { API_BASE_URL } from "./config";
 
 // New constants for businesses
 const categories = ["Food", "Gifts", "Beauty", "Clothing"];
@@ -50,7 +51,7 @@ export default function ManageBusiness() {
       try {
         // IMPORTANT: Replace with your actual business API endpoint
         const response = await api(
-          "http://localhost:5050/businesses"
+          `${API_BASE_URL}/businesses`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
