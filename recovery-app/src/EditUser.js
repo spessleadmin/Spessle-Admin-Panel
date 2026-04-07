@@ -20,7 +20,6 @@ export default function EditUser() {
   });
   const [files, setFiles] = useState([]);
   const [userImage, setUserImage] = useState(null);
-  const [loggedInUserProfilePictureUrl, setLoggedInUserProfilePictureUrl] = useState(null);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -39,23 +38,6 @@ export default function EditUser() {
       return () => clearTimeout(timer);
     }
   }, [showSuccessToast]);
-
-  useEffect(() => {
-    const fetchLoggedInUser = async () => {
-      try {
-        const response = await api(`${API_BASE_URL}/user-info`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setLoggedInUserProfilePictureUrl(data.user.profilepictureurl);
-      } catch (error) {
-        throw new Error("Failed to fetch logged-in user:", error);
-      }
-    };
-
-    fetchLoggedInUser();
-  }, []);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -242,8 +224,8 @@ export default function EditUser() {
       <div className="edit-user-page">
         <h2>Edit User</h2>
         <div className="logged-in-user-profile">
-          {loggedInUserProfilePictureUrl && (
-            <img src={loggedInUserProfilePictureUrl} alt="Logged-in user" />
+          {userImage && (
+            <img src={userImage} alt="User profile" />
           )}
         </div>
         <div className="row">
