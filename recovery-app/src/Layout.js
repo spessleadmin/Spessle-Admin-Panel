@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from "react";
 import feather from "feather-icons";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, Navigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import Sidebar from "./Sidebar";
 import NotificationSidebar from "./NotificationSidebar";
 import { getNotifications } from "./utils/api";
@@ -11,6 +12,8 @@ import "./NotificationSidebar.css";
 import { API_BASE_URL } from "./config";
 
 export default function Layout() {
+  const hasToken = !!Cookies.get("token");
+
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const savedState = localStorage.getItem("sidebar-collapsed");
     return savedState !== null ? JSON.parse(savedState) : false;
@@ -89,6 +92,10 @@ export default function Layout() {
   const toggleNotificationSidebar = () => {
     setisNotificationOpen(!isNotificationOpen);
   };
+
+  if (!hasToken) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className={`dashboard-root ${isCollapsed ? "sidebar-collapsed" : ""}`}>

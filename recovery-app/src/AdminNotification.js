@@ -4,6 +4,7 @@ import "./Notification.css";
 import feather from "feather-icons";
 import { API_BASE_URL } from "./config";
 import api from "./utils/api";
+import { formatNotificationType } from "./utils/notificationTypes";
 
 export default function Notification() {
   const [notifications, setNotifications] = useState([]);
@@ -29,10 +30,17 @@ export default function Notification() {
     feather.replace();
   }, [notifications, currentPage, entriesPerPage]);
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this notification?")) {
-      const updatedNotifications = notifications.filter((n) => n.id !== id);
-      setNotifications(updatedNotifications);
+      try {
+        const response = await api(`${API_BASE_URL}/notifications/${id}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Failed to delete notification");
+        setNotifications(notifications.filter((n) => n.id !== id));
+        setMasterNotificationList(masterNotificationList.filter((n) => n.id !== id));
+      } catch (error) {
+        console.error("Error deleting notification:", error);
+        alert("Failed to delete notification.");
+      }
     }
   };
 
@@ -209,7 +217,7 @@ export default function Notification() {
                                 className={idx % 2 === 0 ? "odd" : "even"}
                               >
                                 <td>{notification.title}</td>
-                                <td>{notification.type.type_name}</td>
+                                <td>{formatNotificationType(notification.type.type_name)}</td>
                                 <td>
                                   {new Date(
                                     notification.sentAt

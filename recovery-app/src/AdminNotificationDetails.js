@@ -8,6 +8,7 @@ import "./AdminNotificationDetails.css";
 import feather from "feather-icons";
 import { API_BASE_URL } from "./config";
 import api from "./utils/api";
+import { formatNotificationType } from "./utils/notificationTypes";
 
 export default function AdminNotificationDetails() {
   const { id } = useParams();
@@ -82,7 +83,7 @@ export default function AdminNotificationDetails() {
                   <p><strong>Sent At:</strong> {new Date(notification.sentAt).toLocaleString()}</p>
                   <p><strong>Read At:</strong> {notification.readAt ? new Date(notification.readAt).toLocaleString() : 'Not read yet'}</p>
                   <p><strong>Username:</strong> {notification.sender_user.username}</p>
-                  <p><strong>Type:</strong> {notification.type.type_name}</p>
+                  <p><strong>Type:</strong> {formatNotificationType(notification.type.type_name)}</p>
                   <p><strong>Type Description:</strong> {notification.type.description}</p>
                 </div>
               </div>

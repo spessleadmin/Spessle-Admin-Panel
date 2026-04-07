@@ -58,7 +58,17 @@ const Login = () => {
         return;
       }
 
-      navigate("/dashboard");
+      // Route based on role
+      const cached = JSON.parse(localStorage.getItem("user-info") || "{}");
+      const user = cached.users?.[0] || cached.user?.[0] || cached.user;
+      const roleName = (user?.role?.roleName || "").toLowerCase();
+
+      if (roleName === "admin") {
+        navigate("/dashboard");
+      } else {
+        const businessId = user?.businesses_on_user?.[0]?.id;
+        navigate(businessId ? `/business-details/${businessId}` : "/dashboard");
+      }
     } catch (err) {
       setError("Failed to login. Please try again.");
     }

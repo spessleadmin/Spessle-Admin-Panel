@@ -129,9 +129,16 @@ export default function AdminUsers() {
     setCurrentPage(1);
   };
 
-  const handleDelete = (email) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter(u => u.email !== email));
+      try {
+        const response = await api(`${API_BASE_URL}/users/${id}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Failed to delete user");
+        setUsers(users.filter(u => u.id !== id));
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        alert("Failed to delete user.");
+      }
     }
   };
 
@@ -308,7 +315,7 @@ export default function AdminUsers() {
                                     className="action-icon text-danger"
                                     onClick={e => {
                                       e.preventDefault();
-                                      handleDelete(user.email);
+                                      handleDelete(user.id);
                                     }}
                                   >
                                     <i data-feather="trash-2"></i>

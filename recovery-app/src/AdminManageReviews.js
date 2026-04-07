@@ -133,13 +133,17 @@ export default function ManageReviews() {
     setCurrentPage(1);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this review?")) {
-      const updatedReviews = reviews.filter(r => r.id !== id);
-      const updatedMasterList = masterReviewList.filter(r => r.id !== id);
-
-      setReviews(updatedReviews);
-      setMasterReviewList(updatedMasterList);
+      try {
+        const response = await api(`${API_BASE_URL}/reviews/${id}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Failed to delete review");
+        setReviews(reviews.filter(r => r.id !== id));
+        setMasterReviewList(masterReviewList.filter(r => r.id !== id));
+      } catch (error) {
+        console.error("Error deleting review:", error);
+        alert("Failed to delete review.");
+      }
     }
   };
 

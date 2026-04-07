@@ -157,14 +157,17 @@ export default function BusinessProducts() {
     setCurrentPage(1);
   };
 
-  // Updated to delete from both master and displayed lists
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      const updatedProducts = products.filter(p => p.id !== id);
-      const updatedMasterList = masterProductList.filter(p => p.id !== id);
-
-      setProducts(updatedProducts);
-      setMasterProductList(updatedMasterList);
+      try {
+        const response = await api(`${API_BASE_URL}/products/${id}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Failed to delete product");
+        setProducts(products.filter(p => p.id !== id));
+        setMasterProductList(masterProductList.filter(p => p.id !== id));
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("Failed to delete product.");
+      }
     }
   };
 

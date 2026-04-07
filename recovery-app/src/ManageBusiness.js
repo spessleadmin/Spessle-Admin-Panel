@@ -178,16 +178,17 @@ export default function ManageBusiness() {
     setCurrentPage(1);
   };
 
-  // Updated to delete from both master and displayed lists
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this business?")) {
-      // Here you would typically make an API call to delete the business
-      // For now, we'll just update the state
-      const updatedBusinesses = businesses.filter((b) => b.id !== id);
-      const updatedMasterList = masterBusinessList.filter((b) => b.id !== id);
-
-      setBusinesses(updatedBusinesses);
-      setMasterBusinessList(updatedMasterList);
+      try {
+        const response = await api(`${API_BASE_URL}/businesses/${id}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Failed to delete business");
+        setBusinesses(businesses.filter((b) => b.id !== id));
+        setMasterBusinessList(masterBusinessList.filter((b) => b.id !== id));
+      } catch (error) {
+        console.error("Error deleting business:", error);
+        alert("Failed to delete business.");
+      }
     }
   };
 

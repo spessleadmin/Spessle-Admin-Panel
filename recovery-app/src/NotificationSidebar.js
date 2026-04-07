@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import feather from "feather-icons";
-import { getNotifications, markNotificationAsRead } from "./utils/api";
+import api, { getNotifications, markNotificationAsRead } from "./utils/api";
+import { API_BASE_URL } from "./config";
 import "./NotificationSidebar.css";
 
 export default function NotificationSidebar({ isNotificationOpen, onClose, user }) {
@@ -37,11 +38,18 @@ export default function NotificationSidebar({ isNotificationOpen, onClose, user 
     setNotifications(filtered);
   };
   
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this notification?")) {
-      const updatedNotifications = notifications.filter(n => n.id !== id);
-      setNotifications(updatedNotifications);
-      setAllNotifications(updatedNotifications);
+      try {
+        const response = await api(`${API_BASE_URL}/notifications/${id}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Failed to delete notification");
+        const updatedNotifications = notifications.filter(n => n.id !== id);
+        setNotifications(updatedNotifications);
+        setAllNotifications(updatedNotifications);
+      } catch (error) {
+        console.error("Error deleting notification:", error);
+        alert("Failed to delete notification.");
+      }
     }
   };
 

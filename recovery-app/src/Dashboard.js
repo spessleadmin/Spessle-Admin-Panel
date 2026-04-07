@@ -1,9 +1,24 @@
 import React, { useEffect, useState } from "react"; // ✅ Added useState and useEffect
+import { Navigate } from "react-router-dom";
 import api from "./utils/api";
 import "./Dashboard.css";
 import { API_BASE_URL } from "./config";
 
+function getUserContext() {
+  try {
+    const cached = JSON.parse(localStorage.getItem("user-info") || "{}");
+    const user = cached.users?.[0] || cached.user?.[0] || cached.user;
+    const roleName = (user?.role?.roleName || "").toLowerCase();
+    const businessId = user?.businesses_on_user?.[0]?.id || null;
+    return { isAdmin: roleName === "admin", businessId };
+  } catch {
+    return { isAdmin: false, businessId: null };
+  }
+}
+
 export default function Dashboard() {
+  const { isAdmin, businessId } = getUserContext();
+
   // ✅ State to store the API stats
   const [stats, setStats] = useState([
     {
@@ -74,6 +89,10 @@ export default function Dashboard() {
         console.error("Error fetching stats:", error);
       });
   }, []);
+
+  if (!isAdmin && businessId) {
+    return <Navigate to={`/business-details/${businessId}`} replace />;
+  }
 
   return (
     <>

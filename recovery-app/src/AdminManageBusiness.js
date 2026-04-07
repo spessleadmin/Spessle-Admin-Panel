@@ -11,11 +11,11 @@ const categories = ["Food", "Gifts", "Beauty", "Clothing"];
 // Helper function to transform complex API data into flat structure for the table
 const transformApiBusiness = (apiBusiness) => ({
   id: apiBusiness.id,
-  ownerName: apiBusiness.user.username, // Assuming owner relationship
+  ownerName: apiBusiness.user.username,
   businessName: apiBusiness.businessname,
   rating: apiBusiness.businessReviews_on_business.length > 0
     ? apiBusiness.businessReviews_on_business.reduce((acc, review) => acc + review.rating, 0) / apiBusiness.businessReviews_on_business.length
-    : 0.0, // Calculate average rating
+    : 0.0,
   phoneNo: apiBusiness.phonenum,
   address: apiBusiness.address,
   category: apiBusiness.category.categoryname,
@@ -154,7 +154,7 @@ export default function ManageBusiness() {
       return;
     }
     const filtered = masterBusinessList.filter(
-      (b) => // Filter from master list
+      (b) =>
         b.businessName.toLowerCase().includes(value.toLowerCase()) ||
         b.ownerName.toLowerCase().includes(value.toLowerCase()) ||
         b.category.toLowerCase().includes(value.toLowerCase()) ||
@@ -165,16 +165,17 @@ export default function ManageBusiness() {
     setCurrentPage(1);
   };
 
-  // Updated to delete from both master and displayed lists
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this business?")) {
-      // Here you would typically make an API call to delete the business
-      // For now, we'll just update the state
-      const updatedBusinesses = businesses.filter((b) => b.id !== id);
-      const updatedMasterList = masterBusinessList.filter((b) => b.id !== id);
-
-      setBusinesses(updatedBusinesses);
-      setMasterBusinessList(updatedMasterList);
+      try {
+        const response = await api(`${API_BASE_URL}/businesses/${id}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Failed to delete business");
+        setBusinesses(businesses.filter((b) => b.id !== id));
+        setMasterBusinessList(masterBusinessList.filter((b) => b.id !== id));
+      } catch (error) {
+        console.error("Error deleting business:", error);
+        alert("Failed to delete business.");
+      }
     }
   };
 

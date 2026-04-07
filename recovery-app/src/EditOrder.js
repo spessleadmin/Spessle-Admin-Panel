@@ -226,14 +226,23 @@ const EditOrder = () => {
                   className="form-control"
                   value={status}
                   onChange={handleStatusChange}
+                  disabled={status === "Partially Refunded" || status === "Refunded"}
                 >
-                  {ORDER_STATUS_VALUES.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
+                  {ORDER_STATUS_VALUES
+                    .filter((s) =>
+                      s === status || (s !== "Partially Refunded" && s !== "Refunded")
+                    )
+                    .map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
                 </select>
-                <button className="btn btn-blue mt-2" onClick={handleSaveStatus}>
+                <button
+                  className="btn btn-blue mt-2"
+                  onClick={handleSaveStatus}
+                  disabled={status === "Partially Refunded" || status === "Refunded"}
+                >
                   Save
                 </button>
               </div>
