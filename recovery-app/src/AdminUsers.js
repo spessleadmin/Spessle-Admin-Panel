@@ -257,16 +257,7 @@ export default function AdminUsers() {
                       </div>
                       <div className="d-flex">
                         <div id="basic-datatable_filter" className="dataTables_filter">
-                          <label>
-                                                                                        <input
-                                                                                          type="search"
-                                                                                          className="form-control form-control-sm"
-                                                                                          placeholder="Search..."
-                                                                                          aria-controls="basic-datatable"
-                                                                                          value={search}
-                                                                                          onChange={e => handleTableSearch(e.target.value)}
-                                                                                          style={{ width: '200px', height: '38px' }}
-                                                                                        />                          </label>
+                          
                         </div>
                       </div>
                     </div>
