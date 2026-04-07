@@ -19,6 +19,7 @@ const transformApiBusiness = (apiBusiness) => ({
   phoneNo: apiBusiness.phonenum,
   address: apiBusiness.address,
   category: apiBusiness.category.categoryname,
+  createdDate: apiBusiness.createddate,
 });
 
 export default function ManageBusiness() {
@@ -390,6 +391,17 @@ export default function ManageBusiness() {
                                   : "🔽"
                                 : ""}
                             </th>
+                            <th
+                              className="sortable-header"
+                              onClick={() => sortBusinesses("createdDate")}
+                            >
+                              Created Date{" "}
+                              {sortConfig.key === "createdDate"
+                                ? sortConfig.direction === "ascending"
+                                  ? "🔼"
+                                  : "🔽"
+                                : ""}
+                            </th>
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -397,14 +409,14 @@ export default function ManageBusiness() {
                         <tbody>
                           {isLoading ? (
                             <tr>
-                              <td colSpan="7" style={{ textAlign: "center" }}>
+                              <td colSpan="8" style={{ textAlign: "center" }}>
                                 Loading businesses...
                               </td>
                             </tr>
                           ) : error ? (
                             <tr>
                               <td
-                                colSpan="7"
+                                colSpan="8"
                                 style={{ textAlign: "center", color: "red" }}
                               >
                                 Error: {error}
@@ -412,7 +424,7 @@ export default function ManageBusiness() {
                             </tr>
                           ) : currentEntries.length === 0 ? (
                             <tr>
-                              <td colSpan="7" style={{ textAlign: "center" }}>
+                              <td colSpan="8" style={{ textAlign: "center" }}>
                                 No businesses found.
                               </td>
                             </tr>
@@ -428,6 +440,7 @@ export default function ManageBusiness() {
                                 <td>{business.phoneNo}</td>
                                 <td>{business.address}</td>
                                 <td>{business.category}</td>
+                                <td>{business.createdDate ? new Date(business.createdDate).toLocaleDateString() : "N/A"}</td>
                                 <td>
                                   <Link
                                     to={`/business-details/${business.id}`} // Assuming an edit route

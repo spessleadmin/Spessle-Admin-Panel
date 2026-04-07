@@ -44,7 +44,7 @@ export default function BusinessDetails() {
     Address: `${businessDetails.address}, ${businessDetails.city}, ${businessDetails.state} ${businessDetails.zipcode}`,
     Category: businessDetails.category.categoryname,
     Tags: businessDetails.businesstagss_on_business.map(tag => tag.tag.tagname).join(', ') || 'None',
-    //Status: 'Unknown', // Status is not in the provided response
+    'Created Date': businessDetails.createddate ? new Date(businessDetails.createddate).toLocaleDateString() : 'N/A',
   } : {};
 
   return (
