@@ -48,15 +48,24 @@ export default function ManageProduct() {
       setIsLoading(true);
       setError(null);
       try {
-        const businessId = getCachedBusinessId();
-        setBusinessId(businessId);
-        if (!businessId) {
-          throw new Error("Business ID not found in cached user info.");
+        const params = new URLSearchParams(window.location.search);
+        const businessIdFromQuery = params.get('business_id');
+
+        let currentBusinessId = businessIdFromQuery;
+
+        if (!currentBusinessId) {
+          currentBusinessId = getCachedBusinessId();
+        }
+
+        setBusinessId(currentBusinessId);
+
+        if (!currentBusinessId) {
+          throw new Error("Business ID not found. Cannot fetch products.");
         }
 
         // Now, fetch products using the dynamic business ID
         const response = await api(
-          `${API_BASE_URL}/businesses/${businessId}/products`
+          `${API_BASE_URL}/businesses/${currentBusinessId}/products`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

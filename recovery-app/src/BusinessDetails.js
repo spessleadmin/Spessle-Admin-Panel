@@ -62,9 +62,9 @@ export default function BusinessDetails() {
             <div className="admin-card card">
               <div className="card-header">
                 <div className="header-buttons">
-                  <Link to={`/manage-product`} className="btn btn-blue">Products</Link>
+                  <Link to={`/manage-product?business_id=${id}`} className="btn btn-blue">Products</Link>
                   <Link to={`/manage-reviews?business_id=${id}`} className="btn btn-blue">Reviews</Link>
-                  <Link to={`/manage-orders`} className="btn btn-blue">Orders</Link>
+                  <Link to={`/manage-orders?business_id=${id}`} className="btn btn-blue">Orders</Link>
                   <Link to={`/revenue-management?business_id=${id}`} className="btn btn-blue">Revenue</Link>
                 </div>
                 <Link to={`/edit-business/${id}`} className="btn btn-red">

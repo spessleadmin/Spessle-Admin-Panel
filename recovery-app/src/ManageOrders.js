@@ -41,9 +41,17 @@ const ManageOrders = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const businessId = getCachedBusinessId();
+      const params = new URLSearchParams(window.location.search);
+      const businessIdFromQuery = params.get('business_id');
+
+      let businessId = businessIdFromQuery;
+
       if (!businessId) {
-        throw new Error("Business ID not found in cached user info.");
+        businessId = getCachedBusinessId();
+      }
+
+      if (!businessId) {
+        throw new Error("Business ID not found. Cannot fetch orders.");
       }
       const response = await api(`${API_BASE_URL}/businesses/${businessId}/orders`);
       if (!response.ok) {
