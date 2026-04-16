@@ -155,12 +155,6 @@ const Login = () => {
               </button>
             </div>
           </form>
-
-          <div className="text-center mt-3">
-            <a href="/forgot-password" className="text-muted">
-              Forgot your password?
-            </a>
-          </div>
         </div>
       </div>
     </div>
