@@ -115,7 +115,7 @@ export default function RevenueManagement() {
           <div className="col-md-3">
             <div className="stat-box">
               <h5>TOTAL EARNINGS</h5>
-              <div className="main-stat">${revenueMetrics.totalEarnings}</div>
+              <div className="main-stat">${revenueMetrics.totalEarnings.toFixed(2)}</div>
               <div className="sub-stat">
                 <span className="text-success">
                   {calculatePercentage(
@@ -123,7 +123,7 @@ export default function RevenueManagement() {
                     allTimeRevenueMetrics.totalEarnings
                   )}
                 </span>{" "}
-                Total Earnings: ${allTimeRevenueMetrics.totalEarnings}
+                Total Earnings: ${allTimeRevenueMetrics.totalEarnings.toFixed(2)}
               </div>
             </div>
           </div>
@@ -196,7 +196,7 @@ export default function RevenueManagement() {
                       <span className="stat-label">Earnings</span>
                       <span dangerouslySetInnerHTML={{ __html: feather.icons['dollar-sign'].toSvg({ color: '#fff', width: 20, height: 20 }) }} />
                     </div>
-                    <div className="stat-value">${revenueMetrics.totalEarnings}</div>
+                    <div className="stat-value">${revenueMetrics.totalEarnings.toFixed(2)}</div>
                     <div className="progress-bar-container">
                       <div className="progress-bar" style={{ width: '60%' }}></div>
                     </div>
