@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import feather from "feather-icons";
-import { Link, Outlet, Navigate } from "react-router-dom";
+import { Link, Outlet, Navigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import Sidebar from "./Sidebar";
 import NotificationSidebar from "./NotificationSidebar";
@@ -11,8 +11,65 @@ import "./Layout.css"; // Add this line
 import "./NotificationSidebar.css";
 import { API_BASE_URL } from "./config";
 
+const pageTitles = {
+  "/dashboard": "Dashboard - Spessle Admin",
+  "/admin-dashboard": "Admin Dashboard - Spessle Admin",
+  "/admin-users": "Admin User Management - Spessle Admin",
+  "/admin-manage-business": "Admin Manage Business - Spessle Admin",
+  "/admin-manage-categories": "Admin Manage Categories - Spessle Admin",
+  "/admin-manage-tags": "Admin Manage Tags - Spessle Admin",
+  "/admin-manage-product": "Admin Manage Product - Spessle Admin",
+  "/manage-product": "Manage Product - Spessle Admin",
+  "/admin-manage-orders": "Admin Manage Orders - Spessle Admin",
+  "/manage-orders": "Manage Orders - Spessle Admin",
+  "/manage-reviews": "Manage Reviews - Spessle Admin",
+  "/admin-manage-reviews": "Admin Manage Reviews - Spessle Admin",
+  "/revenue-management": "Revenue Reports - Spessle Admin",
+  "/admin-revenue-management": "Admin Revenue Reports - Spessle Admin",
+  "/business-notification": "Business Notification - Spessle Admin",
+  "/user-notification": "User Notification - Spessle Admin",
+  "/admin-notifications": "Admin Notifications - Spessle Admin",
+  "/manage-coupons": "Manage Coupons - Spessle Admin",
+  "/admin-manage-coupons": "Admin Manage Coupons - Spessle Admin",
+  "/manage-business": "Manage Business - Spessle Admin",
+  "/add-product": "Add Product - Spessle Admin",
+  "/notification": "Notification - Spessle Admin",
+};
+
 export default function Layout() {
   const hasToken = !!Cookies.get("token");
+  const location = useLocation();
+
+  useEffect(() => {
+    const path = location.pathname;
+    let title = pageTitles[path];
+    
+    if (!title) {
+      if (path.startsWith("/business-details/")) {
+        title = "Business Details - Spessle Admin";
+      } else if (path.startsWith("/edit-product/")) {
+        title = "Edit Product - Spessle Admin";
+      } else if (path.startsWith("/edit-business/")) {
+        title = "Edit Business - Spessle Admin";
+      } else if (path.startsWith("/edit-user/")) {
+        title = "Edit User - Spessle Admin";
+      } else if (path.startsWith("/edit-order/")) {
+        title = "Edit Order - Spessle Admin";
+      } else if (path.startsWith("/business-products/")) {
+        title = "Business Products - Spessle Admin";
+      } else if (path.startsWith("/business-orders/")) {
+        title = "Business Orders - Spessle Admin";
+      } else if (path.startsWith("/business/") && path.includes("/add-product")) {
+        title = "Add Product - Spessle Admin";
+      } else if (path.startsWith("/admin-notification/") || path.startsWith("/notification/")) {
+        title = "Notification Details - Spessle Admin";
+      } else {
+        title = "Spessle Admin";
+      }
+    }
+    
+    document.title = title;
+  }, [location.pathname]);
 
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const savedState = localStorage.getItem("sidebar-collapsed");
