@@ -40,7 +40,7 @@ export default function BusinessDetails() {
     'Business Name': businessDetails.businessname,
     Email: businessDetails.email,
     Phone: businessDetails.phonenum,
-    Ratings: businessDetails.businessreviews_on_business.length > 0 ? `${businessDetails.businessreviews_on_business.reduce((acc, review) => acc + review.rating, 0) / businessDetails.businessreviews_on_business.length}/5` : 'No ratings yet',
+    Ratings: businessDetails.businessreviews_on_business.length > 0 ? `${(businessDetails.businessreviews_on_business.reduce((acc, review) => acc + review.rating, 0) / businessDetails.businessreviews_on_business.length).toFixed(1)}/5` : 'No ratings yet',
     Address: `${businessDetails.address}, ${businessDetails.city}, ${businessDetails.state} ${businessDetails.zipcode}`,
     Category: businessDetails.category.categoryname,
     Tags: businessDetails.businesstagss_on_business.map(tag => tag.tag.tagname).join(', ') || 'None',
