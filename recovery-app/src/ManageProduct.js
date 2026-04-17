@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api, { getCachedBusinessId } from "./utils/api";
 import ProductDetailsModal from "./components/ProductDetailsModal";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "./ManageProduct.css"; // Using the same CSS file
 import feather from "feather-icons";
 import { API_BASE_URL } from "./config";
@@ -25,7 +27,7 @@ const transformApiProduct = (apiProduct) => ({
 export default function ManageProduct() {
   // Updated filter state
   const [filters, setFilters] = useState({
-    productName: "", businessName: "", category: "", dateTime: ""
+    productName: "", businessName: "", category: "", dateTime: [null, null]
   });
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState("10");
@@ -108,14 +110,14 @@ export default function ManageProduct() {
     setProducts(sortedProducts);
   };
 
-  // Get initial filters from URL (no change needed)
+  // Get initial filters from URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const initialFilters = {
       productName: params.get('productName') || '',
       businessName: params.get('businessName') || '',
       category: params.get('category') || '',
-      dateTime: params.get('dateTime') || '',
+      dateTime: [null, null],
     };
     setFilters(initialFilters);
   }, []);
@@ -124,21 +126,25 @@ export default function ManageProduct() {
   const handleFilterSearch = (e) => {
     e.preventDefault();
     let filtered = masterProductList; // Start from the master list
+    const [startDate, endDate] = filters.dateTime;
+    
     if (filters.productName)
       filtered = filtered.filter(p => p.productName.toLowerCase().includes(filters.productName.toLowerCase()));
     if (filters.businessName)
       filtered = filtered.filter(p => p.businessName.toLowerCase().includes(filters.businessName.toLowerCase()));
     if (filters.category)
       filtered = filtered.filter(p => p.category === filters.category);
-    if (filters.dateTime)
-      filtered = filtered.filter(p => p.dateTime.startsWith(filters.dateTime));
+    if (startDate && endDate) {
+      filtered = filtered.filter(p => {
+        const productDate = new Date(p.dateTime);
+        return productDate >= startDate && productDate <= endDate;
+      });
+    }
 
     const params = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) {
-        params.set(key, value);
-      }
-    });
+    if (filters.productName) params.set('productName', filters.productName);
+    if (filters.businessName) params.set('businessName', filters.businessName);
+    if (filters.category) params.set('category', filters.category);
     window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
 
     setProducts(filtered); // Set the displayed products
@@ -147,7 +153,7 @@ export default function ManageProduct() {
 
   // Updated to reset to 'masterProductList'
   const handleFilterReset = () => {
-    setFilters({ productName: "", businessName: "", category: "", dateTime: "" });
+    setFilters({ productName: "", businessName: "", category: "", dateTime: [null, null] });
     setProducts(masterProductList); // Reset to full list
     setSearch("");
     setCurrentPage(1);
@@ -248,11 +254,15 @@ export default function ManageProduct() {
                     </div>
                     <div className="admin-filter-col">
                       <label>Date & Time</label>
-                      <input
-                        type="datetime-local"
+                      <DatePicker
+                        selectsRange={true}
+                        startDate={filters.dateTime[0]}
+                        endDate={filters.dateTime[1]}
+                        onChange={(update) => {
+                          setFilters({ ...filters, dateTime: update });
+                        }}
+                        isClearable={true}
                         className="form-control"
-                        value={filters.dateTime}
-                        onChange={e => setFilters(f => ({ ...f, dateTime: e.target.value }))}
                       />
                     </div>
                   </div>
